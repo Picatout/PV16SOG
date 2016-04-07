@@ -1,0 +1,58 @@
+(* syntaxe EBNF pv16sog BASIC *)
+(* REF: https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_Form *)
+
+
+letter = 'A'|'B'...|'Z';
+digit = '0'|'1'...|'9';
+otherchar = '('|')'|'='|'<'|'>'|'+'|'-'|'*'|'/'|'%'|'\'"|'"'|'$'|'#'|'&'|'|'|'^'|'\n'|'\r'|'\t'|'_'|','|';';
+identifier = letter,{letter|digit|'_'},[$];
+number = digit,{digit};
+varname = identifier;
+subname = identifier;
+funcname = identifier;
+nl = '\n' | ':';
+cr = '\r';
+tab = '\t';
+space = tab|' ';
+sep = space,{space};
+
+program = [block];
+block = statment,{nl statement};
+statement = 'DIM',sep,varname,['('number')'],[sep],{',',[sep],varname,['('number')']}|
+			['LET'],sep,varname,[sep],'=',[sep],expression,[sep],nl|
+			'IF',sep,condition,sep,'THEN',sep|[nl],block,sep|[nl],['ELSE',sep|nl,block,sep|nl],'END IF',[sep],nl|
+			'SUB',sep,subname,['('arglist')'],nl,[localvarlist],nl,block,nl,'END SUB',nl|
+			'FUNC',sep,funcname,['('arglist')'],nl,[localvarlist],nl,block,funcname,[sep],'=',
+			     [sep],expression,nl,[block],nl,'END FUNC',nl|
+			'FOR',sep,varname,[sep]'=',[sep],expression,sep,'TO',sep,expression,sep,
+			    ['STEP' expression],sep|nl,block,sep|nl,'NEXT',sep,varname,[sep],nl|
+			'WHILE',sep,condition,sep|nl,block,sep|nl,'END WHILE',[sep],nl|
+			'LOOP',sep|nl,block,sep|nl,'WHILE',sep,condition,[sep],nl|
+			'SELECT,sep,'CASE',sep,expression,[sep],nl,'CASE',sep,constlist,[sep],nl,sep,block,[sep],nl,
+			    {'CASE',sep,constlist,[sep],nl,block,nl},{'CASE ELSE' block,nl},'END SELECT' nl|
+			command|
+			'REM',sep,comment,[sep],nl|
+			"BYE',[sep],nl|
+			"'",comment,nl;
+
+varlist = varname,{[sep],',',[sep],varname} ;
+bool_expression = bool_term,{sep,'OR',sep,bool_term}
+bool_term= bool_factor|
+           bool_factor,{sep,'AND',bool_factor}
+bool_factor=['NOT',sep],condition          
+                  			
+condition = expression |
+            expression,[sep],('=' | '<' | '<=' | '>' | '>='),[sep],expression ;
+
+expression = [ '+' | '-'],term,[sep],{ ('+' | '-'),[sep],term};
+
+term = factor,[sep],{('*' | '/' | '%' ),[sep],factor};
+
+factor = ident | number | function | "(",[sep],expression,[sep]")";
+
+constlist = number,{[sep],',',[sep],number};
+
+function = ABS|RND|SQRT|POS|TIMER;
+
+command = CLS|COLOR|LOCATE|INPUT|PRINT|BEEP;
+

@@ -1,0 +1,5 @@
+# PV16SOG
+console rétro avec clavier PS/2 , joystick Atari 2600 et sortie NTSC 16 tons de gris
+* MCU: PIC24FJ64GA002
+* RAM SPI 64Ko
+* support carte SD

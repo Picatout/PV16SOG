@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/home/jacques/github/pv16sog/stackvm.h</file>
+            <file>file:/home/jacques/github/pv16sog/text.h</file>
+            <file>file:/home/jacques/github/pv16sog/pv16sog.c</file>
+            <file>file:/home/jacques/github/pv16sog/stackvm.S</file>
+            <file>file:/home/jacques/github/pv16sog/graphics.c</file>
+            <file>file:/home/jacques/github/pv16sog/Hardware/ps2_kbd.c</file>
+            <file>file:/home/jacques/github/pv16sog/editor.c</file>
+            <file>file:/home/jacques/github/pv16sog/text.c</file>
+            <file>file:/home/jacques/github/pv16sog/vm_graphics.S</file>
+            <file>file:/home/jacques/github/pv16sog/graphics.h</file>
+            <file>file:/home/jacques/github/pv16sog/shell.c</file>
+        </group>
+    </open-files>
+</project-private>

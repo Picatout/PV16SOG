@@ -1,0 +1,356 @@
+;-------------------------------------
+;Copyright 2015 Jacques Deschnes
+;This file is part of PV16SOG.
+;LICENCE: GPLV3
+;-------------------------------------
+; NOM: LEM
+; DESCRIPION:
+;  Jeux qui consiste  faire alunir 
+;  le LEM.  clone d'un jeux datant
+;  des annes 197x.
+;  contrle:  FIRE vers le haut
+;             LEFT vers la gauche
+;             RIGHT vers la droite
+;
+; AUTEUR: Jacques Deschnes
+; CRATION: 2014-10-30
+; MISE  JOUR: 2016-01-09
+;-------------------------------------
+;;;;;;;;;;;;;;;;;
+;; constantes  ;;
+;;;;;;;;;;;;;;;;;
+equ PAD_WIDTH   24 ; largeur de la 
+             ;plateforme d'alunissage
+
+;;;;;;;;;;;;;;;
+;; variables ;;
+;;;;;;;;;;;;;;;
+def xpos VE    ; coordonne x du LEM
+def ypos VD    ; coordonne y du LEM
+def hspeed VC  ; vitesse horizontale
+def vspeed VB  ; vitesse verticale
+def fuel VA    ; niveau de carburant
+def score V9   ; nombre d'alunissage
+                ; russis.
+def set V8     ; nombre de tentative
+                ; d'alunissage
+def pad V7     ; position du pad 
+                ; d'alunissage
+
+
+;;;;;;;;;;;;;;;;;;;;
+;;  code segment  ;;
+;;;;;;;;;;;;;;;;;;;;
+  cls
+  call show_credit
+  cls
+  ld score, 0
+  ld set, 0
+next_set:
+  add set,1
+;position initiale du LEM
+;centre haut de l'cran
+  scrx xpos
+  ld w, 16
+  sub xpos, w
+  shr xpos
+  ld ypos,0  
+; vitesses initiales nulles 
+  ld hspeed,0
+  ld vspeed,0
+;rservoir carburant plein
+  ld fuel, 100
+; dessine la surface de la lune
+  call moonscape
+; dessine LEM
+  call drw_lem
+; affiche le niveau carburant
+;boucle principale
+main:
+  call prt_fuel_level
+  sne fuel,0 
+; plus de carburant ignore le clavier
+  jp move_lem
+; lecture clavier
+  ld w, LEFT
+  sknp w ; jet de droite?
+  jp right_jet
+  ld w, RIGHT
+  sknp w ; jet de gauche?
+  jp left_jet
+  ld w, UP
+  sknp w ; jet vertical?
+  jp up_jet
+  jp move_lem
+right_jet:
+  add hspeed,-1  
+  add fuel,-1
+  sne fuel, 0  
+  jp update_fuel
+  jp up_jet
+; acclaration vers la droite
+left_jet:
+  add hspeed, 1   
+  add fuel, -1
+  sne fuel, 0 
+  jp update_fuel
+;acclaration vers le haut
+up_jet:
+  add vspeed, -2  
+  se fuel, 1
+  add fuel, -1  
+  add fuel, -1   
+update_fuel:
+  ld w,20
+  noise w
+  call prt_fuel_level
+; dplacement LEM
+move_lem:
+  call erase_fuel
+  call drw_lem ; efface LEM
+; mise  jour position LEM
+  add xpos, hspeed  
+  scrx w
+  sub w, xpos
+  sne C, 0
+  ld xpos,0
+  add ypos, vspeed 
+  add vspeed, 1  ; gravite
+  call drw_lem
+  sne C, 1
+  jp collision
+; verification carburant
+  sne fuel, 0
+  jp fuel_empty
+; delais
+  ld w,30
+  call delay 
+  jp main
+erase_fuel:
+  ld w, 0
+  scur w,w
+  ld i, _3spaces
+  prt
+  ret
+; rservoir vide
+fuel_empty:
+  call erase_fuel
+  ld w, 10
+  ld v1, 20
+  tone w,v1,wait
+  call prt_fuel_level
+  ld w, 4
+  tone w,v1,wait
+  jp main
+;delais
+; arguments:
+;   w = millisecondes
+delay:
+  ld dt,w
+  ld w, dt
+  se w, 0
+  jp .-2
+  ret
+    
+; il y a eu collision avec le sol   
+; condition succs: 
+;   LEM entirement sur le pad
+;   vitesse infrieure  3
+collision:
+  call prt_fuel_level
+  ld w,3
+  sub w, vspeed
+  se C, 1
+  jp crash ;vitesse vert. trop grande
+  ld w,3
+  sub w, hspeed
+  se C, 1
+  jp crash ; vitesse hor. trop grande
+  ld w, pad
+  subn w, xpos
+  se C, 1
+  jp crash    ; hors du pad
+  ld W, PAD_WIDTH
+  add w, pad
+  add w, -16
+  sub w, xpos
+  se C, 1
+  jp crash  
+; alunissage reussie
+  add score,1
+  ld i, success_msg
+  ld v1,0
+  ld v2,16
+  scur v1,v2
+  prt
+  jp wait_next_set
+crash:
+  ld i, crash_msg
+  ld v1, 0
+  ld v2,16
+  scur v1,v2
+  prt
+wait_next_set:
+  call display_score
+  ld w, 60
+  call delay
+  ld w, FIRE_BTN
+  skp w
+  jp .-1
+  ld v1, 1
+  ld v2, 100
+  tone v1, v2,wait
+  sknp w
+  jp .-1
+  cls
+  jp next_set
+; dessine le LEM
+drw_lem:
+  ld I, LEM
+  DRW xpos,ypos,0
+  ret
+
+; affiche le pointage
+; variables locales
+;   v1  position x
+;   v2  position y
+display_score:
+  ld v1, 0
+  ld v2, 10
+  scur
+  prn score
+  ld w, '\\'
+  prc w
+  prn set
+  ret
+    
+;dessine la surface de la lune
+;variables locales:
+;   v1 position y du pixel
+;   v3 variable temporaire
+;   v4 position  droite du pad
+;   v5 position x du pixel
+moonscape:
+  ld v5,0
+;position du pad au hasard
+  rnd pad, 8
+  scrx w
+  add w, -PAD_WIDTH
+  sub w, pad
+  se C, 0
+  jp .+3
+  scrx pad
+  add pad, -PAD_WIDTH 
+  ld v4, pad
+  add v4, PAD_WIDTH
+  rnd v1,4
+  scry w
+  add w,-1
+  subn v1, w
+scape_loop:
+  ld v3,v5
+  sub v3,pad 
+  se C,1
+  jp rand_y  ;gauche du pad
+  ld v3,v5
+  sub v3,v4
+  se C,1  ;droite du pad
+  jp put_pixel ;sur le pad
+rand_y:
+  scry w
+  add w,-1
+  sub w, v1
+  sne V1, 0
+  add v1,-1
+  scry w
+  shr w
+  shr w
+  shr w
+  sub w, v1
+  se C, 0
+  add v1, 1
+  rnd v3,1
+  se v3,0
+  add v1,-2
+  add v1,1
+put_pixel:
+  pixi v5,v1
+  add v5,1
+  scrx w
+  se v5, w
+  jp scape_loop
+  ret
+
+; affiche le niveau de carburant
+prt_fuel_level:
+  call erase_fuel
+  ld w,0
+  scur w,w
+  prn fuel
+  ret
+
+show_credit:
+  ld i, credit1
+  ld w, 0
+  scry v1
+  shr v1
+  scur w,v1
+  prt
+  ld i, credit2
+  prt
+  ld i, credit3
+  prt
+scroll_loop:
+  ld w,FIRE_BTN
+  sknp w
+  ret
+  ld w, 1
+  scu w
+  ld w,3
+  call delay
+  add v1,-1
+  se v1, 0
+  jp scroll_loop
+  ret
+    
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;     data  segment    ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;  
+
+; vhicule d'alunissage  
+LEM:
+  db  #00,#00,#00,#ff,#ff,#00,#00,#00
+  db  #00,#00,#0f,#f0,#0f,#f0,#00,#00
+  db  #00,#0f,#ff,#ff,#ff,#ff,#f0,#00
+  db  #00,#ff,#ff,#ff,#ff,#ff,#ff,#00
+  db  #00,#f0,#00,#00,#00,#00,#0f,#00
+  db  #f0,#f0,#ff,#ff,#ff,#ff,#0f,#0f
+  db  #0f,#f0,#ff,#00,#00,#ff,#0f,#f0
+  db  #00,#f0,#ff,#00,#00,#ff,#0f,#00
+  db  #0f,#f0,#ff,#ff,#ff,#ff,#0f,#f0
+  db  #f0,#f0,#00,#00,#00,#00,#0f,#0f
+  db  #00,#ff,#ff,#ff,#ff,#ff,#ff,#00
+  db  #00,#ff,#ff,#ff,#ff,#ff,#ff,#00
+  db  #00,#0f,#00,#f0,#f0,#0f,#00,#00
+  db  #00,#f0,#0f,#00,#0f,#00,#f0,#00
+  db  #0f,#f0,#00,#00,#00,#00,#ff,#00
+  db  #ff,#00,#00,#00,#00,#00,#0f,#f0
+
+
+crash_msg:
+  ascii "you crashed"
+success_msg:
+  ascii "congratulation!"
+credit1:
+  ascii "LEM\nJacques Deschenes\n"
+credit2:
+  ascii "Copyright 2014,2015\n"
+credit3:
+  ascii "licence GPLv3"
+    
+; 3 espaces
+_3spaces:
+  ascii "   "
+
+    
+end 

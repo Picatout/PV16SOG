@@ -1,0 +1,65 @@
+; pv16asm syntax description
+; '[]' optional
+; '*' zéro or more
+; 'e' empty
+; '|' altrnatives
+; '()' alternate grouping
+; quoted char are terminal symbols
+; upper case words are terminal symbols
+
+program ::= line*
+
+line ::=    e|
+            comment|
+            label [(mnemonic [arg_list]|
+            directive [arg_list]|comment)]|
+            mnemonic [arg_list]|
+            directive [arg_list]
+
+comment ::= ';' any ascii to end of line
+
+label ::= (letter|'_')(letter|digit|'_')*':'
+
+mmenonic ::= NOP|CLS|RET|SCR|SCL|EXIT|SAVE|RSTR|SCD|JP|CALL|
+             SHR|SHL|SKP|SKNP|SE|SNE|ADD|SUB|SUBN|OR|AND|
+             XOR|RND|TONE|PRT|PIXI|LD|DRW|NOISE|PUSH|POP|
+             SCRX|SCRY|SCU|BSET|BCLR|BINV|BTSS|BTSC|GPIX|
+             PRN|PRC|SCUR|KEY|SET|SETP
+
+directive ::= EQU|DB|DW|ASCII|SPACE|END|DEF
+
+arg_list ::= argument[','argument]*
+
+argument ::= expression|register|quoted_char|'['char']'|string
+
+expression ::= term [('+'|'-') term]*
+
+term ::= factor [('*'|'/') factor]*
+
+factor ::= number|'('expression')'|quoted_char
+
+register := ('v|'V')hex_digit|I|DT|ST 
+
+quoted_char ::= '\''char'\''
+
+string ::= '"'[char|escaped_char]*'"'
+
+char ::= ASCII set
+
+escaped_char ::= '\'valid_espace
+
+valid_escapce ::= 't'|'n'|'r'|'"'|'\'' 
+
+number ::= ['+'|'-']digit[digit]*|
+           '$'hex_digit[hex_digit]*
+           '#'binary_digit[binary_digit]*
+
+digit ::= '0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9'
+
+hex_digit := digit|'a'|'A'|'b'|'B'|'c'|'C'|'d'|'D'|'e'|'E'|'f'|'F'
+
+binary_digit ::= '0'|'1'
+
+
+
+

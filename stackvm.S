@@ -1,0 +1,1092 @@
+/*
+ * PV16SOG retro-computer 
+ * specifications:
+ *  MCU: PIC24EP512MC202
+ *  video out: 
+ *     - NTSC signal
+ *     - graphics 240x170 16 shades of gray
+ *     - text 21 lines 40 colons.
+ *  storage:
+ *     - SDcard
+ *     - temporary: SPI RAM 64Ko
+ *  input:
+ *     - PS/2 keyboard
+ *     - Atari 2600 joystick
+ * sound:
+ *     - single tone or white noise.
+ * software:
+ *     - small command shell
+ *     - virtual machine derived from SCHIP
+ *     - editor
+ *     - assembler for the virtual machine
+ * 
+ * Copyright 2015, 2016, Jacques Deschenes
+ * 
+ * This file is part of PV16SOG project.
+ * 
+ * ***  LICENCE ****
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; See 'copying.txt' in root directory of source.
+ * If not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+ *  
+ * to contact the author:  jd_temp@yahoo.fr
+ * 
+ */
+
+/*
+ *  NAME: stackvm.S
+ * DESCRIPTION: machine virtuelle à pile exécutant le bytecode BASIC
+ * DATE: 2016-02-14
+ */
+
+/*  NOTES:
+ *    T -> valeur au sommet de dstack
+ *    R ->  valeur au sommet de rstack
+ */
+/*
+ *   utilisation des registres
+ *   W4  step
+ *   W5  limit
+ *   W6  ip
+ *   W7  pointeur words
+ *   W8  pointeur dstack
+ *   W9  pointeur rstack
+ *   W10 pointeur frame
+ *   W11 valeur DSRPAG avant appel interpréteur
+  */
+
+.include "p24EP512MC202.inc"  
+#define __asm
+#include "Hardware/hardware.h"
+#include "Hardware/tones.h"
+#include "stackvm.h"
+#include "Hardware/ntsc_const.h"    
+#undef __asm    
+    
+
+    
+.global _dstack, _rstack,_dsp,_rsp, _endmark, _progspace,_dp, _ftrace, _vm_exit_code
+
+.section ndata bss near  
+_dstack_empty:
+.space 2    
+_dstack:
+.space DSTACK_SIZE
+_rstack_empty:
+.space 2    
+_rstack:
+.space RSTACK_SIZE    
+_dsp: // pointejur pile données
+.space 1
+_rsp: // pointeur pile retours
+.space 1
+_endmark:
+.space 2
+_progspace:
+.space 2 
+_dp:
+.space 2
+_pad:
+.space CHAR_PER_LINE    
+_ftrace:
+.space 2
+_vm_exit_code:
+.space 2
+
+.global _pause_timer
+_pause_timer: .space 2
+
+    
+.text
+    
+//*********************
+// opération sur piles
+//*********************
+
+drop: //( n --)
+    dec2 dsp,dsp
+    return
+
+twodrop: // ( n1 n2 -- )
+    dec2 dsp,dsp
+    dec2 dsp,dsp
+    return
+
+
+dup: // ( n -- n n )
+    mov [dsp],[++dsp]
+    return
+
+
+vm_swap: // ( n1 n2 -- n2 n1 )
+    mov [--dsp],W0
+    mov [++dsp],[--dsp]
+    mov W0,[++dsp]
+    return
+
+rot: // ( n1 n2 n3 -- n3 n1 n2 )
+    mov [dsp-4],W0
+    mov [dsp-2],W1
+    mov [dsp],W2
+    mov W2, [dsp-4]
+    mov W1,[dsp]
+    mov W0,[dsp-2]
+    return
+    
+over: // (n1 n2 -- n1 n2 n1 )
+    mov #4,W1
+    dec2 dsp,dsp
+    mov [dsp],[dsp+W1]
+    add W1,dsp,dsp
+    return
+
+tuck: // (n1 n2 -- n2 n1 n2)
+    mov [dsp],W0
+    mov #2,W1
+    mov [--dsp],[dsp+W1]
+    mov W0,[dsp]
+    inc2 dsp,dsp
+    mov W0,[++dsp]
+    return
+
+// calcul la valeur de dsp
+// et sauvegarde dans la variable dsp
+dspstore: // ( n -- )
+    mov #_dstack,W0
+    sub dsp,W0,W0
+    asr W0,W0
+    sub #1,W0
+    mov.b WREG,_dsp
+    return
+
+//exécution à une adresse
+// absolue
+exec: // ( adr -- )
+    mov ip,[++rsp]
+    mov [dsp--],ip
+    return
+
+//     
+exit: // (R: adr -- )
+    mov [rsp--],ip
+    return
+    
+    
+// calcule nombre d'éléments
+// sur la pile dstack
+depth: //( -- n)
+    mov #_dstack,W0
+    sub dsp,W0,W0
+    asr W0,W0
+    add #1,W0
+    mov W0,[++dsp]
+    return
+
+// copie le nième élément au sommet de la pile
+// [IP] indique l'élément à copier au sommet
+pick: // (nx ... n2 n1 n0 -- nx ... n1 n0 nx )
+    mov.b [ip++],W0
+    ze W0,W0
+    sl W0,W0
+    neg W0,W0
+    mov [dsp+W0],[++dsp]
+    return
+
+// envoie T sur R
+tor: // >R ( n -- R:n)
+    mov [dsp--],[++rsp]
+    return
+
+// envoie R sur T
+rfrom: // R> ( R:n -- n )
+    mov [++dsp],[rsp--]
+    return
+
+//copie R dans T
+rfetch: // @R ( R:n -- n R:n)
+    mov [rsp],[++dsp]
+    return
+
+// transfert les 2 éléments au sommet de dstack
+// W4 et limit
+savelimit: //( limit -- )
+    mov [dsp--],limit
+    return
+
+// sauvegarde les variables de boucle sur rstack
+saveloop: // ( -- R:step R:limit)
+    mov step,[++rsp] //step
+    mov limit,[++rsp] //limit
+    return
+
+// sauvegarde STEP
+savestep: // ( step -- )
+    mov [dsp--],step
+    return
+
+// restore les variables de boucle
+restloop: // ( R:step R:limit -- )
+    mov [rsp--],limit
+    mov [rsp--],step
+    return
+
+//addresse de la variable de contrôle 
+// au sommet de la pile
+// n est la valeur de la variable de contrôle
+// flag=0 si limite dépassée.
+looptest: // (  n -- flag )
+    clr W0
+    sub limit,[dsp],W1  //test limit
+    btss step,#15
+    bra lt, 1f
+    btsc step,#15
+    bra gt, 1f
+    setm W0
+    1:
+    mov W0,[dsp]
+    return
+
+// incrémente variable de la
+// boucle FOR
+// adresse de la variable au sommet de pile
+// step contient la valeur de l'incrément
+// adr -> adresse de la variable
+// n -> valeur de la variable incrémentée
+for_next: // ( adr -- n )
+    mov [dsp],W0
+    mov [W0],W1
+    add step,W1,W1
+    mov W1,[W0]
+    mov W1,[dsp]
+    return
+
+;**************************
+; gestion mémoire programme
+;**************************
+    
+.global alloc
+alloc:; ( size -- adr|NULL )  size -> nombre d'octets (arrondie à un nombre pair.
+    mov [dsp],W0
+    cp0 W0
+    bra z, 0f
+    sub _endmark,WREG
+    btsc W0,#0
+    dec W0,W0
+    mov _progspace, W1
+    mov _dp,W2
+    add W1,W2,W1
+    cp W0, W1
+    bra gt, 1f
+    clr [dsp]
+0:  return
+1:  mov W0, _endmark    
+    mov W0, [dsp]
+    return
+    
+    
+    
+//************************
+// entrées/sorties
+//************************
+// imprime 1 caractère a l'écran
+emit: // ( c -- )
+    mov [dsp--],W0
+    and #0x7f,W0
+    callxfunc(_put_char)
+    return
+
+//imprime une chaîne literale, zéro terminée
+// ip pointe sur str
+// str-> chaîne à imprimer.
+prt_str: // ( -- )
+    clr W0
+    mov.b [ip++],W0
+    cp0 W0
+    bra z, 1f
+    callxfunc(_put_char)
+    bra prt_str
+1:  return
+
+//imprime la valeur dans W0
+dotW0: // ( -- )
+    push W0
+    clr W1
+    btsc W0,#15
+    com W1,W1
+    clr W2
+    callxfunc(_print_int)
+    mov #32,W0
+    callxfunc(_put_char)
+    pop W0
+    return
+
+// imprime T à l'écran
+dot: // (n --)
+    mov [dsp--],W0
+    call dotW0
+    return
+
+// affiche le contenu de la pile
+dots:
+    callxfunc _new_line
+    mov #_dstack,W3
+    sub dsp,W3,W0
+    asr W0,W0
+    add #1,W0
+    push W3
+    call dotW0
+    mov #':',W0
+    callxfunc(_put_char)
+    mov #32, W0
+    callxfunc(_put_char)
+    pop W3
+0:  cp dsp,W3
+    bra n, 1f
+    mov [W3++],W0
+    push W3
+    call dotW0
+    pop W3
+    bra 0b
+1:  return 
+
+// lecture 1 caractère du clavier
+wait_key: // ( -- c )
+    callxfunc(_kbd_wait_key)
+    and #255,W0
+    mov W0,[++dsp]
+    return
+
+; vérifie s'il y a un caractère dans 
+; retourne 0 si pas de caractère
+key: ; ( -- key )
+    callxfunc _kbd_get_key
+    and #255,W0
+    mov W0, [++dsp]
+    return
+
+    
+// imprime une chaïne ZASCII à l'écran
+//adresse sur la pile.
+type: // ( adr -- )
+    mov [dsp--],W0
+    callxfunc(_print)
+    return
+
+// lecture d'une chaine au clavier
+// n buffer size
+// addresse buffer = _pad
+// longueur chaine lue.    
+accept:  // ( n -- adr len )
+    mov #'?', W0
+    callxfunc _put_char
+    mov [dsp--],W0
+    mov #CHAR_PER_LINE,W1
+    cp W0,W1
+    bra gt, 1f
+    mov W0,W1
+1:  mov #_pad,W0
+    mov W0,[++dsp]
+    callxfunc _readln
+    ze W0,W0
+    mov W0,[++dsp]
+    return
+
+; convertie la chaine
+; en entier
+; adr -> adresse chaîne    
+to_int: ; (adr -- n )
+    push.D W4
+    push W6
+    clr W6
+    clr W4
+    mov #10, W2
+    mov [dsp--], W3
+    mov.b [W3++],W0
+    ze W0,W0
+    cp W0,#'-'
+    bra neq, 2f
+    com W6,W6
+0:
+    mov.b [W3++],W0
+    ze W0,W0
+2:   
+    cp W0,#'0'
+    bra lt, 3f
+    cp W0,#'9'
+    bra gt, 3f
+    sub #'0',W0
+    mul.uu W4,W2,W4
+    add W0,W4,W4
+    bra 0b 
+3:
+    cp0 W6
+    bra eq, 4f
+    neg W4,W4
+4:    
+    mov W4,[++dsp]
+    pop W6
+    pop.D W4
+    return
+    
+//imprime un espace
+space: // ( -- )
+    mov #32,W0
+    callxfunc(_put_char)
+    return
+
+//envoie un '\n' à l'écran
+cr: // ( -- )
+    callxfunc(_new_line)
+    return
+
+//positionne le curseur texte
+vm_locate: // ( line col -- )
+    mov [dsp--],W0
+    and #255,W0
+    mov [dsp--],W1
+    and #255,W1
+    saveregs
+    call _set_cursor
+    restregs
+    return
+
+// change la couleur de fond d'écran
+vm_back_color: // ( n -- )
+    mov [dsp--],W0
+    and #15,W0
+    mov.b WREG,_bg_color
+    return
+
+//change la couleur de la police
+vm_font_color: // ( n -- )
+    mov [dsp--],W0
+    and #15,W0
+    mov.b WREG,_fg_color
+    return
+
+
+//************************
+// constantes
+//************************
+
+// literal entier 16 bits
+lit:  // ( -- n )
+    mov.b [ip+1],W0
+    swap W0
+    mov.b [ip],W0
+    mov W0,[++dsp]
+    inc2 ip,ip
+    return
+
+// literal entier 8 bits
+litc: // ( -- c )
+    mov.b [ip++],W0
+    ze W0,W0
+    mov W0,[++dsp]
+    return
+
+//**************************
+// variables
+//***************************
+
+//empile valeur variable entier 16 bits
+fetch: // ( adr -- n )
+    mov [dsp],W2
+    mov [W2],[dsp]
+    return
+
+//empile variable entier 8 bits
+fetchc: // ( adr -- c )
+    mov [dsp],W0
+    mov.b [W0],W0
+    ze W0,W0
+    mov W0,[dsp]
+    return
+
+//enregistre valeur variable 16 bits
+store:  // ( n adr -- )
+    mov [dsp--],W2
+    mov [dsp--],[W2]
+    return
+
+//enregistre valeur variable 8 bits
+storec: // ( c adr -- )
+    mov [dsp--],W0
+    mov.b [dsp--],[W0]
+    dec dsp,dsp
+    return
+
+//sauvegarde variable local
+//[IP] indique la position de la variable
+local_store: // ( n -- )
+    mov.b [ip++],W0
+    ze W0,W0
+    sl W0,W0
+    mov [dsp--],[fp+W0]
+    return
+
+//empile variable locale
+//[IP] indique la position  de la variable
+local_fetch:
+    mov.b [ip++],W0
+    ze W0,W0
+    sl W0,W0
+    mov [fp+W0],[++dsp]
+    return
+
+//empile l'adresse de la variable locale
+// [IP] indique la position de la variable
+//sur la pile
+local_address: //( -- adr )
+    mov.b [ip++],W0
+    ze W0,W0
+    sl W0,W0
+    add W0,fp,W0
+    mov W0,[++dsp]
+    return
+
+//copie d'une chaîne zéro terminal
+str_copy: // ( src dest -- )
+    mov [dsp--],W1
+    mov [dsp--],W2
+0:  cp0.b [W2]
+    bra z, 1f
+    mov.b [W2++],[W1++]
+    bra  0b
+1:  clr.b [W1]
+    return
+
+//**************************
+// opérations logique et arithmétiques
+//**************************
+
+negate: //( n -- -n )
+    neg [dsp],[dsp]
+    return
+
+not: // ( n -- !n )
+    com [dsp],[dsp]
+    return
+
+vm_ior: ; ( n1 n2 -- n1|n2 )
+    mov [dsp--],W0
+    ior W0,[dsp],[dsp]
+    return
+    
+vm_xor: ; ( n1 n2 -- n1^n2 )
+    mov [dsp--],W0
+    xor W0,[dsp],[dsp]
+    return
+
+
+vm_and: ; ( n1 n2 -- n1&n2 )
+    mov [dsp--],W0
+    and W0,[dsp],[dsp]
+    return
+    
+vm_add: // ( n1 n2 -- n1+n2 )
+    mov [dsp--],W0
+    add W0,[dsp],[dsp]
+    return
+
+vm_sub: // ( n1 n2 -- n1-n2 )
+    mov [dsp--],W0
+    mov [dsp],W1
+    sub W1,W0,[dsp]
+    return
+
+vm_mul: // ( n1 n2 -- n1*n2 )
+    mov [dsp--],W0
+    mov [dsp],W1
+    mul.ss W1,W0,W0
+    mov W0,[dsp]
+    return
+
+// division entière
+divide: // ( n1 n2 -- n1/n2 )
+    mov [dsp--],W2
+    mov [dsp],W0
+    repeat #17
+    div.s W0,W2
+    mov W0, [dsp]
+    return
+
+// division modulo
+mod: // ( n1 n2 -- n1%n2 )
+    mov [dsp--],W2
+    mov [dsp],W0
+    repeat #17
+    div.s W0,W2
+    mov W1, [dsp]
+    return
+
+// T>>1
+shr: //( u -- u>>1 )
+    asr [dsp],[dsp]
+    return
+
+// T<<1
+shl: // ( u -- u<<1)
+    sl [dsp],[dsp]
+    return
+
+// T++
+oneplus: // ( n -- n++ )
+    inc [dsp],[dsp]
+    return
+
+// T+=2
+twoplus:
+    inc2 [dsp],[dsp]
+    return
+
+// T--
+oneminus: // ( n -- n-- )
+    dec [dsp],[dsp]
+    return
+
+// T-=2
+twominus:
+    dec2 [dsp],[dsp]
+    return
+
+//racine carree
+//REF: https://fr.wikipedia.org/wiki/M%C3%A9thode_de_H%C3%A9ron
+sqroot: //( u -- sqrt(u) )
+    lsr [dsp],W2
+    clr W3
+    0: sub W2,W3,W1
+    bra z, 1f
+    dec W1,W1
+    bra z, 1f
+    mov [dsp],W0
+    repeat #17
+    div.u W0,W2
+    mov W0,W3
+    add w2,w3,w2
+    lsr W2,W2
+    bra 0b
+    1: mov W2,[dsp]
+    return
+
+// retourne un nomber aléatoire
+rnd: //( -- n)
+    saveregs
+    call _random
+    restregs
+    mov W0, [++dsp]
+    return
+
+vm_abs: //(n -- u )
+    btst.c [dsp],#15
+    bra nc, 1f
+    neg [dsp],[dsp]
+    1:
+    return
+
+// test bit #b de n    
+btest: ; ( n b -- f )
+    clr W0
+    mov [dsp--],W1
+    btst.z [dsp],W1
+    bra z, 1f
+    com W0,W0
+1:  mov W0,[dsp]
+    return
+    
+/*******************
+ * fonctions variées
+******************/
+
+// empile _msec_ticks
+vm_ticks:// ( -- u )
+    mov _msec_ticks, W0
+    mov W0, [++dsp]
+    return
+
+;vm_tone: // ( n1 n2 n3 --  ) n1->note, n2->durée, n3->wait
+;    mov [dsp-4],W0
+;    and #0x3f,W0
+;    cp W0,#SCALE_SIZE
+;    bra lt, 1f
+;    return
+;1:
+;    sl W0,W0
+;    mov #_scale,W1
+;    mov [W1+W0],W0
+;    mov W0,[dsp-4]
+;    
+;
+;.extern _tone_len
+;// génère un beep sonore
+;vm_beep: // ( n1 n2 n3 -- ) n1->freq, n2-> durée, n3->wait
+;    mov #(AUDIO_CLK>>1)&0xffff,W0
+;    mov #(AUDIO_CLK)>>17,W1
+;    mov [dsp-4],W2  // fréquence
+;    repeat #17
+;    div.ud W0,W2
+;    dec W0,W0
+;    mov W0, AUDIO_R
+;    mov W0, AUDIO_RS
+;    mov #TOGGLE_MODE, W0
+;    ior AUDIO_OCCON1
+;    mov [dsp-2],W1  // durée
+;    mov W1, _tone_len
+;    mov [dsp--],W2  //flag wait
+;    cp0 W2
+;    bra z, 1f
+;0:
+;    cp0 _tone_len
+;    bra nz, 0b
+;1:  
+;    sub #4,dsp
+;    return
+
+    
+.global _pause    
+//suspend exécution pour n millisecondes 
+vm_pause: // ( n -- )
+    mov [dsp--],W0
+_pause:
+    mov W0, _pause_timer
+1:
+    cp0 _pause_timer
+    bra nz, 1b
+    return
+    
+// initialise pause_timer
+set_ptmr: // ( n1 -- ) n1-> durée en msec
+    mov [dsp--],W0
+    mov W0, _pause_timer
+    return
+
+// vérifie si pause_timer==0
+test_ptmr: // ( -- flag )
+    clr W0
+    mov W0, [++dsp]
+    cp0 _pause_timer
+    bra nz, 1f
+    com [dsp],[dsp]
+    1:
+    return
+
+vm_noise:
+    mov [dsp--],W0
+    mov W0, _tone_len
+0:  callxfunc _random
+    mov #16,W1
+1:  btsc W0,#0
+    btg AUDIO_PORT,#AUDIO_OUT
+    lsr W0,W0
+    dec W1,W1
+    bra nz, 1b
+    cp0 _tone_len     
+    bra nz, 0b
+    return
+
+//*************************
+// joystick
+//*************************
+    
+//lecture du joystick    
+read_stick: //( -- n )
+    mov JOYPORT, W0
+    lsr W0,#11,W0
+    xor #0x1f,W0
+    mov W0, [++dsp]
+    return
+
+    
+//*************************
+// comparaison
+//*************************
+
+// n1==n2
+isequal:// ( n1 n2 -- flag )
+    clr W2
+    mov [dsp--],W0
+    mov [dsp],W1
+    cp W1,W0
+    bra nz, 1f
+    setm W2
+    1: mov W2,[dsp]
+    return
+
+// n1>n2
+isgreater: // ( n1 n2 -- flag )
+    clr W2
+    mov [dsp--],W0
+    mov [dsp],W1
+    cp W1,W0
+    bra le, 1f
+    setm W2
+    1: mov W2,[dsp]
+    return
+
+// n1>=n2
+isgrequal: // ( n1 n2 -- flag )
+    clr W2
+    mov [dsp--],W0
+    mov [dsp],W1
+    cp W1,W0
+    bra lt, 1f
+    setm W2
+    1: mov W2,[dsp]
+    return
+
+// n1<n2
+islittlethan: // ( n1 n2 -- flag)    
+    clr W2
+    mov [dsp--],W0
+    mov [dsp],W1
+    cp W1,W0
+    bra ge, 1f
+    setm W2
+    1: mov W2,[dsp]
+    return
+
+// n1<=n2
+isltequal: // ( n1 n2 -- flag )
+    clr W2
+    mov [dsp--],W0
+    mov [dsp],W1
+    cp W1,W0
+    bra gt, 1f
+    setm W2
+    1: mov W2,[dsp]
+    return
+
+//**************************
+// branchements
+//**************************
+
+// branchement relatif inconditionnel
+branch: // ( -- )
+    mov.b [ip++],W0
+    ze W0,W1
+    mov.b [ip++],W0
+    ze W0,W0
+    swap W0
+    add W0,W1,W0
+    add W0,ip,ip
+    return
+
+// branchement relatif si T==0
+zerobranch: // ( flag -- )
+    mov.b [ip++],W0
+    ze W0,W1
+    mov.b [ip++],W0
+    ze W0,W0
+    swap W0
+    add W0,W1,W0
+    mov [dsp--],W1
+    cp0 W1
+    bra nz, 1f
+    add W0,ip,ip
+    1:
+    return
+
+// branchement relatif si T!=0
+nzbranch: // ( n -- )
+    mov.b [ip++],W0
+    ze W0,W1
+    mov.b [ip++],W0
+    ze W0,W0
+    swap W0
+    add W0,W1,W0
+    mov [dsp--],W1
+    cp0 W1
+    bra z, 1f
+    add W0,ip,ip
+    1:
+    return
+
+//crée l'espace sur dstack pour
+// les variables locales
+//[IP] nombre de variables locales
+local_var:
+    clr W0
+    mov.b [ip++],W0
+    sl W0,W0
+    add dsp,W0,dsp
+    return
+
+//ajuste le registe fp
+//pour les arguments
+// [IP] nombres d'arguments
+frame:// (  --  )
+    clr W0
+    mov.b [ip++],W0
+    sl W0,W0
+1:  mov fp,[++rsp]
+    sub dsp,W0,fp
+    return
+
+// appel sous-routine
+enter: // ( --  )
+    clr W0
+    mov.b [ip++],W0
+    mov W0,W1
+    mov.b [ip++],W0
+    swap W0
+    mov ip, [++rsp]
+    add W0,W1,ip
+    return
+
+// sortie sous-routine
+leave: // (R: link -- )
+    mov.b [W6++],W0
+    ze W0,W0
+    sl W0,W0
+    sub dsp,W0,dsp
+    mov [rsp--],fp
+    mov [rsp--],ip
+    return
+
+bye: // ( -- )
+    sub #4,W15
+    bra vm_quit
+
+;active/désactive mode TRACE
+trace: // ( f -- )
+    mov [dsp--],W0
+    mov W0,_ftrace
+    sub #4,W15
+    cp0 W0
+    bra z, trace_off
+    bra trace_on
+    
+; vérification des limites de _rstack
+rstack_bound_check:
+    mov #_rstack_empty, W0
+    cp rsp,W0
+    bra lt, 1f
+    add #RSTACK_SIZE, W0
+    cp rsp,W0
+    bra gt, 1f
+    return
+1:  mov #RSTACK_ERROR, W0
+    mov W0, _vm_exit_code
+    sub #4,W15
+    bra vm_quit
+    
+    
+; vérification des limites de _dstack    
+dstack_bound_check:
+    mov #_dstack_empty, W0
+    cp dsp,W0
+    bra lt, 1f
+    add #DSTACK_SIZE, W0
+    cp dsp,W0
+    bra gt, 1f
+    return
+1:  mov #DSTACK_ERROR, W0
+    mov W0, _vm_exit_code
+    sub #4,W15
+    bra vm_quit
+    
+    
+//table des fonctions correspondant à bytecode_t
+words:    
+.word bye,drop,twodrop,dup,vm_swap,over,tuck,pick,tor,rfrom
+.word rfetch,saveloop,restloop,looptest,rnd,vm_abs,_vm_beep,_tone,vm_ticks,set_ptmr
+.word test_ptmr,vm_noise,_cls,vm_locate,vm_back_color,vm_font_color,emit,dot,wait_key,type
+.word accept,space,cr,prt_str,lit,litc,fetch,fetchc,store,storec
+.word negate,not,vm_add,vm_sub,vm_mul,divide,mod,shr,shl,oneplus
+.word twoplus,oneminus,twominus,sqroot,isequal,isgreater,isgrequal,islittlethan,isltequal,branch
+.word zerobranch,nzbranch,enter,leave,dspstore,depth,str_copy,dots,savestep,savelimit
+.word for_next,btest,alloc,local_store,local_fetch,local_address,frame,local_var,vm_pause,read_stick
+.word _set_pixel,_vm_get_pixel,to_int,_vm_invert_pixel,_vm_scroll_up,_vm_scroll_down,_vm_scroll_right,_vm_scroll_left,_vm_line,_vm_sprite
+.word exec,exit,vm_ior,vm_xor,vm_and,trace,rot,_box,key,_vm_rect    
+    
+.global _interpret
+_interpret:
+    mov.D step, [W15++]
+    mov.D ip, [W15++]
+    mov.D dsp, [W15++]
+    mov.D fp, [W15++]
+    mov DSRPAG, _page
+    mov W0, ip // ip
+    mov #edspage(words),W0
+    mov W0, DSRPAG
+    mov #edsoffset(words),wp
+    mov #_dstack,dsp   // pointeur pile arguments
+    mov.b _dsp,WREG
+    se W0,W0
+    sl W0,W0
+    add W0,dsp,dsp
+    mov dsp,fp
+    mov #_rstack,rsp   // pointeur pile de contrôle
+    mov.b _rsp,WREG
+    se W0,W0
+    sl W0,W0
+    add W0,rsp,rsp
+    clr step // boucle valeur début
+    clr limit // boucle valeur fin
+    clr _vm_exit_code
+    //vérification TRACE flags
+    cp0 _ftrace
+    bra z, trace_off
+    // interpréteur mode trace
+trace_on:
+    mov #SRAM_SIZE-2,W0
+    mov ip, W1
+    callxfunc _sram_write_word
+    mov.b [ip++],W0
+    ze W0,W0
+    sl W0,W0
+    mov [wp+W0],W0
+    call W0
+    call dstack_bound_check
+    call rstack_bound_check
+    saveregs
+    mov #SRAM_SIZE-2-(XRES/2)*YRES,W0
+    call _save_screen
+    call _cls
+    mov #SRAM_SIZE-2,W0
+    call _sram_read_word
+    mov.b [W0],W0
+    ze W0,W0
+    call dotW0
+    call dots
+    call _prompt_continue
+    mov #SRAM_SIZE-2-(XRES/2)*YRES,W0
+    callxfunc _restore_screen
+    restregs
+    bra trace_on
+    //interpréteur
+trace_off:
+    mov.b [ip++],W0
+    ze W0,W0
+    sl W0,W0
+    mov [wp+W0],W0
+    call W0
+    bra trace_off
+    //sortie de l'interpréteur
+    //sauvegarde la valeur de dsp
+vm_quit:
+    mov #_dstack,W0
+    sub dsp,W0,W0
+    asr W0,W0
+    mov.b WREG,_dsp
+    mov _page, DSRPAG
+    mov.D [--W15],fp
+    mov.D [--W15],dsp
+    mov.D [--W15],ip
+    mov.D [--W15],step
+    return
+	
+.end
+	
+

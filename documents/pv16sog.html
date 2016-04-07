@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<header>
+<title>ordinateur PV16SOG</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="Author" content="Jacques Deschênes">
+<meta name="Created on" content="2015-08-03">
+<meta name="version" content="1.0">
+<meta name="licence" content="CC-NC-SA-BY V3.0">
+<link rel="stylesheet" type="text/css" href="style.css">
+<link rel="stylesheet" type="text/css" href="style.css">
+</header>
+<body>
+<h2>Ordindateur PV16SOG</h2>
+<h4>Licence</h4>
+<p>  
+  Ce document fait partie du projet <a href="./pv16sog.html">PV16SOG</a> et est fourni sous licence <a href="https://creativecommons.org/">CC-NC-SA-BY V3.0</a><br><br>
+  <b>auteur:</b> Jacques Deschênes<br>
+  <b>révision</b> 1.0</br>
+  <b>Copyright:</b> 2015,2016, Jacques Deschênes<br>	
+
+</p>
+<h3>Présentation</h3>
+<p>
+ L'objectif de ce projet était de créer un petit ordinateur qui aurait des capacités semblables à celle d'un ordinateur des années 70 comme le TRS-80 en utilisant
+la technologie disponible en 2015. Je voulais garder le montage électronique le plus simple possible afin qu'il puisse être réaliser à faible coût par un amateur avec 
+un minimum d'expérience en électronique.</p>
+<p>
+ Il s'agit d'un petit ordinateur basé sur un microcontroleur PIC. <b>PV16SOG</b> signifit: <b><u>P</u>IC<u>V</u>ision <u>16</u> <u>S</u>hade <u>O</u>f <u>G</u>ray</b>.
+</p>
+<h4>caractérisiques de PV16SOG</h4>
+<p>
+<ul>
+<li>MCU <b>PIC24EP512MC202</b></li>
+<li>Affichage vidéo de 240x170 pixels en 16 tons de gris.</li>
+<li>Sortie son: tonalitée simple ou bruit blanc.</li>
+<li>interface pour carte SD.</i>
+<li>interface pour clavier PS/2</i>
+<li>interface pour joystick Atari 2600</li>
+<li>mémoire RAM externe de 64Ko à interface SPI. Microchip 23LC512</li> 
+<li>logiciels en firwmare:
+<ul>
+<li><b>shell de commande</b></li>
+<li><b>machine virtuelle</b> <a href="./pv16vm.html">pv16vm.html</a> qui exécute un programme stocké dans la RAM SPI. voir <a href="./pv16asm.html">pv16asm.html</a></li>
+<li><b>éditeur de texte</b> servant écrire les programmes pour <b>PV16ASM</b>. Fichiers stockés sur la carte SD.</li>
+<li><b>assembleur PV16ASM</b> pour convertir les fichiers créer dans l'éditeur de texte en fichiers binaires exécutable par <b>PV16VM</b> aussi conservés sur la carte SD. Ces fichiers binaires sont chargés dans la SPI-RAM pour exécution.</li>
+</ul>
+<h4>schéma électronique</h4>
+<p>
+<img src="pv16sog-schematic.png">
+</p>
+<p>
+<h4>principaux composants</h4>
+<p>
+</p>
+<ul>
+<li>MCU PIC24EP512MC202, ce processeur contient 512Ko de mémoire flash et 48Ko de RAM.</li>
+<li>Mémoire SPI RAM 23LC512, mémoire sérielle à interface SPi de 64Ko.</li>
+<li>Régulateur de tension LD33V.</li>
+<li>Une embase pour la carte SD.</li>
+<li>Un connecteur MINI-DIN-6 pour le clavier PS/2.</li>
+<li>Deux Connecteurs RCA audio pour les sorties son et NTSc</li>
+<li>Un connecteur barrel jack 2,1mm pour l'adapteur d'alimentation.</li>
+<li>Un cristal de 8Mhz.</li>
+<li>Un bouton momentané pour le <b>RESET</b>.</li>
+<li>1 porte piles pour 2 piles AA.</li>
+<li>1 LED indicateur d'alimentation</li>
+</ul>
+Le reste sont des résistances et condensateurs. Les résistances R1-R5, R7,R8,R10,R11 pour le convertissseur numérique/analogique doivent avoir une présicion d'au moins 1%. 
+</p>
+<h4>prototype</h4>
+<p>
+<img src="prototype.png" width=800>
+</p>
+</body>
+</html>

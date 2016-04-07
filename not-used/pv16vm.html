@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<header>
+<title>PV16SOG Virtual machine opcodes</title>
+<meta charset="UTF-8">
+<meta name="Author" content="Jacques Deschênes">
+<meta name="copiright" content="2015, Jacques Deschênes">
+<meta name="date created" content="2015-08-12">
+<meta name="licence" content="CC-NC-SA-BY V3.0">
+<link rel="stylesheet" type="text/css" href="style.css">
+</header>
+<body>
+<h4>Licence</h4>
+<p>  
+  Ce document fait partie du projet <a href="./pv16sog.html">PV16SOG</a> et est fourni sous licence <a href="https://creativecommons.org/">CC-NC-SA-BY V3.0</a><br><br>
+  <b>auteur:</b> Jacques Deschênes<br>
+  <b>révision</b> 1.0</br>
+  <b>Copyright:</b> 2015,2016, Jacques Deschênes<br>	
+
+</p>
+<h4>introduction</h4>
+<p>
+  Ce document fait partie du projet <a href="pv16sog.html">PV16SOG</a> et décris la machine virtuelle utilisée dans ce projet.
+  L'ensemble du projet logiciel ainsi que la documentation est sous licence <a href="http://www.gnu.org/licenses/gpl-3.0.fr.html">GPLv3</a>. La partie matériel est <a href="https://en.wikipedia.org/wiki/Open-source_hardware">OSH</a>.
+</p>
+<h2> codes machines PV16VM</h4>
+<h4>Présentation</h4>
+<p>
+   PV16VM est une machine virtuelle inspirée de <a href="https://fr.wikipedia.org/wiki/CHIP-8">CHIP-8</a> mais qui comporte de nombreuses
+   différence avec celle-ci. Cette machine virtuelle fait partie du projet <a href="https://github.com/Picatout/pv16sog">PV16SOG</a>.
+   Ce document présente le modèle de programmation ainsi que les codes opérationnels de cette machine virtuelle.
+
+<h4>Modèle de programmation de la VM</h4>
+
+	<ul>
+	<li>L'espace adressable est de 8192 octets et le compteur ordinal adresse des mots de 16 bits. Les programmes sont chargée à l'adresse 0.</li>
+	<li><b>V0...VF</b> 16 registres de 16 bits.</li>
+    <li><b>I</b> registre d'index de 16 bits.</li>
+    <li><b>PC</b> compteur ordinal de 16 bits.</li>
+    <li><b>SP</b> pointeur de pile de 8 bits. La pile est de 32 cellules de 16 bits.</li>
+    <li><b>DT</b> minuterie délais. Auto-décrémente à chaque milliseconde.</li>
+    <li><b>ST</b> minuterie durée son. Auto-décrémente à chaque milliseconde.</li>
+	</ul>
+</p>
+<p>
+<div style="border:solid;margin:auto;width:320px;">
+   <img src="pv16vm.png" alt="machine virtuelle pv16vm" width="300" height="300">
+</div>
+</p>
+<h4>Description du jeux d'instructions</h4>
+<p>
+<b>KK</b> constante de 8 bits codé en position 0..7 du opcode.<br>
+<b>X</b> index de registre V codé en position 8..11 du opcode.<br>
+<b>Y</b> index de registre V codé en position 4..7 du opcode.<br>
+<b>Z</b> index de registre V codé en position 0..3 du opcode.<br>
+<b>NNN</b> constante de 12 bits codée en position 0..11 du opcode<br>
+<b>N</b> constante de 4 bits codée en position 0..3 du opcode<br>
+<b>P</b> constante de 4 bits codée en position 4..7 du opcode<br>
+</p> 
+<p>
+<table border="single"> 
+<tr><th>OPCODE</th><th>Mnémonique</th><th>Description</th></tr>
+<tr><td>0000</td><td>NOP</td><td>ne fait rien, opération nulle.</td></tr>
+<tr><td>0001</td><td>PRT</td><td>affiche le texte pointé par [I] à l'écran à la position courante du curseur.</td></tr>
+<tr><td>002Z</td><td>PRN VZ</td><td>affiche l'entier dans VZ à la positin courante du curseur.</td></tr>
+<tr><td>003Z</td><td>PRC VZ</td><td>affiche le caractère dans VZ à la positin courante du curseur.</td></tr>
+<tr><td>004Z</td><td>KEY VZ</td><td>Lire le clavier mettre la valeur dans VZ.</td></tr>
+<tr><td>005Z</td><td>SCD VZ</td><td>défile l'affichage vers le bas de VZ lignes.</td></tr>
+<tr><td>006Z</td><td>SCU VZ</td><td>défile l'affichage vers le haut de VZ lignes.</td></tr>
+<tr><td>007N</td><td>SET FG,N</td><td>fixe la couleur utilisée par SETP.</td></tr>
+<tr><td>008N</td><td>SET BG,N</td><td>fixe la couleur utilisée par CLS.</td></tr>
+<tr><td>009Z</td><td>SET FG,VZ</td><td>fixe la couleur utilisée par SETP à partir de la valeur de VZ.</td></tr>
+<tr><td>00AZ</td><td>SET BG,VZ</td><td>fixe la couleur utilisée par CLS à partir de la valeur de VZ.</td></tr>
+<tr><td>0015</td><td>CLS</td><td>Efface l'affichage.</td></tr>
+<tr><td>00EE</td><td>RET</td><td>Quitte une sous-routine.</td></tr>
+<tr><td>00FB</td><td>SCR</td><td>Défile l'écran vers la droite de 4 pixels.</td></tr>
+<tr><td>00FC</td><td>SCL</td><td>Défile l'écran vers la gauche de 4 pixels.</td></tr>
+<tr><td>00FD</td><td>EXIT</td><td>Fin de programme, quitte la machine virtuelle.</td></tr>
+<tr><td>00FE</td><td>SAVE</td><td>sauvagarde l'affichage.</td></tr>
+<tr><td>00FF</td><td>RSTR</td><td>réinitialise l'affichage à partir de la sauvegarde.</td></tr>
+<tr><td>1NNN</td><td>JP NNN</td><td>Saute à l'adresse 2*NNN.</td></tr>
+<tr><td>2NNN</td><td>CALL NNN</td><td>Exécute la sous-routine à l'adresse 2*NNN.</td></tr>
+<tr><td>3XKK</td><td>SE VX, KK</td><td>Saute l'instruction suivante si VX == KK </td></tr>
+<tr><td>4XKK</td><td>SNE VX, KK</td><td>Saute l'instruction suivante si VX <> KK </td></tr>
+<tr><td>5XY0</td><td>SE VX, VY</td><td>Saute l'instruction suivante si VX == VY </td></tr>
+<tr><td>6XKK</td><td>LD VX, KK</td><td>VX := KK </td></tr>
+<tr><td>7XKK</td><td>ADD VX, KK</td><td>VX := VX + KK </td></tr>
+<tr><td>8XY0</td><td>LD VX, VY</td><td>VX := VY</td></tr>
+<tr><td>8XY1</td><td>OR VX, VY</td><td>VX := VX or VY</td></tr>
+<tr><td>8XY2</td><td>AND VX, VY</td><td>VX := VX and VY</td></tr>
+<tr><td>8XY3</td><td>XOR VX, VY</td><td>VX := VX xor VY</td></tr>
+<tr><td>8XY4</td><td>ADD VX, VY</td><td>VX := VX + VY, VF := carry </td></tr>
+<tr><td>8XY5</td><td>SUB VX, VY</td><td>VX := VX - VY, VF := not borrow </td></tr>
+<tr><td>8X06</td><td>SHR VX</td><td>VX := VX shr 1, VF := carry </td></tr>
+<tr><td>8XY7</td><td>SUBN VX, VY</td><td>VX := VY - VX, VF := not borrow</td></tr>
+<tr><td>8XYD</td><td>SCUR VX, VY</td><td>positionne le curseur texte VX=colon, VY=line</td></tr>
+<tr><td>8X0E</td><td>SHL VX</td><td>VX := VX shl 1, VF := carry </td></tr>
+<tr><td>8XPF</td><td>SHL VX, P</td><td>VX := VX&lt;&lt;P, décalage de VX vers la gauche de P bits.</td></tr>
+<tr><td>9XY0</td><td>SNE VX, VY</td><td>Saute l'instruction suivante si VX <> VY </td></tr>
+<tr><td>9XY1</td><td>TONE VX, VY</td><td>Fais entendre une note de la gamme tempérée. VX note entre 0-F. 0=DO4, F=RÉ5#. VY durée.</td>
+<tr><td>9XY2</td><td>SETP VX, VY</td><td>met le pixel à la position VX,VY à la couleur pré-fixée par SET FG,N.</td>
+<tr><td>9XY3</td><td>PIXI VX, VY</td><td>Inverse le pixel aux coordonnées indiquées par VX,VY.</td>
+<tr><td>9X04</td><td>NOISE VX</td><td>bruit blanc d'une durée de VX msec.</td></tr>
+<tr><td>9XY5</td><td>TONE VX, VY, WAIT</td><td>Fais entendre une note de la gamme tempérée. VX note entre 0-F. 0=DO4, F=RÉ5#. VY durée. Attend la fin de la note avant de poursuivre.</td>
+<tr><td>9X06</td><td>PUSH VX</td><td>empile la valeur du registre VX</td></tr>
+<tr><td>9X07</td><td>POP VX</td><td>dépile dans le registre VX</td></tr>
+<tr><td>9X08</td><td>SCRX VX</td><td>VX = pixels horizontaux.</td></tr>
+<tr><td>9X09</td><td>SCRY VX</td><td>VX = pixels verticaux.</td></tr>
+<tr><td>9XPA</td><td>BSET VX,P</td><td>met à 1 le bit en position P dans VX.</td></tr>
+<tr><td>9XPB</td><td>BCLR VX,P</td><td>met à 0 le bit en position P can VX.</td></tr>
+<tr><td>9XPC</td><td>BINV VX,P</td><td>inverse le bit en position P dans VX.</td></tr>
+<tr><td>9XPD</td><td>BTSS VX,P</td><td>Si le bit en position P dans VX est à 1 saute l'instruction suivante.</td></tr>
+<tr><td>9XPE</td><td>BTSC VX,P</td><td>Si le bit en position P dans VX est à 0 saute l'insruction suivante.</td></tr>
+<tr><td>9XYF</td><td>GPIX VX,VY</td><td>met la valeur du pixel aux coordonnées indiquées par VX,VY dans V0.</td>
+<tr><td>ANNN</td><td>LD I, NNN</td><td>I := 2*NNN </td></tr>
+<tr><td>BNNN</td><td>JP V0, NNN</td><td>saute à l'adresse 2*(NNN+V0)</td></tr>
+<tr><td>CXN0</td><td>RND VX, N</td><td>VX := nombre aléatoire, N{0-15}nombre de bits masqués.</td></tr>
+<tr><td>DXYN</td><td>DRW VX, VY, N</td><td>Affiche un sprite de  N-octets aux coordonnées d'écran VX, VY.<br>
+       Le contenu du sprite se trouve à l'adresse débutant M(I).<br>
+       VF := 1 si il y a collision.<br>
+       Si N==0 indique un sprite de 16x16 pixels.</td></tr>
+<tr><td>EX9E</td><td>SKP VX</td><td>Saute l'instruction suivante si la touche dont la valeur est indiquée dans VX est enfoncée.</td></tr>
+<tr><td>EXA1</td><td>SKNP VX</td><td>Saute l'instruction suivante si la touche dont la valeur est indiquée dans VX n'est pas enfoncée.</td></tr>
+<tr><td>FX07</td><td>LD VX, DT</td><td>VX := valeur de la minuterie délais.</td></tr>
+<tr><td>FX0A</td><td>LD VX, K</td><td>Attend qu'un bouton du joystick sois enfoncé et met sa valeur dans VX.</td></tr>
+<tr><td>FX15</td><td>LD DT, VX</td><td>minuterie de délais := VX, elle est décrémentée jusqu'à zéro 60 fois par seconde.</td></tr>
+<tr><td>FX18</td><td>LD ST, VX</td><td>minuterie son := VX, La minuterie est décrémentée, le son s'arrête lorsqu'elle atteint zéro. </td></tr>
+<tr><td>FX1E</td><td>ADD I, VX</td><td>I := I + VX </td></tr>
+<tr><td>FX55</td><td>LD [I], VX</td><td>Enregistres les valeurs des registres V0..VX dans la mémoire RAM en débutant à l'adresse M(I).</td></tr>
+<tr><td>FX65</td><td>LD VX, [I]</td><td>Charge les V0..VX à partir de la mémoire RAM en débutant à l'adresse M(I).</td></tr>
+<tr><td>F075</td><td>PUSH I</td><td>Sauvegarde I sur la pile.</td></tr>
+<tr><td>F085</td><td>POP I</td><td>Dépile dans I.</td></tr>
+</table>
+</p>
+</body>
+</html>
+

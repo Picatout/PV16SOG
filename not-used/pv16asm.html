@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+<header>
+<title>assembleur PV16ASM</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="Author" content="Jacques Deschênes">
+<meta name="created on" content="2015-08-03">
+<meta name="version" content="1.0">
+<meta name="licence" content="CC-NC-SA-BY V3.0">
+<link rel="stylesheet" type="text/css" href="style.css">
+</header>
+<body>
+<h2>Assembleur PV16ASM</h2>
+<h4>Licence</h4>
+<p>  
+  Ce document fait partie du projet <a href="./pv16sog.html">PV16SOG</a> et est fourni sous licence <a href="https://creativecommons.org/">CC-NC-SA-BY V3.0</a><br><br>
+  <b>auteur:</b> Jacques Deschênes<br>
+  <b>révision</b> 1.0</br>
+  <b>Copyright:</b> 2015,2016, Jacques Deschênes<br>	
+
+</p>
+<h3>Présentation</h3>
+<p>
+	PV16ASM est l'assembleur pour la machine virtuelle <a href="PV16VM.html">PV16VM</a>. Cet assembleur est invoqué à partir de la ligne de commande 
+	de <a href="pv16sog.html">PV16SOG</a> de la façon suivante:
+	<center>
+        <pre>
+	<code>
+	asm file.asm  [output_file] [-m map_file]
+	</code>
+	</pre></center>
+</p><p>
+	<b>File.asm</b> est le fichier source en assembleur.<br>
+	<b>output_file</b> est le nom de l'excécutable produit par l'assembleur et enregistré sur le disque. 
+	Si <b>output_file</b> n'est pas mentionné un fichier
+	portant le même nom que le fichier source sera créé mais avec l'extension <b>.bin</b>.<br>
+	L'option <b>-m map_file</b> permet de généré un fichier avec la liste des étiquettes avec l'adresse correspondante. 
+	Fichier qui peut-être utile pour le débogage.<br>
+	 
+</p>
+<h4>Organisation d'un fichier source</h4>
+<p>
+	Un fichier source est constitué de directives, d'instructions opérationnelles, d'étiquettes et de commentaires. 
+</p>
+<h4>Directives</h4>
+<p>
+	<table border="single">
+		<tr><th>directive</th><th>syntaxe</th><th>description</th></tr>
+		<tr><td>.EQU</td><td>.EQU SYMBOLE VALEUR</td><td>Permet de définir une constante.</td></tr>
+		<tr><td>.DEF</td><td>.DEF SYMBOLE CHAINE</td><td>Permet la substitution d'une de caractère par un symbole.</td></tr>
+		<tr><td>.END</td><td>.END</td><td>indique la fin du programme source.</td></tr>
+		<tr><td>.DB</td><td>.DB N</td><td>définie une valeur octet à l'adresse courante du pointeur ordinal. 
+		La donnée peut-être saisie en base hexadécimale, indiquée par un <b>$</b>. 
+		En base décimale ou en base binaire indiqué par un <b>#</b>. Plusieurs données peuvent-être indiquées en les séparant par une virgule.</td></tr>
+		<tr><td>.DW</td><td>.DW $H|D|b</td><td>définie une valeur de 16 bits à l'adresse courante du pointeur ordinal. 
+		La donnée peut-être dans les même 3 bases que pour la directive <b>.DB</b>. 
+		Plusieurs données peuvent-être indiquées en les séparant par une virgule.</td></tr>
+		<tr><td>.ASCII</td><td>.ASCII "chaine"</td><td>définie une chaîne de caractère à l'adresse courante du compteur ordinal. 
+		Cette est stockée dans le fichier binaire avec un zéro terminal.</td></tr>
+	</table>
+</p>
+<h4>Commentaires</h4>
+<p>
+Les commentaires débute par un <b>';'</b> et se termine avec la fin de la ligne.
+</p>
+<h4>Étiquettes</h4>
+<p>
+ Les étiquettes doivent débutées par une lettre ou un <b>'_'</b> et suivie de lettres,chiffres et <b>'_'</b>. Une étiquette se termine par <b>':'</b>.
+ Les étiquettes servent à indiquer des des adresses absolues pour les instructions de saut, appel de sous-routines et indenfication de variables.
+</p>
+<h4>Insructions opérationnelles</h4>
+<p>
+  Pour la liste des instructions opérationnelles voir le fichier <a href="pv16vm.html">PV16VM.HTML</a>.
+</p>
+<h4>traitement</h4>
+<p>
+  Chaque ligne est d'abord pré-processée pour suprimer les commentaires, les espaces inutiles et convertir les lettres en majuscules. Chaque ligne
+  de texte est traitée comme une unitée complète. Les directives, instructions et étiquettes doivent commencer et se terminer sur la même ligne.
+</p>
+</body>
+

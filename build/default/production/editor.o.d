@@ -1,0 +1,26 @@
+build/default/production/editor.o:  \
+editor.c  \
+text.h  \
+Hardware/ntsc_const.h  \
+ Hardware/TVout.h  \
+Hardware/ntsc_const.h  \
+Hardware/spi_ram.h  \
+ Hardware/hardware.h  \
+Hardware/spi.h  \
+Hardware/ps2_kbd.h  \
+filesys.h  \
+ FAT/fat.h  \
+FAT/sd_raw.h  \
+FAT/sd_raw_config.h  \
+FAT/../Hardware/hardware.h  \
+ FAT/../Hardware/spi.h  \
+FAT/fat_config.h  \
+FAT/partition.h  \
+ FAT/partition_config.h  \
+FAT/sd_raw.h  \
+errors.h  \
+Hardware/tones.h  \
+graphics.h  \
+ font6x8.h  \
+reader.h  \
+stackvm.h 
