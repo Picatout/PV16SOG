@@ -51,6 +51,7 @@
 #define __asm    
 #include "Hardware/ntsc_const.h"
 #include "stackvm.h"
+#include "font6x8.h"    
 #undef __asm
 
 .text 
@@ -120,26 +121,30 @@ _get_pixel:
     return
     
 ;inverse la valeur d'un pixel    
-.global _vm_invert_pixel, _invert_pixel
-_vm_invert_pixel: ; ( x,y -- )
+.global _vm_xor_pixel, _xor_pixel
+_vm_xor_pixel: ; ( x,y, xor -- )
+    mov [dsp--],W2 ; xor
     mov [dsp--],W1 ; y
     mov [dsp--],W0 ; x
-_invert_pixel:    
+_xor_pixel:    
     push DSRPAG
+    push DSWPAG
     movpag #1, DSRPAG
-    mov #BPL,W2
-    mul.uu W1,W2,W2 ; position ligne
-    mov W0,W3 
-    lsr W0,W0  ; position octet sur la ligne
-    add W2,W0,W2 ; position octet dans _video_buffer
+    movpag #1, DSWPAG
+    mov W0,W3
+    mov #BPL,W0
+    mul.uu W1,W0,W0 ; position ligne
+    lsr W3,W1  ; position octet sur la ligne
+    add W1,W0,W0 ; position octet dans _video_buffer
     mov #edsoffset(_video_buffer),W1
-    add W2,W1,W1
+    add W0,W1,W1
     mov.b [W1],W0
-    mov #0xf,W2
+    and #15,W2
     btss W3,#0
     swap.b W2
     xor W2,W0,W0
     mov.b W0,[W1]
+    pop DSWPAG
     pop DSRPAG
     return
 
@@ -462,7 +467,7 @@ xloop:
     mov W0,[++dsp]    ; ( x -- x y )
     mov [fp+BCOLOR],W0
     mov W0,[++dsp]    ; ( x y -- x y c )
-    call _set_pixel   ; ( x y c -- )
+    rcall _set_pixel   ; ( x y c -- )
     inc CNTR,CNTR
     bra xloop
 row_completed:
@@ -494,8 +499,52 @@ _vm_rect: ; ( x0,y0,width,height,color -- )
     pop W4
     return
 
+.global _clreol
+; efface la fin de la ligne
+; à partir de la position du curseur    
+    ; W2 pointeur vers _video_buffer
+    ; W3 octet couleur de fond à copier dans _video_buffer
+    ; W4 compteur ligne vidéo
+    ; W5 limite ligne
+    ; W6 offset sur la ligne
+    ; W7 nombre d'octets à copier
+_clreol: ; ( -- )
+    push DSWPAG
+    push.D W4
+    push.D W6
+    movpag #1, DSWPAG
+    mov _xpos,W0
+    lsr W0,W6	  ; offset sur la ligne
+    mov #BPL,W7   
+    sub W7,W6,W7  ; nombre d'octets à copier
+    dec W7,W7     ; décrémente pour le repeat
+    mov _ypos, W4  ; compteur ligne
+    mov #CHAR_HEIGHT,W5
+    add W4,W5,W5  ; limite ligne
+    mov.b _bg_color, WREG
+    and #0xf,W0
+    mov W0,W3
+    swap.b W3
+    ior W0,W3,W3 ; couleur fond
+0:  ; boucle ligne
+    mov #edsoffset(_video_buffer),W2
+    mov #BPL, W1
+    mul.uu W1,W4,W0
+    add W0,W2,W2
+    add W6,W2,W2
+    repeat W7
+    mov.b W3,[W2++]
+    inc W4,W4
+    cp W4,W5
+    bra ltu, 0b
+    pop.D W6
+    pop.D W4
+    pop DSWPAG
+    return
+
+    
 .global _cls    
-_cls:  ; ( color -- )
+_cls:  ; ( -- )
     push DSWPAG
     movpag #1, DSWPAG
     mov.b _bg_color, WREG
@@ -528,7 +577,7 @@ _gray_scale:
     mov W6,W0
     mov W4,W1
     lsr W0,#4,W2
-    call _draw_pixel
+    rcall _draw_pixel
     inc W6,W6
     cp W6,#HRES
     bra ltu, 1b
@@ -538,4 +587,43 @@ _gray_scale:
     pop W6
     pop.D W4
     return
+ 
+; retourne la position ligne curseur texte    
+.global _text_line
+_text_line: ; ( -- )    
+    mov _ypos,W0
+    mov #CHAR_HEIGHT,W2
+    repeat #17
+    div.u W0,W2
+    and #0xff,W0
+    return
+    
+; retourne la position colonne curseur texte
+.global _text_colon
+_text_colon: ; ( -- )
+    mov _xpos,W0
+    mov #CHAR_WIDTH,W2
+    repeat #17
+    div.u W0,W2
+    and #0xff,W0
+    return
+
+; retour à la ligne suivante
+.global _new_line
+_new_line: ; ( -- )
+    mov #CHAR_HEIGHT,W0
+    add _ypos,WREG
+    cp W0, #VRES-CHAR_HEIGHT+1
+    bra gtu, 1f
+    rcall _clreol
+    mov #CHAR_HEIGHT, W0
+    add _ypos
+    bra 2f
+1:
+    mov #CHAR_HEIGHT, W0
+    rcall _scroll_up
+2:    
+    clr _xpos
+    return
+    
     

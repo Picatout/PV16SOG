@@ -206,13 +206,12 @@ static void kw_dim();
 static void kw_do();
 static void kw_else();
 static void kw_end();
-static void kw_exec();
+//static void kw_exec();
 static void kw_for();
 static void kw_func();
 static void kw_getpixel();
 static void kw_if();
 static void kw_input();
-static void kw_invpixel();
 static void kw_key();
 static void kw_let();
 static void kw_line();
@@ -246,15 +245,16 @@ static void kw_use();
 static void kw_waitkey();
 static void kw_wend();
 static void kw_while();
+static void kw_xorpixel();
 
 //identifiant KEYWORD doit-être dans le même ordre que
 //dans la liste KEYWORD
 enum {eKW_ABS,eKW_AND,eKW_BEEP,eKW_BOX,eKW_BTEST,eKW_BYE,eKW_CASE,eKW_CLS,eKW_COLOR,eKW_CONST,eKW_DIM,eKW_DO,eKW_ELSE,
-      eKW_END,eKW_EXEC,eKW_FOR,eKW_FUNC,eKW_GETPIXEL,eKW_IF,eKW_INPUT,eKW_INVPIXEL,eKW_KEY,
+      eKW_END,/*eKW_EXEC,*/eKW_FOR,eKW_FUNC,eKW_GETPIXEL,eKW_IF,eKW_INPUT,eKW_KEY,
       eKW_LET,eKW_LINE,eKW_LOCAL,eKW_LOCATE,eKW_LOOP,eKW_NEXT,eKW_NOISE,eKW_NOT,eKW_OR,eKW_PAUSE,
       eKW_PRINT,eKW_PUTC,eKW_JSTICK,eKW_RECT,eKW_REF,eKW_REM,eKW_RETURN,eKW_RND,eKW_SCRLUP,eKW_SCRLDN,
       eKW_SCRLRT,eKW_SCRLFT,eKW_SELECT,eKW_SETPIXEL,eKW_SPRITE,eKW_SUB,eKW_THEN,eKW_TICKS,
-      eKW_TONE,eKW_TRACE,eKW_USE,eKW_WAITKEY,eKW_WEND,eKW_WHILE,
+      eKW_TONE,eKW_TRACE,eKW_USE,eKW_WAITKEY,eKW_WEND,eKW_WHILE,eKW_XORPIXEL
 };
 
 //mots réservés BASIC
@@ -273,13 +273,12 @@ __eds__ static const dict_entry_t __attribute__((space(prog))) KEYWORD[]={
     {kw_do,2,"DO"},
     {kw_else,4,"ELSE"},
     {kw_end,3,"END"},
-    {kw_exec,4,"EXEC"},
+//    {kw_exec,4,"EXEC"},
     {kw_for,3,"FOR"},
     {kw_func,4,"FUNC"},
     {kw_getpixel,8+FUNCTION,"GETPIXEL"},
     {kw_if,2,"IF"},
     {kw_input,5,"INPUT"},
-    {kw_invpixel,8,"INVPIXEL"},
     {kw_key,3+FUNCTION,"KEY"},
     {kw_let,3,"LET"},
     {kw_line,4,"LINE"},
@@ -315,6 +314,7 @@ __eds__ static const dict_entry_t __attribute__((space(prog))) KEYWORD[]={
     {kw_waitkey,7+FUNCTION,"WAITKEY"},
     {kw_wend,4,"WEND"},
     {kw_while,5,"WHILE"},
+    {kw_xorpixel,8,"XORPIXEL"},
     {NULL,0,""}
 };
 
@@ -1753,10 +1753,10 @@ static void kw_use(){
 
 
 // EXEC @identifier
-static void kw_exec(){
-    expression();
-    bytecode(EXEC);
-}//f
+//static void kw_exec(){
+//    expression();
+//    bytecode(EXEC);
+//}//f
 
 // COLOR texte [,fond]|COLOR ,fond
 // fixe couleur de police et du fond
@@ -2154,11 +2154,11 @@ static void kw_setpixel(){
     bytecode(SETPIXEL);
 }//f
 
-// INVPIXEL(x,y)
-// XOR la couleur avec 0xF
-static void kw_invpixel(){
-    parse_arg_list(2);
-    bytecode(INVPIXEL);
+// XORPIXEL(x,y,xor_value)
+// XOR le pixel avec xor_value {0-15}
+static void kw_xorpixel(){
+    parse_arg_list(3);
+    bytecode(XORPIXEL);
 }//f
 
 // SCRLUP(n)

@@ -91,7 +91,7 @@ void draw_pixel(int x, int y, int color);
 void scroll_up(unsigned int lines);
 void scroll_down(unsigned int lines);
 void cls();
-void invert_pixel(int x, int y);
+void xor_pixel(int x, int y,uint8_t xor_value);
 int get_pixel(int x, int y);
 void gray_scale(int top, int height);
 
@@ -105,8 +105,8 @@ typedef enum {
     TWOPLUS,ONEMINUS,TWOMINUS,SQRT,EQUAL,GT,GE,LT,LE,BRANCH,
     ZBRANCH,NZBRANCH,CALL,LEAVE,DSPSTORE,DEPTH,STRCPY,DOTS,SAVESTEP,SAVELIMIT,
     NEXT,BTEST,ALLOC,LCSTORE,LCFETCH,LCADR,FRAME,LCVARSPACE,IDLE,JSTICK,
-    SETPIXEL,GETPIXEL,INT,INVPIXEL,SCRLUP,SCRLDN,SCRLRT,SCRLLT,LINE,SPRITE,
-    EXEC,EXIT,OR,XOR,AND,TRACE,ROT,BOX,KEY,RECT} bytecode_t;
+    SETPIXEL,GETPIXEL,INT,XORPIXEL,SCRLUP,SCRLDN,SCRLRT,SCRLLT,LINE,SPRITE,
+    /*EXEC,EXIT,*/OR,XOR,AND,TRACE,ROT,BOX,KEY,RECT} bytecode_t;
     
 #else
     
@@ -193,16 +193,16 @@ typedef enum {
 #define SETPIXEL (JSTICK+1)
 #define GETPIXEL (SETPIXEL+1)
 #define INT (GETPIXEL+1)
-#define INVPIXEL (INT+1)
-#define SCRLUP (INVPIXEL+1)
+#define XORPIXEL (INT+1)
+#define SCRLUP (XORPIXEL+1)
 #define SCRLDN (SCRLUP+1)
 #define SCRLRT (SCRLDN+1)
 #define SCRLLT (SCRLRT+1)
 #define LINE (SCRLLT+1)
 #define SPRITE (LINE+1)
-#define EXEC (SPRITE+1)
-#define EXIT (EXEC+1)
-#define OR (EXIT+1)
+//#define EXEC (SPRITE+1)
+//#define EXIT (EXEC+1)
+#define OR (SPRITE+1)
 #define XOR (OR+1)
 #define AND (XOR+1)
 #define TRACE (AND+1)

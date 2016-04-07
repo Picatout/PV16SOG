@@ -172,15 +172,15 @@ dspstore: // ( n -- )
 
 //exécution à une adresse
 // absolue
-exec: // ( adr -- )
-    mov ip,[++rsp]
-    mov [dsp--],ip
-    return
+;exec: // ( adr -- )
+;    mov ip,[++rsp]
+;    mov [dsp--],ip
+;    return
 
 //     
-exit: // (R: adr -- )
-    mov [rsp--],ip
-    return
+;exit: // (R: adr -- )
+;    mov [rsp--],ip
+;    return
     
     
 // calcule nombre d'éléments
@@ -334,7 +334,7 @@ dotW0: // ( -- )
 // imprime T à l'écran
 dot: // (n --)
     mov [dsp--],W0
-    call dotW0
+    rcall dotW0
     return
 
 // affiche le contenu de la pile
@@ -345,7 +345,7 @@ dots:
     asr W0,W0
     add #1,W0
     push W3
-    call dotW0
+    rcall dotW0
     mov #':',W0
     callxfunc(_put_char)
     mov #32, W0
@@ -355,7 +355,7 @@ dots:
     bra n, 1f
     mov [W3++],W0
     push W3
-    call dotW0
+    rcall dotW0
     pop W3
     bra 0b
 1:  return 
@@ -457,7 +457,7 @@ vm_locate: // ( line col -- )
     mov [dsp--],W1
     and #255,W1
     saveregs
-    call _set_cursor
+    rcall _set_cursor
     restregs
     return
 
@@ -683,7 +683,7 @@ sqroot: //( u -- sqrt(u) )
 // retourne un nomber aléatoire
 rnd: //( -- n)
     saveregs
-    call _random
+    rcall _random
     restregs
     mov W0, [++dsp]
     return
@@ -1007,8 +1007,8 @@ words:
 .word twoplus,oneminus,twominus,sqroot,isequal,isgreater,isgrequal,islittlethan,isltequal,branch
 .word zerobranch,nzbranch,enter,leave,dspstore,depth,str_copy,dots,savestep,savelimit
 .word for_next,btest,alloc,local_store,local_fetch,local_address,frame,local_var,vm_pause,read_stick
-.word _set_pixel,_vm_get_pixel,to_int,_vm_invert_pixel,_vm_scroll_up,_vm_scroll_down,_vm_scroll_right,_vm_scroll_left,_vm_line,_vm_sprite
-.word exec,exit,vm_ior,vm_xor,vm_and,trace,rot,_box,key,_vm_rect    
+.word _set_pixel,_vm_get_pixel,to_int,_vm_xor_pixel,_vm_scroll_up,_vm_scroll_down,_vm_scroll_right,_vm_scroll_left,_vm_line,_vm_sprite
+.word vm_ior,vm_xor,vm_and,trace,rot,_box,key,_vm_rect    
     
 .global _interpret
 _interpret:
@@ -1047,20 +1047,20 @@ trace_on:
     ze W0,W0
     sl W0,W0
     mov [wp+W0],W0
-    call W0
-    call dstack_bound_check
-    call rstack_bound_check
+    rcall W0
+    rcall dstack_bound_check
+    rcall rstack_bound_check
     saveregs
     mov #SRAM_SIZE-2-(XRES/2)*YRES,W0
-    call _save_screen
-    call _cls
+    rcall _save_screen
+    rcall _cls
     mov #SRAM_SIZE-2,W0
-    call _sram_read_word
+    rcall _sram_read_word
     mov.b [W0],W0
     ze W0,W0
-    call dotW0
-    call dots
-    call _prompt_continue
+    rcall dotW0
+    rcall dots
+    rcall _prompt_continue
     mov #SRAM_SIZE-2-(XRES/2)*YRES,W0
     callxfunc _restore_screen
     restregs

@@ -139,7 +139,11 @@ bool draw_sprite(int x, int y, int width, int height, const uint8_t* sprite){
         for (c=0;c<width;c++){
             if ((c+x)<0)continue;
             if ((c+x)>=HRES) break;
-            scr_pixel=get_pixel(c+x,r+y);
+            if ((c+x)&1){
+                scr_pixel=video_buffer[(r+y)*BPL+((c+x)>>1)]&0xf;
+            }else{
+                scr_pixel=(video_buffer[(r+y)*BPL+((c+x)>>1)]>>4);
+            }
             b=sprite[(sprt_w*r)+(c>>1)]; 
             if (c&1){
                 pixel_color=b&0xf;
@@ -147,7 +151,7 @@ bool draw_sprite(int x, int y, int width, int height, const uint8_t* sprite){
                 pixel_color=(b>>4)&0xf;
             }
             scr_pixel ^= pixel_color;
-            collision = collision || !((scr_pixel==bg_color) || ((scr_pixel^bg_color)==pixel_color));
+            collision = collision || !((pixel_color==bg_color) || ((pixel_color^scr_pixel)==bg_color));
             draw_pixel(c+x,r+y,scr_pixel);
         }
     }
@@ -170,14 +174,3 @@ void restore_screen(uint16_t address){
     set_cursor(curpos&255,curpos>>8);
 }//f()
 
-//// test vidéo échelle de gris
-//void gray_scale(int top, int height){
-//    unsigned x,y, width;
-//    
-//    width=XRES/16;
-//    for (y=top;y<top+height;y++){
-//        for (x=0;x<HRES;x++){
-//            draw_pixel(x,y,x/width);
-//        }
-//    }
-//}//f()

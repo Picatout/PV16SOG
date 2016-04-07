@@ -76,15 +76,15 @@ static cursor_shape_t cursor_shape=cVLINE;
 
 
 
-void new_line(){
-    if ((ypos+CHAR_HEIGHT)<=(VRES-CHAR_HEIGHT+1)){
-        clreol();
-        ypos+=CHAR_HEIGHT;
-    }else{
-        scroll_up(CHAR_HEIGHT);
-    }
-	xpos=0;
-}
+//void new_line(){
+//    if ((ypos+CHAR_HEIGHT)<=(VRES-CHAR_HEIGHT+1)){
+//        clreol();
+//        ypos+=CHAR_HEIGHT;
+//    }else{
+//        scroll_up(CHAR_HEIGHT);
+//    }
+//	xpos=0;
+//}
 
 static void draw_char(unsigned x, unsigned y, char c){
     int x0,y0;
@@ -144,7 +144,7 @@ cursor_t get_cursor(){
 	return cursor;
 }
 
-//positionnele curseur texte
+//positionne le curseur texte
 void set_cursor(uint8_t col, uint8_t line){
     if (col>=CHAR_PER_LINE) col=CHAR_PER_LINE-1;
     if (line>=LINE_PER_SCREEN) line=LINE_PER_SCREEN-1;
@@ -152,15 +152,6 @@ void set_cursor(uint8_t col, uint8_t line){
     ypos=line*CHAR_HEIGHT;
 }//f()
 
-//ligne du curseur texte
-uint8_t text_line(){
-    return ypos/CHAR_HEIGHT;
-}//f()
-
-//colonne du curseur texte
-uint8_t text_colon(){
-    return xpos/CHAR_WIDTH;
-}//f()
 
 void text_clear_line(uint16_t line){
     memset((void*)(video_buffer+line*CHAR_HEIGHT*BPL),(bg_color<<4)+bg_color,BPL*CHAR_HEIGHT);
@@ -217,55 +208,15 @@ void print_hex(uint16_t n, int width){
 	while (i<4) put_char(hex[i++]);
 }
 
-void cursor_left(){
-    if (xpos-CHAR_WIDTH>=0) xpos-=CHAR_WIDTH;
-}
-
-//définie la couleur de fond d'écran.
-//void set_back_color(color_t new_color){
-//    bg_color=new_color;
-//}//f()
-
-//color_t get_back_color(){
-//    return bg_color;
-//}//f()
-
-//définie la couleur des caractères
-//void set_font_color(color_t new_color){
-//    fg_color=new_color;
-//}//f()
-
-//color_t get_font_color(){
-//    return fg_color;
-//}//f()
-
-//void cls(){
-//    memset((void*)&video_buffer,bg_color|(bg_color<<4),TV_BUFFER);
-//    xpos=0;
-//    ypos=0;
-//}//f()
-
-void clreol(){
-    uint8_t y;
-    uint8_t color=bg_color|(bg_color<<4);
-    uint16_t count;
-
-    count=(HRES-xpos)>>1;
-    for (y=ypos;y<(ypos+CHAR_HEIGHT);y++){
-        memset((void*)&video_buffer[BPL*y+(xpos>>1)],color,count);
-        //memset((void*)&video_buffer[BPL*y+(xpos>>1)],bg_color|(bg_color<<4),(HRES-xpos)>>1);
-    }
-}//f()
-
 void update_cursor(){
     int i,j;
     if (cursor_shape==cVLINE){
         for (i=ypos;i<ypos+CHAR_HEIGHT;i++)
-            invert_pixel(xpos,i);
+            xor_pixel(xpos,i,fg_color);
     }else{
         for (i=ypos;i<ypos+CHAR_HEIGHT;i++){
             for(j=xpos;j<xpos+CHAR_WIDTH;j++)
-                invert_pixel(j,i);
+                xor_pixel(j,i,fg_color);
         }
     }
     cursor_visible = !cursor_visible;

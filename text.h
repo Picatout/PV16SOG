@@ -135,8 +135,6 @@ void print(const char* str);
 void print_int(int32_t n, int width);
 // imprime un entier en hexadécimal
 void print_hex(uint16_t n, int width);
-// déplace le curseur ver la gauche
-void cursor_left();
 //efface la ligne à partir de la position du curseur
 void clreol();
 //affiche un message d'erreur en préservant l'écran
