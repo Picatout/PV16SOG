@@ -106,6 +106,25 @@ static void draw_char(unsigned x, unsigned y, char c){
     }
 }//f()
 
+static void cursor_right(){
+    xpos+=CHAR_WIDTH;
+    if (xpos>(HRES-CHAR_WIDTH+1)){
+      new_line();
+    }
+}//f
+
+static void cursor_left(){
+    xpos-=CHAR_WIDTH;
+    if (xpos<0){
+        if (ypos>=CHAR_HEIGHT){
+            ypos-=CHAR_HEIGHT;
+        }else{
+            scroll_down(CHAR_HEIGHT);
+        }
+        xpos=((int)HRES/CHAR_WIDTH-1)*CHAR_WIDTH;
+    }
+}//f
+
 
  void put_char(uint8_t c){
     switch (c){
@@ -129,10 +148,7 @@ static void draw_char(unsigned x, unsigned y, char c){
         default:
             if ((c>31) && (c<(FONT_SIZE+32))){
                 draw_char(xpos,ypos,c);
-                xpos+=CHAR_WIDTH;
-                if (xpos>(HRES-CHAR_WIDTH+1)){
-                  new_line();
-                }
+                cursor_right();
             }
     }//switch
 }
@@ -272,19 +288,22 @@ void prompt_continue(){
     prompt("\nany key...","*");
 }
 
+
 #define HIST_SIZE (10)
 static char history[HIST_SIZE][CHAR_PER_LINE];
 static int last=0;
 static int circle=0;
+static bool insert_mode=true; //true=insert, false=overwrite
 
 //retourne le nombre de caractères lus.
 // <ENTER> termine la ligne
 uint8_t readln(char *buffer, uint8_t buff_len){
-    uint8_t len=0,first_col,first_line;
-    uint8_t c;
+    uint8_t len=0,first_col,first_line,pos=0;
+    uint8_t c, cline;
     
     first_col=text_colon();
     first_line=text_line();
+    buffer[len]=0;
     while (1){
         c=wait_key();
         switch(c){
@@ -292,6 +311,7 @@ uint8_t readln(char *buffer, uint8_t buff_len){
                 strcpy(buffer,history[last--]);
                 if (last<0) last=HIST_SIZE-1;
                 len=strlen(buffer);
+                pos=len;
                 if (text_line()>first_line) text_clear_line(text_line());
                 set_cursor(first_col,first_line);
                 print(buffer);
@@ -301,20 +321,49 @@ uint8_t readln(char *buffer, uint8_t buff_len){
                 strcpy(buffer,history[last++]);
                 if (last>(HIST_SIZE-1)) last=0;
                 len=strlen(buffer);
+                pos=len;
                 if (text_line()>first_line) text_clear_line(text_line());
                 set_cursor(first_col,first_line);
                 print(buffer);
                 clreol();
                 break;
+            case VK_LEFT:
+                if (pos){
+                    pos--;
+                    cursor_left();
+                }
+                break;
+            case VK_RIGHT:
+                if (pos<len){
+                    pos++;
+                    cursor_right();
+                }
+                break;
+            case VK_INSERT:
+                insert_mode=!insert_mode;
+                if (insert_mode) 
+                    cursor_shape=cVLINE;
+                else//écrasement
+                    cursor_shape=cBLOCK;
+                break;
             case BACKSPACE:
-                if (len){
+                if (len && pos){
+                    memmove(&buffer[pos-1],&buffer[pos],len-pos);
                     len--;
-                    xpos-=CHAR_WIDTH;
-                    if (xpos<0){
-                        ypos-=CHAR_HEIGHT;
-                        xpos=((int)HRES/CHAR_WIDTH-1)*CHAR_WIDTH;
-                    }
+                    buffer[len]=0;
+                    pos--;
+                    cursor_left();
                     clreol();
+                    print(&buffer[pos]);
+                }
+                break;
+            case VK_DELETE:
+                if (len && pos<len){
+                    memmove(&buffer[pos],&buffer[pos+1],len-pos-1);
+                    len--;
+                    buffer[len]=0;
+                    clreol();
+                    print(&buffer[pos]);
                 }
                 break;
             case VK_ENTER:
@@ -323,14 +372,41 @@ uint8_t readln(char *buffer, uint8_t buff_len){
                 last=circle;
                 circle++;
                 if (circle>(HIST_SIZE-1)) circle=0;
+                while (pos<len){
+                    cursor_right();
+                    pos++;
+                }
                 new_line();
                 return len;
             default:
-                if ((len<(buff_len-1)) && (c>=32) && (c<(FONT_SIZE+32))){
-                    buffer[len++]=c;
-                    put_char(c);
+                if (insert_mode || pos==len){
+                    if ((len<(buff_len-1)) && (c>=32) && (c<(FONT_SIZE+32))){
+                        if (pos<len){
+                            memmove(&buffer[pos+1],&buffer[pos],len-pos);
+                            buffer[pos]=c;
+                            len++;
+                            buffer[len]=0;
+                            clreol();
+                            cline=text_line();
+                            print(&buffer[pos]);
+                            pos++;
+                            if (cline==first_line)
+                                set_cursor(first_col+pos,cline);
+                            else
+                                set_cursor(pos,cline);
+                        }else{
+                            buffer[pos++]=c;
+                            len++;
+                            put_char(c);
+                        }
+                    }else{
+                        beep(500,100,false);
+                    }
                 }else{
-                    beep(500,100,false);
+                    if (c>=32 && c<(FONT_SIZE+32)){
+                        buffer[pos++]=c;
+                        put_char(c);
+                    }
                 }
                 break;
         }//switch

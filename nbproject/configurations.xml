@@ -62,8 +62,8 @@
       <itemPath>reader.c</itemPath>
       <itemPath>editor.c</itemPath>
       <itemPath>stackvm.S</itemPath>
-      <itemPath>vm_graphics.S</itemPath>
       <itemPath>Hardware/tones.S</itemPath>
+      <itemPath>asm_graphics.S</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

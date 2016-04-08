@@ -45,17 +45,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=FAT/byteordering.c FAT/fat.c FAT/partition.c FAT/sd_raw.c pv16sog.c graphics.c Hardware/hardware.c Hardware/TVout.S Hardware/systicks.S text.c Hardware/spi_ram.c Hardware/ps2_kbd.c Hardware/QWERTY.c filesys.c Hardware/spi.c shell.c errors.c font6x8.c reader.c editor.c stackvm.S vm_graphics.S Hardware/tones.S
+SOURCEFILES_QUOTED_IF_SPACED=FAT/byteordering.c FAT/fat.c FAT/partition.c FAT/sd_raw.c pv16sog.c graphics.c Hardware/hardware.c Hardware/TVout.S Hardware/systicks.S text.c Hardware/spi_ram.c Hardware/ps2_kbd.c Hardware/QWERTY.c filesys.c Hardware/spi.c shell.c errors.c font6x8.c reader.c editor.c stackvm.S Hardware/tones.S asm_graphics.S
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/FAT/byteordering.o ${OBJECTDIR}/FAT/fat.o ${OBJECTDIR}/FAT/partition.o ${OBJECTDIR}/FAT/sd_raw.o ${OBJECTDIR}/pv16sog.o ${OBJECTDIR}/graphics.o ${OBJECTDIR}/Hardware/hardware.o ${OBJECTDIR}/Hardware/TVout.o ${OBJECTDIR}/Hardware/systicks.o ${OBJECTDIR}/text.o ${OBJECTDIR}/Hardware/spi_ram.o ${OBJECTDIR}/Hardware/ps2_kbd.o ${OBJECTDIR}/Hardware/QWERTY.o ${OBJECTDIR}/filesys.o ${OBJECTDIR}/Hardware/spi.o ${OBJECTDIR}/shell.o ${OBJECTDIR}/errors.o ${OBJECTDIR}/font6x8.o ${OBJECTDIR}/reader.o ${OBJECTDIR}/editor.o ${OBJECTDIR}/stackvm.o ${OBJECTDIR}/vm_graphics.o ${OBJECTDIR}/Hardware/tones.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/FAT/byteordering.o.d ${OBJECTDIR}/FAT/fat.o.d ${OBJECTDIR}/FAT/partition.o.d ${OBJECTDIR}/FAT/sd_raw.o.d ${OBJECTDIR}/pv16sog.o.d ${OBJECTDIR}/graphics.o.d ${OBJECTDIR}/Hardware/hardware.o.d ${OBJECTDIR}/Hardware/TVout.o.d ${OBJECTDIR}/Hardware/systicks.o.d ${OBJECTDIR}/text.o.d ${OBJECTDIR}/Hardware/spi_ram.o.d ${OBJECTDIR}/Hardware/ps2_kbd.o.d ${OBJECTDIR}/Hardware/QWERTY.o.d ${OBJECTDIR}/filesys.o.d ${OBJECTDIR}/Hardware/spi.o.d ${OBJECTDIR}/shell.o.d ${OBJECTDIR}/errors.o.d ${OBJECTDIR}/font6x8.o.d ${OBJECTDIR}/reader.o.d ${OBJECTDIR}/editor.o.d ${OBJECTDIR}/stackvm.o.d ${OBJECTDIR}/vm_graphics.o.d ${OBJECTDIR}/Hardware/tones.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/FAT/byteordering.o ${OBJECTDIR}/FAT/fat.o ${OBJECTDIR}/FAT/partition.o ${OBJECTDIR}/FAT/sd_raw.o ${OBJECTDIR}/pv16sog.o ${OBJECTDIR}/graphics.o ${OBJECTDIR}/Hardware/hardware.o ${OBJECTDIR}/Hardware/TVout.o ${OBJECTDIR}/Hardware/systicks.o ${OBJECTDIR}/text.o ${OBJECTDIR}/Hardware/spi_ram.o ${OBJECTDIR}/Hardware/ps2_kbd.o ${OBJECTDIR}/Hardware/QWERTY.o ${OBJECTDIR}/filesys.o ${OBJECTDIR}/Hardware/spi.o ${OBJECTDIR}/shell.o ${OBJECTDIR}/errors.o ${OBJECTDIR}/font6x8.o ${OBJECTDIR}/reader.o ${OBJECTDIR}/editor.o ${OBJECTDIR}/stackvm.o ${OBJECTDIR}/Hardware/tones.o ${OBJECTDIR}/asm_graphics.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/FAT/byteordering.o.d ${OBJECTDIR}/FAT/fat.o.d ${OBJECTDIR}/FAT/partition.o.d ${OBJECTDIR}/FAT/sd_raw.o.d ${OBJECTDIR}/pv16sog.o.d ${OBJECTDIR}/graphics.o.d ${OBJECTDIR}/Hardware/hardware.o.d ${OBJECTDIR}/Hardware/TVout.o.d ${OBJECTDIR}/Hardware/systicks.o.d ${OBJECTDIR}/text.o.d ${OBJECTDIR}/Hardware/spi_ram.o.d ${OBJECTDIR}/Hardware/ps2_kbd.o.d ${OBJECTDIR}/Hardware/QWERTY.o.d ${OBJECTDIR}/filesys.o.d ${OBJECTDIR}/Hardware/spi.o.d ${OBJECTDIR}/shell.o.d ${OBJECTDIR}/errors.o.d ${OBJECTDIR}/font6x8.o.d ${OBJECTDIR}/reader.o.d ${OBJECTDIR}/editor.o.d ${OBJECTDIR}/stackvm.o.d ${OBJECTDIR}/Hardware/tones.o.d ${OBJECTDIR}/asm_graphics.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/FAT/byteordering.o ${OBJECTDIR}/FAT/fat.o ${OBJECTDIR}/FAT/partition.o ${OBJECTDIR}/FAT/sd_raw.o ${OBJECTDIR}/pv16sog.o ${OBJECTDIR}/graphics.o ${OBJECTDIR}/Hardware/hardware.o ${OBJECTDIR}/Hardware/TVout.o ${OBJECTDIR}/Hardware/systicks.o ${OBJECTDIR}/text.o ${OBJECTDIR}/Hardware/spi_ram.o ${OBJECTDIR}/Hardware/ps2_kbd.o ${OBJECTDIR}/Hardware/QWERTY.o ${OBJECTDIR}/filesys.o ${OBJECTDIR}/Hardware/spi.o ${OBJECTDIR}/shell.o ${OBJECTDIR}/errors.o ${OBJECTDIR}/font6x8.o ${OBJECTDIR}/reader.o ${OBJECTDIR}/editor.o ${OBJECTDIR}/stackvm.o ${OBJECTDIR}/vm_graphics.o ${OBJECTDIR}/Hardware/tones.o
+OBJECTFILES=${OBJECTDIR}/FAT/byteordering.o ${OBJECTDIR}/FAT/fat.o ${OBJECTDIR}/FAT/partition.o ${OBJECTDIR}/FAT/sd_raw.o ${OBJECTDIR}/pv16sog.o ${OBJECTDIR}/graphics.o ${OBJECTDIR}/Hardware/hardware.o ${OBJECTDIR}/Hardware/TVout.o ${OBJECTDIR}/Hardware/systicks.o ${OBJECTDIR}/text.o ${OBJECTDIR}/Hardware/spi_ram.o ${OBJECTDIR}/Hardware/ps2_kbd.o ${OBJECTDIR}/Hardware/QWERTY.o ${OBJECTDIR}/filesys.o ${OBJECTDIR}/Hardware/spi.o ${OBJECTDIR}/shell.o ${OBJECTDIR}/errors.o ${OBJECTDIR}/font6x8.o ${OBJECTDIR}/reader.o ${OBJECTDIR}/editor.o ${OBJECTDIR}/stackvm.o ${OBJECTDIR}/Hardware/tones.o ${OBJECTDIR}/asm_graphics.o
 
 # Source Files
-SOURCEFILES=FAT/byteordering.c FAT/fat.c FAT/partition.c FAT/sd_raw.c pv16sog.c graphics.c Hardware/hardware.c Hardware/TVout.S Hardware/systicks.S text.c Hardware/spi_ram.c Hardware/ps2_kbd.c Hardware/QWERTY.c filesys.c Hardware/spi.c shell.c errors.c font6x8.c reader.c editor.c stackvm.S vm_graphics.S Hardware/tones.S
+SOURCEFILES=FAT/byteordering.c FAT/fat.c FAT/partition.c FAT/sd_raw.c pv16sog.c graphics.c Hardware/hardware.c Hardware/TVout.S Hardware/systicks.S text.c Hardware/spi_ram.c Hardware/ps2_kbd.c Hardware/QWERTY.c filesys.c Hardware/spi.c shell.c errors.c font6x8.c reader.c editor.c stackvm.S Hardware/tones.S asm_graphics.S
 
 
 CFLAGS=
@@ -367,19 +367,19 @@ ${OBJECTDIR}/stackvm.o: stackvm.S  nbproject/Makefile-${CND_CONF}.mk
 	${MP_CC} $(MP_EXTRA_AS_PRE)  stackvm.S  -o ${OBJECTDIR}/stackvm.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/stackvm.o.d"  -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -omf=elf -no-legacy-libc  -Wa,-MD,"${OBJECTDIR}/stackvm.o.asm.d",--defsym=__MPLAB_BUILD=1,--defsym=__ICD2RAM=1,--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,--defsym=__MPLAB_DEBUGGER_PK3=1,-g,--no-relax$(MP_EXTRA_AS_POST)
 	@${FIXDEPS} "${OBJECTDIR}/stackvm.o.d" "${OBJECTDIR}/stackvm.o.asm.d"  -t $(SILENT)  -rsi ${MP_CC_DIR}../  
 	
-${OBJECTDIR}/vm_graphics.o: vm_graphics.S  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/vm_graphics.o.d 
-	@${RM} ${OBJECTDIR}/vm_graphics.o 
-	${MP_CC} $(MP_EXTRA_AS_PRE)  vm_graphics.S  -o ${OBJECTDIR}/vm_graphics.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/vm_graphics.o.d"  -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -omf=elf -no-legacy-libc  -Wa,-MD,"${OBJECTDIR}/vm_graphics.o.asm.d",--defsym=__MPLAB_BUILD=1,--defsym=__ICD2RAM=1,--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,--defsym=__MPLAB_DEBUGGER_PK3=1,-g,--no-relax$(MP_EXTRA_AS_POST)
-	@${FIXDEPS} "${OBJECTDIR}/vm_graphics.o.d" "${OBJECTDIR}/vm_graphics.o.asm.d"  -t $(SILENT)  -rsi ${MP_CC_DIR}../  
-	
 ${OBJECTDIR}/Hardware/tones.o: Hardware/tones.S  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}/Hardware" 
 	@${RM} ${OBJECTDIR}/Hardware/tones.o.d 
 	@${RM} ${OBJECTDIR}/Hardware/tones.o 
 	${MP_CC} $(MP_EXTRA_AS_PRE)  Hardware/tones.S  -o ${OBJECTDIR}/Hardware/tones.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/Hardware/tones.o.d"  -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -omf=elf -no-legacy-libc  -Wa,-MD,"${OBJECTDIR}/Hardware/tones.o.asm.d",--defsym=__MPLAB_BUILD=1,--defsym=__ICD2RAM=1,--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,--defsym=__MPLAB_DEBUGGER_PK3=1,-g,--no-relax$(MP_EXTRA_AS_POST)
 	@${FIXDEPS} "${OBJECTDIR}/Hardware/tones.o.d" "${OBJECTDIR}/Hardware/tones.o.asm.d"  -t $(SILENT)  -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/asm_graphics.o: asm_graphics.S  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/asm_graphics.o.d 
+	@${RM} ${OBJECTDIR}/asm_graphics.o 
+	${MP_CC} $(MP_EXTRA_AS_PRE)  asm_graphics.S  -o ${OBJECTDIR}/asm_graphics.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/asm_graphics.o.d"  -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -omf=elf -no-legacy-libc  -Wa,-MD,"${OBJECTDIR}/asm_graphics.o.asm.d",--defsym=__MPLAB_BUILD=1,--defsym=__ICD2RAM=1,--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,--defsym=__MPLAB_DEBUGGER_PK3=1,-g,--no-relax$(MP_EXTRA_AS_POST)
+	@${FIXDEPS} "${OBJECTDIR}/asm_graphics.o.d" "${OBJECTDIR}/asm_graphics.o.asm.d"  -t $(SILENT)  -rsi ${MP_CC_DIR}../  
 	
 else
 ${OBJECTDIR}/Hardware/TVout.o: Hardware/TVout.S  nbproject/Makefile-${CND_CONF}.mk
@@ -403,19 +403,19 @@ ${OBJECTDIR}/stackvm.o: stackvm.S  nbproject/Makefile-${CND_CONF}.mk
 	${MP_CC} $(MP_EXTRA_AS_PRE)  stackvm.S  -o ${OBJECTDIR}/stackvm.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/stackvm.o.d"  -omf=elf -no-legacy-libc  -Wa,-MD,"${OBJECTDIR}/stackvm.o.asm.d",--defsym=__MPLAB_BUILD=1,-g,--no-relax$(MP_EXTRA_AS_POST)
 	@${FIXDEPS} "${OBJECTDIR}/stackvm.o.d" "${OBJECTDIR}/stackvm.o.asm.d"  -t $(SILENT)  -rsi ${MP_CC_DIR}../  
 	
-${OBJECTDIR}/vm_graphics.o: vm_graphics.S  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/vm_graphics.o.d 
-	@${RM} ${OBJECTDIR}/vm_graphics.o 
-	${MP_CC} $(MP_EXTRA_AS_PRE)  vm_graphics.S  -o ${OBJECTDIR}/vm_graphics.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/vm_graphics.o.d"  -omf=elf -no-legacy-libc  -Wa,-MD,"${OBJECTDIR}/vm_graphics.o.asm.d",--defsym=__MPLAB_BUILD=1,-g,--no-relax$(MP_EXTRA_AS_POST)
-	@${FIXDEPS} "${OBJECTDIR}/vm_graphics.o.d" "${OBJECTDIR}/vm_graphics.o.asm.d"  -t $(SILENT)  -rsi ${MP_CC_DIR}../  
-	
 ${OBJECTDIR}/Hardware/tones.o: Hardware/tones.S  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}/Hardware" 
 	@${RM} ${OBJECTDIR}/Hardware/tones.o.d 
 	@${RM} ${OBJECTDIR}/Hardware/tones.o 
 	${MP_CC} $(MP_EXTRA_AS_PRE)  Hardware/tones.S  -o ${OBJECTDIR}/Hardware/tones.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/Hardware/tones.o.d"  -omf=elf -no-legacy-libc  -Wa,-MD,"${OBJECTDIR}/Hardware/tones.o.asm.d",--defsym=__MPLAB_BUILD=1,-g,--no-relax$(MP_EXTRA_AS_POST)
 	@${FIXDEPS} "${OBJECTDIR}/Hardware/tones.o.d" "${OBJECTDIR}/Hardware/tones.o.asm.d"  -t $(SILENT)  -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/asm_graphics.o: asm_graphics.S  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/asm_graphics.o.d 
+	@${RM} ${OBJECTDIR}/asm_graphics.o 
+	${MP_CC} $(MP_EXTRA_AS_PRE)  asm_graphics.S  -o ${OBJECTDIR}/asm_graphics.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/asm_graphics.o.d"  -omf=elf -no-legacy-libc  -Wa,-MD,"${OBJECTDIR}/asm_graphics.o.asm.d",--defsym=__MPLAB_BUILD=1,-g,--no-relax$(MP_EXTRA_AS_POST)
+	@${FIXDEPS} "${OBJECTDIR}/asm_graphics.o.d" "${OBJECTDIR}/asm_graphics.o.asm.d"  -t $(SILENT)  -rsi ${MP_CC_DIR}../  
 	
 endif
 
