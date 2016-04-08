@@ -244,14 +244,12 @@ __T2Interrupt:
 ;2:  pop DSRPAG
     inc line_count
     bra z, 1f
-    mov #6, W0
-    cp line_count
+    mov line_count, W0
+    cp W0, #6
     bra z, 2f
-    mov #12, W0
-    cp line_count
+    cp W0,#12
     bra z, 3f
-    mov #18, W0
-    cp line_count
+    cp W0, #18
     bra z, 4f
     mov _top_line, WREG
     cp line_count
@@ -312,8 +310,7 @@ __T2Interrupt:
     setm line_count
     setm.b even
     bra 0b
-
-
+    
 ;*********************
 ; interruption OC2
 ;*********************

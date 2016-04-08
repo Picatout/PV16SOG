@@ -118,12 +118,6 @@ drop: //( n --)
     dec2 dsp,dsp
     return
 
-twodrop: // ( n1 n2 -- )
-    dec2 dsp,dsp
-    dec2 dsp,dsp
-    return
-
-
 dup: // ( n -- n n )
     mov [dsp],[++dsp]
     return
@@ -143,32 +137,31 @@ rot: // ( n1 n2 n3 -- n3 n1 n2 )
     mov W1,[dsp]
     mov W0,[dsp-2]
     return
-    
+
+.global over
 over: // (n1 n2 -- n1 n2 n1 )
-    mov #4,W1
-    dec2 dsp,dsp
-    mov [dsp],[dsp+W1]
-    add W1,dsp,dsp
+    mov #-4,W1
+    mov [dsp+W1],[++dsp]
     return
 
-tuck: // (n1 n2 -- n2 n1 n2)
-    mov [dsp],W0
-    mov #2,W1
-    mov [--dsp],[dsp+W1]
-    mov W0,[dsp]
-    inc2 dsp,dsp
-    mov W0,[++dsp]
-    return
-
-// calcul la valeur de dsp
-// et sauvegarde dans la variable dsp
-dspstore: // ( n -- )
-    mov #_dstack,W0
-    sub dsp,W0,W0
-    asr W0,W0
-    sub #1,W0
-    mov.b WREG,_dsp
-    return
+;tuck: // (n1 n2 -- n2 n1 n2)
+;    mov [dsp],W0
+;    mov #2,W1
+;    mov [--dsp],[dsp+W1]
+;    mov W0,[dsp]
+;    inc2 dsp,dsp
+;    mov W0,[++dsp]
+;    return
+;
+;// calcul la valeur de dsp
+;// et sauvegarde dans la variable dsp
+;dspstore: // ( n -- )
+;    mov #_dstack,W0
+;    sub dsp,W0,W0
+;    asr W0,W0
+;    sub #1,W0
+;    mov.b WREG,_dsp
+;    return
 
 //exécution à une adresse
 // absolue
@@ -185,41 +178,41 @@ dspstore: // ( n -- )
     
 // calcule nombre d'éléments
 // sur la pile dstack
-depth: //( -- n)
-    mov #_dstack,W0
-    sub dsp,W0,W0
-    asr W0,W0
-    add #1,W0
-    mov W0,[++dsp]
-    return
+;depth: //( -- n)
+;    mov #_dstack,W0
+;    sub dsp,W0,W0
+;    asr W0,W0
+;    add #1,W0
+;    mov W0,[++dsp]
+;    return
 
 // copie le nième élément au sommet de la pile
 // [IP] indique l'élément à copier au sommet
-pick: // (nx ... n2 n1 n0 -- nx ... n1 n0 nx )
-    mov.b [ip++],W0
-    ze W0,W0
-    sl W0,W0
-    neg W0,W0
-    mov [dsp+W0],[++dsp]
-    return
+;pick: // (nx ... n2 n1 n0 -- nx ... n1 n0 nx )
+;    mov.b [ip++],W0
+;    ze W0,W0
+;    sl W0,W0
+;    neg W0,W0
+;    mov [dsp+W0],[++dsp]
+;    return
 
 // envoie T sur R
-tor: // >R ( n -- R:n)
-    mov [dsp--],[++rsp]
-    return
+;tor: // >R ( n -- R:n)
+;    mov [dsp--],[++rsp]
+;    return
 
 // envoie R sur T
-rfrom: // R> ( R:n -- n )
-    mov [++dsp],[rsp--]
-    return
+;rfrom: // R> ( R:n -- n )
+;    mov [++dsp],[rsp--]
+;    return
 
 //copie R dans T
-rfetch: // @R ( R:n -- n R:n)
-    mov [rsp],[++dsp]
-    return
+;rfetch: // @R ( R:n -- n R:n)
+;    mov [rsp],[++dsp]
+;    return
 
-// transfert les 2 éléments au sommet de dstack
-// W4 et limit
+// transfert l'élément au sommet de dstack
+// dans limit
 savelimit: //( limit -- )
     mov [dsp--],limit
     return
@@ -406,7 +399,6 @@ accept:  // ( n -- adr len )
 ; en entier
 ; adr -> adresse chaîne    
 to_int: ; (adr -- n )
-    push.D W4
     push W6
     clr W6
     clr W4
@@ -436,7 +428,6 @@ to_int: ; (adr -- n )
 4:    
     mov W4,[++dsp]
     pop W6
-    pop.D W4
     return
     
 //imprime un espace
@@ -641,26 +632,6 @@ shl: // ( u -- u<<1)
     sl [dsp],[dsp]
     return
 
-// T++
-oneplus: // ( n -- n++ )
-    inc [dsp],[dsp]
-    return
-
-// T+=2
-twoplus:
-    inc2 [dsp],[dsp]
-    return
-
-// T--
-oneminus: // ( n -- n-- )
-    dec [dsp],[dsp]
-    return
-
-// T-=2
-twominus:
-    dec2 [dsp],[dsp]
-    return
-
 //racine carree
 //REF: https://fr.wikipedia.org/wiki/M%C3%A9thode_de_H%C3%A9ron
 sqroot: //( u -- sqrt(u) )
@@ -766,19 +737,20 @@ _pause:
     return
     
 // initialise pause_timer
-set_ptmr: // ( n1 -- ) n1-> durée en msec
+set_tmr: // ( n1 -- ) n1-> durée en msec
     mov [dsp--],W0
     mov W0, _pause_timer
     return
 
 // vérifie si pause_timer==0
-test_ptmr: // ( -- flag )
-    clr W0
-    mov W0, [++dsp]
+timeout: // ( -- flag )
+;    clr W0
+;    mov W0, [++dsp]
+    clr [++dsp]
     cp0 _pause_timer
     bra nz, 1f
     com [dsp],[dsp]
-    1:
+1:
     return
 
 vm_noise:
@@ -999,16 +971,15 @@ dstack_bound_check:
     
 //table des fonctions correspondant à bytecode_t
 words:    
-.word bye,drop,twodrop,dup,vm_swap,over,tuck,pick,tor,rfrom
-.word rfetch,saveloop,restloop,looptest,rnd,vm_abs,_vm_beep,_tone,vm_ticks,set_ptmr
-.word test_ptmr,vm_noise,_cls,vm_locate,vm_back_color,vm_font_color,emit,dot,wait_key,type
-.word accept,space,cr,prt_str,lit,litc,fetch,fetchc,store,storec
-.word negate,not,vm_add,vm_sub,vm_mul,divide,mod,shr,shl,oneplus
-.word twoplus,oneminus,twominus,sqroot,isequal,isgreater,isgrequal,islittlethan,isltequal,branch
-.word zerobranch,nzbranch,enter,leave,dspstore,depth,str_copy,dots,savestep,savelimit
-.word for_next,btest,alloc,local_store,local_fetch,local_address,frame,local_var,vm_pause,read_stick
-.word _set_pixel,_vm_get_pixel,to_int,_vm_xor_pixel,_vm_scroll_up,_vm_scroll_down,_vm_scroll_right,_vm_scroll_left,_vm_line,_vm_sprite
-.word vm_ior,vm_xor,vm_and,trace,rot,_box,key,_vm_rect    
+.word bye,drop,dup,vm_swap,over,saveloop,restloop,looptest,rnd,vm_abs
+.word _vm_beep,_tone,vm_ticks,set_tmr,timeout,vm_noise,_cls,vm_locate,vm_back_color,vm_font_color
+.word emit,dot,wait_key,type,accept,space,cr,prt_str,lit,litc
+.word fetch,fetchc,store,storec,negate,not,vm_add,vm_sub,vm_mul,divide
+.word mod,shr,shl,sqroot,isequal,isgreater,isgrequal,islittlethan,isltequal,branch
+.word zerobranch,nzbranch,enter,leave,str_copy,dots,savestep,savelimit,for_next,btest
+.word alloc,local_store,local_fetch,local_address,frame,local_var,vm_pause,read_stick,_set_pixel,_vm_get_pixel
+.word to_int,_vm_xor_pixel,_vm_scroll_up,_vm_scroll_down,_vm_scroll_right,_vm_scroll_left,_vm_line,_vm_sprite,vm_ior,vm_xor
+.word vm_and,trace,rot,_box,key,_vm_rect
     
 .global _interpret
 _interpret:

@@ -68,6 +68,14 @@
     void save_screen(uint16_t address);
     //rempli le buffer vidéo avec le contenu de la SRAM qui est à l'adressse <address>
     void restore_screen(uint16_t address);
+    // fonctions dans vm_graphics.S
+    void draw_pixel(int x, int y, int color);
+    void scroll_up(unsigned int lines);
+    void scroll_down(unsigned int lines);
+    void cls();
+    void xor_pixel(int x, int y,uint8_t xor_value);
+    //int get_pixel(int x, int y);
+    void gray_scale(int top, int height);
 
 #ifdef	__cplusplus
 }

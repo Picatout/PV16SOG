@@ -103,7 +103,7 @@ bool kbd_ready(){
 }
 
 bool kbd_reset(){
-
+    key_state=0;
     kbd_flags |= F_NOPS2;
     kbd_send(KBD_RESET);
     pause_timer=750;
@@ -367,6 +367,10 @@ _ISR_NAPSV  void _T4Interrupt(){
                     }
                     kbd_flags &= ~(F_KEYREL+F_XTDKEY);
                     break;
+                case DEL:
+                    if ((key_state & (F_LALT|F_LCTRL))==(F_LALT|F_LCTRL)){
+                        asm("reset");
+                    }
                 default:
                     if (!(kbd_flags&F_KEYREL)){
                         if (kbd_flags &F_XTDKEY){

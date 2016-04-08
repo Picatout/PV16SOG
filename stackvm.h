@@ -86,58 +86,32 @@ extern int8_t rsp;
 extern void interpret(uint8_t *program);
 extern void pause(uint16_t msec);
 
-// fonctions dans vm_graphics.S
-void draw_pixel(int x, int y, int color);
-void scroll_up(unsigned int lines);
-void scroll_down(unsigned int lines);
-void cls();
-void xor_pixel(int x, int y,uint8_t xor_value);
-int get_pixel(int x, int y);
-void gray_scale(int top, int height);
 
+#endif
 
-typedef enum {
-    BYE,DROP,DROP2,DUP,SWAP,OVER,TUCK,PICK,TOR,RFROM,
-    RFETCH,SAVELOOP,RESTLOOP,LOOPTEST,RND,ABS,BEEP,TONE,TICKS,SETPTMR,
-    TSTPTMR,NOISE,CLS,LOCATE,BACK_COLOR,FONT_COLOR,EMIT,DOT,WKEY,TYPE,
-    ACCEPT,SPACE,CRLF,PRTSTR,LIT,LITC,FETCH,FETCHC,STORE,STOREC,
-    NEGATE,NOT,ADD,SUB,MUL,DIV,MOD,SHR,SHL,ONEPLUS,
-    TWOPLUS,ONEMINUS,TWOMINUS,SQRT,EQUAL,GT,GE,LT,LE,BRANCH,
-    ZBRANCH,NZBRANCH,CALL,LEAVE,DSPSTORE,DEPTH,STRCPY,DOTS,SAVESTEP,SAVELIMIT,
-    NEXT,BTEST,ALLOC,LCSTORE,LCFETCH,LCADR,FRAME,LCVARSPACE,IDLE,JSTICK,
-    SETPIXEL,GETPIXEL,INT,XORPIXEL,SCRLUP,SCRLDN,SCRLRT,SCRLLT,LINE,SPRITE,
-    /*EXEC,EXIT,*/OR,XOR,AND,TRACE,ROT,BOX,KEY,RECT} bytecode_t;
     
-#else
     
-#define BYE (0)
+#define BYE (0)     
 #define DROP (BYE+1)
-#define DROP2 (DROP+1)
-#define DUP (DROP2+1)
+#define DUP (DROP+1)
 #define SWAP (DUP+1)
 #define OVER (SWAP+1)
-#define TUCK (OVER+1)
-#define PICK (TUCK+1)
-#define TOR (PICK+1)
-#define RFROM (TOR+1)
-#define RFETCH (RFROM+1) 
-#define SAVELOOP (RFETCH+1)
+#define SAVELOOP (OVER+1)
 #define RESTLOOP (SAVELOOP+1)
 #define LOOPTEST (RESTLOOP+1)
 #define RND (LOOPTEST+1)
 #define ABS (RND+1)
-#define BEEP (ABS+1)
+#define BEEP (ABS+1)   //10
 #define TONE (BEEP+1)
 #define TICKS (TONE+1)
-#define SETPTMR (TICKS+1)
-#define GETPTMR (SETPTMR+1)
-#define TSTPTMR (GETPTMR+1)
-#define NOISE (TSTPTMR+1)
+#define SETTMR (TICKS+1)
+#define TIMEOUT (SETTMR+1)
+#define NOISE (TIMEOUT+1)
 #define CLS (NOISE+1)
 #define LOCATE (CLS+1)
 #define BACK_COLOR (LOCATE+1)
-#define FONT_COLOR (BACK_COLOR+1)
-#define EMIT (FONT_COLOR+1)
+#define FONT_COLOR (BACK_COLOR+1) 
+#define EMIT (FONT_COLOR+1) //20
 #define DOT (EMIT+1)
 #define WKEY (DOT+1)
 #define TYPE (WKEY+1)
@@ -147,7 +121,7 @@ typedef enum {
 #define PRTSTR (CRLF+1)
 #define LIT (PRTSTR+1)
 #define LITC (LIT+1)
-#define FETCH (LITC+1)
+#define FETCH (LITC+1)  //30
 #define FETCHC (FETCH+1)
 #define STORE (FETCHC+1)
 #define STOREC (STORE+1)
@@ -157,32 +131,27 @@ typedef enum {
 #define SUB (ADD+1)
 #define MUL (SUB+1)
 #define DIV (MUL+1)
-#define MOD (DIV+1)
+#define MOD (DIV+1)     //40
 #define SHR (MOD+1)
 #define SHL (SHR+1)
-#define ONEPLUS (SHL+1)
-#define TWOPLUS (ONEPLUS+1)
-#define ONEMINUS (TWOPLUS+1)
-#define TWOMINUS (ONEMINUS+1)
-#define SQRT (TWOMINUS+1)
+#define SQRT (SHL+1)
 #define EQUAL (SQRT+1)
-#define GE (EQUAL+1)
+#define GT (EQUAL+1)
+#define GE (GT+1)
 #define LT (GE+1)
 #define LE (LT+1)
 #define BRANCH (LE+1)
-#define ZBRANCH (BRANCH+1)
+#define ZBRANCH (BRANCH+1)      //50
 #define NZBRANCH (ZBRANCH+1)
 #define CALL (NZBRANCH+1)
 #define LEAVE (CALL+1)
-#define DSPSTORE (LEAVE+1)
-#define DEPTH (DSPSTORE+1)
-#define STRCPY (DEPTH+1)
+#define STRCPY (LEAVE+1)
 #define DOTS (STRCPY+1)
 #define SAVESTEP (DOTS+1)
 #define SAVELIMIT (SAVESTEP+1)
 #define NEXT (SAVELIMIT+1)
 #define BTEST (NEXT+1)
-#define ALLOC (BTEST+1)
+#define ALLOC (BTEST+1)     //60
 #define LCSTORE (ALLOC+1)
 #define LCFETCH (LCSTORE+1)
 #define LCADR (LCFETCH+1)
@@ -191,8 +160,8 @@ typedef enum {
 #define IDLE (LCVARSPACE+1)
 #define JSTICK (IDLE+1)
 #define SETPIXEL (JSTICK+1)
-#define GETPIXEL (SETPIXEL+1)
-#define INT (GETPIXEL+1)
+#define GETPIXEL (SETPIXEL+1)   
+#define INT (GETPIXEL+1)    //70
 #define XORPIXEL (INT+1)
 #define SCRLUP (XORPIXEL+1)
 #define SCRLDN (SCRLUP+1)
@@ -200,25 +169,25 @@ typedef enum {
 #define SCRLLT (SCRLRT+1)
 #define LINE (SCRLLT+1)
 #define SPRITE (LINE+1)
-//#define EXEC (SPRITE+1)
-//#define EXIT (EXEC+1)
 #define OR (SPRITE+1)
 #define XOR (OR+1)
-#define AND (XOR+1)
+#define AND (XOR+1)     //80
 #define TRACE (AND+1)
 #define ROT (TRACE+1)
 #define BOX (ROT+1)
 #define KEY (BOX+1)
 #define RECT (KEY+1)
-    
-.equ step, W4   //FOR loop STEP
-.equ limit, W5  // FOR loop limit
+ 
+#ifdef __asm
+
 .equ ip, W6     // pointeur instructions bytecode
 .equ wp, W7     // pointeur table des fonctions/bytecode
 .equ dsp, W8    // pointeur pile arguments
 .equ rsp, W9    // pointeur pile de contrôle
 .equ fp, W10    // pointeur variables locales
 .equ _page, W11 // sauvegarde DSRPAG 
+.equ step, W12   //FOR loop STEP
+.equ limit, W13  // FOR loop limit
 
 .equ SRAM_SIZE, 65536
 
@@ -229,7 +198,6 @@ typedef enum {
 // ********* macros **************
     
 .macro saveregs
-    mov.D step, [W15++]
     mov.D ip, [W15++]
     push DSRPAG
     mov _page,DSRPAG
@@ -238,7 +206,6 @@ typedef enum {
 .macro restregs
     pop DSRPAG
     mov.D [--W15], ip
-    mov.D [--W15], step
 .endm
  
 ; appel fonction externe 'C'    

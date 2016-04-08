@@ -98,11 +98,10 @@ oddx:
 
 ; retourne couleur du pixel
 ; à la position x,y
-.global _vm_get_pixel, _get_pixel
+.global _vm_get_pixel
 _vm_get_pixel: ; ( x, y -- c )
     mov [dsp--],W1 ; y
     mov [dsp], W0  ; x
-_get_pixel:    
     push DSRPAG
     movpag #1, DSRPAG
     mov #BPL,W2
@@ -244,7 +243,6 @@ _scroll_down:
 _vm_scroll_right: ; ( n -- )
     push DSRPAG
     push DSWPAG
-    push.D W4
     movpag #1, DSRPAG
     movpag #1, DSWPAG
     mov [dsp--],W0
@@ -259,7 +257,6 @@ erase_screen:
     repeat #TV_BUFFER-1
     mov.b W2,[W1++]
 scroll_exit:    
-    pop.D W4
     pop DSWPAG
     pop DSRPAG
     return
@@ -303,7 +300,6 @@ scroll_exit:
 _vm_scroll_left: ; ( n -- )
     push DSRPAG
     push DSWPAG
-    push.D W4
     movpag #1, DSRPAG
     movpag #1, DSWPAG
     mov [dsp--],W0
@@ -343,7 +339,6 @@ _vm_scroll_left: ; ( n -- )
     ; W2 longueur
     ; W3 couleur
 ;vline:
-;    push.D W4
 ;    push.D W6
 ;    mov W0,W4
 ;    mov W1,W5
@@ -360,7 +355,6 @@ _vm_scroll_left: ; ( n -- )
 ;    bra 0b
 ;1:    
 ;    pop.D W6
-;    pop.D W4
 ;    return
     
 ;ligne horizontale
@@ -369,7 +363,6 @@ _vm_scroll_left: ; ( n -- )
     ; W2 longueur
     ; W3 couleur
 ;hline:
-;    push.D W4
 ;    push.D W6
 ;    mov W0,W4
 ;    mov W1,W5
@@ -386,7 +379,6 @@ _vm_scroll_left: ; ( n -- )
 ;    bra 0b
 ;1:    
 ;    pop.D W6
-;    pop.D W4
 ;    return
     
 .global _vm_line
@@ -510,13 +502,14 @@ _vm_rect: ; ( x0,y0,width,height,color -- )
     ; W7 nombre d'octets à copier
 _clreol: ; ( -- )
     push DSWPAG
-    push.D W4
     push.D W6
-    movpag #1, DSWPAG
+    movpag #edspage(_video_buffer), DSWPAG
     mov _xpos,W0
     lsr W0,W6	  ; offset sur la ligne
     mov #BPL,W7   
     sub W7,W6,W7  ; nombre d'octets à copier
+    cp0 W7
+    bra z, 1f
     dec W7,W7     ; décrémente pour le repeat
     mov _ypos, W4  ; compteur ligne
     mov #CHAR_HEIGHT,W5
@@ -537,8 +530,8 @@ _clreol: ; ( -- )
     inc W4,W4
     cp W4,W5
     bra ltu, 0b
+1:    
     pop.D W6
-    pop.D W4
     pop DSWPAG
     return
 
@@ -565,7 +558,6 @@ _cls:  ; ( -- )
 ; W0 top
 ; W1 height    
 _gray_scale:
-    push.D W4
     push W6
     mov W0, W4 ; y
     add W0,W1,W5 ; bottom
@@ -585,7 +577,6 @@ _gray_scale:
     bra 0b
 2:    
     pop W6
-    pop.D W4
     return
  
 ; retourne la position ligne curseur texte    

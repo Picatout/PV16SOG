@@ -177,10 +177,10 @@ void kbd_init(){
     // utilisation TMR4 pour compléter 
     //traitement ps2_queue vers kbd_queue
     IPC6bits.T4IP=2;
-    // TCKPS 1:8
-    KBD_TCON|=(1<<15)+(1<<4);
-    // période 1,5msec. 
-    KBD_TMR_PER=TCY_MS/8+TCY_MS/16;
+    // TCKPS 1:64
+    KBD_TCON|=(1<<15)+(2<<4);
+    // période  8 msec. 
+    KBD_TMR_PER=TCY_MS/8;
     
 }//f();
 

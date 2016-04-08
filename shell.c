@@ -235,10 +235,12 @@ static void kw_scrlright();
 static void kw_scrlleft();
 static void kw_select();
 static void kw_setpixel();
+static void kw_set_timer();
 static void kw_sprite();
 static void kw_sub();
 static void kw_then();
 static void kw_ticks();
+static void kw_timeout();
 static void kw_tone();
 static void kw_trace();
 static void kw_use();
@@ -250,11 +252,11 @@ static void kw_xorpixel();
 //identifiant KEYWORD doit-être dans le même ordre que
 //dans la liste KEYWORD
 enum {eKW_ABS,eKW_AND,eKW_BEEP,eKW_BOX,eKW_BTEST,eKW_BYE,eKW_CASE,eKW_CLS,eKW_COLOR,eKW_CONST,eKW_DIM,eKW_DO,eKW_ELSE,
-      eKW_END,/*eKW_EXEC,*/eKW_FOR,eKW_FUNC,eKW_GETPIXEL,eKW_IF,eKW_INPUT,eKW_KEY,
+      eKW_END,eKW_FOR,eKW_FUNC,eKW_GETPIXEL,eKW_IF,eKW_INPUT,eKW_KEY,
       eKW_LET,eKW_LINE,eKW_LOCAL,eKW_LOCATE,eKW_LOOP,eKW_NEXT,eKW_NOISE,eKW_NOT,eKW_OR,eKW_PAUSE,
       eKW_PRINT,eKW_PUTC,eKW_JSTICK,eKW_RECT,eKW_REF,eKW_REM,eKW_RETURN,eKW_RND,eKW_SCRLUP,eKW_SCRLDN,
-      eKW_SCRLRT,eKW_SCRLFT,eKW_SELECT,eKW_SETPIXEL,eKW_SPRITE,eKW_SUB,eKW_THEN,eKW_TICKS,
-      eKW_TONE,eKW_TRACE,eKW_USE,eKW_WAITKEY,eKW_WEND,eKW_WHILE,eKW_XORPIXEL
+      eKW_SCRLRT,eKW_SCRLFT,eKW_SELECT,eKW_SETPIXEL,eKW_SETTMR,eKW_SPRITE,eKW_SUB,eKW_THEN,eKW_TICKS,
+      eKW_TIMEOUT,eKW_TONE,eKW_TRACE,eKW_USE,eKW_WAITKEY,eKW_WEND,eKW_WHILE,eKW_XORPIXEL
 };
 
 //mots réservés BASIC
@@ -304,10 +306,12 @@ __eds__ static const dict_entry_t __attribute__((space(prog))) KEYWORD[]={
     {kw_scrlleft,6,"SCRLLT"},
     {kw_select,6,"SELECT"},
     {kw_setpixel,8,"SETPIXEL"},
+    {kw_set_timer,6,"SETTMR"},
     {kw_sprite,6+FUNCTION,"SPRITE"},
     {kw_sub,3,"SUB"},
     {kw_then,4,"THEN"},
     {kw_ticks,5+FUNCTION,"TICKS"},
+    {kw_timeout,7+FUNCTION,"TIMEOUT"},
     {kw_tone,4,"TONE"},
     {kw_trace,5,"TRACE"},
     {kw_use,3,"USE"},
@@ -1758,39 +1762,12 @@ static void kw_use(){
 //    bytecode(EXEC);
 //}//f
 
-// COLOR texte [,fond]|COLOR ,fond
+// COLOR(texte,fond)
 // fixe couleur de police et du fond
 static void kw_color(){
-    next_token();
-    switch(token.id){
-        case eNUMBER:
-            litc(token.n);
-            bytecode(FONT_COLOR);
-            next_token();
-            if (token.id==eNL){
-                unget_token=true;
-                return;
-            }else if (token.id!=eCOMMA){
-                throw(eERR_SYNTAX);
-            }
-            break;
-        case eCOMMA:
-            break;
-        default:
-            throw(eERR_SYNTAX);
-    }//switch
-    next_token();
-    switch(token.id){
-        case eNUMBER:
-            litc(token.n);
-            bytecode(BACK_COLOR);
-            break;
-        case eNL:
-            unget_token=true;
-            break;
-        default:
-            throw(eERR_SYNTAX);
-    }//switch
+    parse_arg_list(2);
+    bytecode(BACK_COLOR);
+    bytecode(FONT_COLOR);
 }//f
 
 static void kw_const(){
@@ -1855,9 +1832,6 @@ static void kw_tone(){
 // argument en millisecondes
 static void kw_pause(){
     parse_arg_list(1);
-//    expect(eLPAREN);
-//    expression();
-//    expect(eRPAREN);
     bytecode(IDLE);
 }//f
 
@@ -1869,15 +1843,26 @@ static void kw_ticks(){
     bytecode(TICKS);
 }//f
 
+// SETTMR(msec)
+// initialise _pause_timer
+static void kw_set_timer(){
+    parse_arg_list(1);
+    bytecode(SETTMR);
+}//f
+
+// TIMEOUT()
+// retourne vrai si _pause_timer==0
+static void kw_timeout(){
+    expect(eLPAREN);
+    expect(eRPAREN);
+    bytecode(TIMEOUT);
+}//f
 
 //NOISE(msec)
 // génère un bruit blanc
 // durée en millisecondes
 static void kw_noise(){
     parse_arg_list(1);
-//    expect(eLPAREN);
-//    expression();
-//    expect(eRPAREN);
     bytecode(NOISE);
 }//f
 
