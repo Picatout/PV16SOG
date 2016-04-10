@@ -236,6 +236,8 @@ static void kw_scrlleft();
 static void kw_select();
 static void kw_setpixel();
 static void kw_set_timer();
+static void kw_shl();
+static void kw_shr();
 static void kw_sprite();
 static void kw_sub();
 static void kw_then();
@@ -251,11 +253,13 @@ static void kw_xorpixel();
 
 //identifiant KEYWORD doit-être dans le même ordre que
 //dans la liste KEYWORD
-enum {eKW_ABS,eKW_AND,eKW_BEEP,eKW_BOX,eKW_BTEST,eKW_BYE,eKW_CASE,eKW_CLS,eKW_COLOR,eKW_CONST,eKW_DIM,eKW_DO,eKW_ELSE,
+enum {eKW_ABS,eKW_AND,eKW_BEEP,eKW_BOX,eKW_BTEST,eKW_BYE,eKW_CASE,eKW_CLS,eKW_COLOR,
+      eKW_CONST,eKW_DIM,eKW_DO,eKW_ELSE,
       eKW_END,eKW_FOR,eKW_FUNC,eKW_GETPIXEL,eKW_IF,eKW_INPUT,eKW_KEY,
       eKW_LET,eKW_LINE,eKW_LOCAL,eKW_LOCATE,eKW_LOOP,eKW_NEXT,eKW_NOISE,eKW_NOT,eKW_OR,eKW_PAUSE,
       eKW_PRINT,eKW_PUTC,eKW_JSTICK,eKW_RECT,eKW_REF,eKW_REM,eKW_RETURN,eKW_RND,eKW_SCRLUP,eKW_SCRLDN,
-      eKW_SCRLRT,eKW_SCRLFT,eKW_SELECT,eKW_SETPIXEL,eKW_SETTMR,eKW_SPRITE,eKW_SUB,eKW_THEN,eKW_TICKS,
+      eKW_SCRLRT,eKW_SCRLFT,eKW_SELECT,eKW_SETPIXEL,eKW_SETTMR,eKW_SHL,eKW_SHR,
+      eKW_SPRITE,eKW_SUB,eKW_THEN,eKW_TICKS,
       eKW_TIMEOUT,eKW_TONE,eKW_TRACE,eKW_USE,eKW_WAITKEY,eKW_WEND,eKW_WHILE,eKW_XORPIXEL
 };
 
@@ -307,6 +311,8 @@ __eds__ static const dict_entry_t __attribute__((space(prog))) KEYWORD[]={
     {kw_select,6,"SELECT"},
     {kw_setpixel,8,"SETPIXEL"},
     {kw_set_timer,6,"SETTMR"},
+    {kw_shl,3+FUNCTION,"SHL"},
+    {kw_shr,3+FUNCTION,"SHR"},
     {kw_sprite,6+FUNCTION,"SPRITE"},
     {kw_sub,3,"SUB"},
     {kw_then,4,"THEN"},
@@ -1801,6 +1807,20 @@ static void kw_const(){
 static void kw_abs(){
     parse_arg_list(1);
     bytecode(ABS);
+}//f
+
+// SHL(expression)
+// décalage à gauche de 1 bit
+static void kw_shl(){
+    parse_arg_list(1);
+    bytecode(SHL);
+}//f
+
+// SHR(expression)
+// décale à droite de 1 bit
+static void kw_shr(){
+    parse_arg_list(1);
+    bytecode(SHR);
 }//f
 
 // BTEST(expression1,expression2{0-15})

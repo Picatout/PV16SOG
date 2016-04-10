@@ -295,11 +295,21 @@ static int last=0;
 static int circle=0;
 static bool insert_mode=true; //true=insert, false=overwrite
 
+static void update_eol(char *eol){
+    uint8_t col, line;
+    
+    col=text_colon();
+    line=text_line();
+    clreol();
+    print(eol);
+    set_cursor(col,line);
+}//f
+
 //retourne le nombre de caractères lus.
 // <ENTER> termine la ligne
 uint8_t readln(char *buffer, uint8_t buff_len){
     uint8_t len=0,first_col,first_line,pos=0;
-    uint8_t c, cline;
+    uint8_t c;
     
     first_col=text_colon();
     first_line=text_line();
@@ -339,6 +349,19 @@ uint8_t readln(char *buffer, uint8_t buff_len){
                     cursor_right();
                 }
                 break;
+            case VK_HOME:
+                if (len && pos){
+                    pos=0;
+                    set_cursor(first_col,first_line);
+                    update_eol(buffer);
+                }
+                break;
+            case VK_END:
+                while (pos<len){
+                    cursor_right();
+                    pos++;
+                }
+                break;
             case VK_INSERT:
                 insert_mode=!insert_mode;
                 if (insert_mode) 
@@ -353,8 +376,7 @@ uint8_t readln(char *buffer, uint8_t buff_len){
                     buffer[len]=0;
                     pos--;
                     cursor_left();
-                    clreol();
-                    print(&buffer[pos]);
+                    update_eol(&buffer[pos]);
                 }
                 break;
             case VK_DELETE:
@@ -362,8 +384,7 @@ uint8_t readln(char *buffer, uint8_t buff_len){
                     memmove(&buffer[pos],&buffer[pos+1],len-pos-1);
                     len--;
                     buffer[len]=0;
-                    clreol();
-                    print(&buffer[pos]);
+                    update_eol(&buffer[pos]);
                 }
                 break;
             case VK_ENTER:
@@ -386,14 +407,9 @@ uint8_t readln(char *buffer, uint8_t buff_len){
                             buffer[pos]=c;
                             len++;
                             buffer[len]=0;
-                            clreol();
-                            cline=text_line();
-                            print(&buffer[pos]);
+                            update_eol(&buffer[pos]);
                             pos++;
-                            if (cline==first_line)
-                                set_cursor(first_col+pos,cline);
-                            else
-                                set_cursor(pos,cline);
+                            cursor_right();
                         }else{
                             buffer[pos++]=c;
                             len++;

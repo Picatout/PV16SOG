@@ -632,6 +632,7 @@ shl: // ( u -- u<<1)
     sl [dsp],[dsp]
     return
 
+    
 //racine carree
 //REF: https://fr.wikipedia.org/wiki/M%C3%A9thode_de_H%C3%A9ron
 sqroot: //( u -- sqrt(u) )

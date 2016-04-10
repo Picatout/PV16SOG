@@ -177,7 +177,7 @@ extern void pause(uint16_t msec);
 #define BOX (ROT+1)
 #define KEY (BOX+1)
 #define RECT (KEY+1)
- 
+
 #ifdef __asm
 
 .equ ip, W6     // pointeur instructions bytecode
