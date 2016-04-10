@@ -1458,7 +1458,6 @@ static void cmd_free_pool(){
 
 //efface le contenu de progspace
 static void cmd_clear(){
-    dsp=-1;
     rsp=-1;
     dp=0;
     varlist=NULL;

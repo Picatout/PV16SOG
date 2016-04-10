@@ -76,7 +76,7 @@
     
 
     
-.global _dstack, _rstack,_dsp,_rsp, _endmark, _progspace,_dp, _ftrace, _vm_exit_code
+.global  _rstack,_rsp, _endmark, _progspace,_dp, _ftrace, _vm_exit_code
 
 .section ndata bss near  
 _dstack_empty:
@@ -91,22 +91,21 @@ _dsp: // pointejur pile données
 .space 1
 _rsp: // pointeur pile retours
 .space 1
-_endmark:
+_endmark: ;adresse fin des variables
 .space 2
-_progspace:
+_progspace: ; adresse espace programme
 .space 2 
-_dp:
+_dp:        ; pointer dans _progspace
 .space 2
-_pad:
+_pad:       ; tampon chaine lecture clavier
 .space CHAR_PER_LINE    
-_ftrace:
+_ftrace:    ; indicateur mode traçage
 .space 2
-_vm_exit_code:
+_vm_exit_code:  ; code de sortie de la machine virtuelle
 .space 2
 
 .global _pause_timer
-_pause_timer: .space 2
-
+_pause_timer: .space 2  
     
 .text
     
@@ -144,80 +143,14 @@ over: // (n1 n2 -- n1 n2 n1 )
     mov [dsp+W1],[++dsp]
     return
 
-;tuck: // (n1 n2 -- n2 n1 n2)
-;    mov [dsp],W0
-;    mov #2,W1
-;    mov [--dsp],[dsp+W1]
-;    mov W0,[dsp]
-;    inc2 dsp,dsp
-;    mov W0,[++dsp]
-;    return
-;
-;// calcul la valeur de dsp
-;// et sauvegarde dans la variable dsp
-;dspstore: // ( n -- )
-;    mov #_dstack,W0
-;    sub dsp,W0,W0
-;    asr W0,W0
-;    sub #1,W0
-;    mov.b WREG,_dsp
-;    return
-
-//exécution à une adresse
-// absolue
-;exec: // ( adr -- )
-;    mov ip,[++rsp]
-;    mov [dsp--],ip
-;    return
-
-//     
-;exit: // (R: adr -- )
-;    mov [rsp--],ip
-;    return
-    
-    
-// calcule nombre d'éléments
-// sur la pile dstack
-;depth: //( -- n)
-;    mov #_dstack,W0
-;    sub dsp,W0,W0
-;    asr W0,W0
-;    add #1,W0
-;    mov W0,[++dsp]
-;    return
-
-// copie le nième élément au sommet de la pile
-// [IP] indique l'élément à copier au sommet
-;pick: // (nx ... n2 n1 n0 -- nx ... n1 n0 nx )
-;    mov.b [ip++],W0
-;    ze W0,W0
-;    sl W0,W0
-;    neg W0,W0
-;    mov [dsp+W0],[++dsp]
-;    return
-
-// envoie T sur R
-;tor: // >R ( n -- R:n)
-;    mov [dsp--],[++rsp]
-;    return
-
-// envoie R sur T
-;rfrom: // R> ( R:n -- n )
-;    mov [++dsp],[rsp--]
-;    return
-
-//copie R dans T
-;rfetch: // @R ( R:n -- n R:n)
-;    mov [rsp],[++dsp]
-;    return
-
 // transfert l'élément au sommet de dstack
 // dans limit
 savelimit: //( limit -- )
     mov [dsp--],limit
     return
 
-// sauvegarde les variables de boucle sur rstack
+;sauvegarde les variables de boucle sur rstack
+; sur _rstack
 saveloop: // ( -- R:step R:limit)
     mov step,[++rsp] //step
     mov limit,[++rsp] //limit
@@ -228,7 +161,8 @@ savestep: // ( step -- )
     mov [dsp--],step
     return
 
-// restore les variables de boucle
+; restore les variables de boucle
+; à partir de _rstack
 restloop: // ( R:step R:limit -- )
     mov [rsp--],limit
     mov [rsp--],step
@@ -267,7 +201,8 @@ for_next: // ( adr -- n )
 ;**************************
 ; gestion mémoire programme
 ;**************************
-    
+
+;allocation d'espace à la fin de _progspace
 .global alloc
 alloc:; ( size -- adr|NULL )  size -> nombre d'octets (arrondie à un nombre pair.
     mov [dsp],W0
@@ -332,7 +267,7 @@ dot: // (n --)
 
 // affiche le contenu de la pile
 dots:
-    callxfunc _new_line
+    rcall _new_line
     mov #_dstack,W3
     sub dsp,W3,W0
     asr W0,W0
@@ -434,11 +369,6 @@ to_int: ; (adr -- n )
 space: // ( -- )
     mov #32,W0
     callxfunc(_put_char)
-    return
-
-//envoie un '\n' à l'écran
-cr: // ( -- )
-    callxfunc(_new_line)
     return
 
 //positionne le curseur texte
@@ -974,7 +904,7 @@ dstack_bound_check:
 words:    
 .word bye,drop,dup,vm_swap,over,saveloop,restloop,looptest,rnd,vm_abs
 .word _vm_beep,_tone,vm_ticks,set_tmr,timeout,vm_noise,_cls,vm_locate,vm_back_color,vm_font_color
-.word emit,dot,wait_key,type,accept,space,cr,prt_str,lit,litc
+.word emit,dot,wait_key,type,accept,space,_new_line,prt_str,lit,litc
 .word fetch,fetchc,store,storec,negate,not,vm_add,vm_sub,vm_mul,divide
 .word mod,shr,shl,sqroot,isequal,isgreater,isgrequal,islittlethan,isltequal,branch
 .word zerobranch,nzbranch,enter,leave,str_copy,dots,savestep,savelimit,for_next,btest
@@ -992,17 +922,8 @@ _interpret:
     mov W0, ip // ip
     movpag #edspage(words),DSRPAG
     mov #edsoffset(words),wp
-    mov #_dstack,dsp   // pointeur pile arguments
-    mov.b _dsp,WREG
-    se W0,W0
-    sl W0,W0
-    add W0,dsp,dsp
-    mov dsp,fp
-    mov #_rstack,rsp   // pointeur pile de contrôle
-    mov.b _rsp,WREG
-    se W0,W0
-    sl W0,W0
-    add W0,rsp,rsp
+    mov #_dstack_empty,dsp   // pointeur pile arguments
+    mov #_rstack_empty,rsp   // pointeur pile de contrôle
     clr step // boucle valeur début
     clr limit // boucle valeur fin
     clr _vm_exit_code
@@ -1044,10 +965,6 @@ trace_off:
     //sortie de l'interpréteur
     //sauvegarde la valeur de dsp
 vm_quit:
-    mov #_dstack,W0
-    sub dsp,W0,W0
-    asr W0,W0
-    mov.b WREG,_dsp
     mov _page, DSRPAG
     mov.D [--W15],fp
     mov.D [--W15],dsp

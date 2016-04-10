@@ -74,7 +74,6 @@
     void scroll_down(unsigned int lines);
     void cls();
     void xor_pixel(int x, int y,uint8_t xor_value);
-    //int get_pixel(int x, int y);
     void gray_scale(int top, int height);
 
 #ifdef	__cplusplus

@@ -100,19 +100,17 @@ oddx:
 ; à la position x,y
 .global _vm_get_pixel
 _vm_get_pixel: ; ( x, y -- c )
-    mov [dsp--],W1 ; y
-    mov [dsp], W0  ; x
     push DSRPAG
-    movpag #1, DSRPAG
-    mov #BPL,W2
-    mul.uu W1,W2,W2 ; W2=y*BPL
-    mov W0,w3
-    lsr W0,W0
-    add W0,W2,W0 ; W0=y*BPL+(x/2)
-    mov #edsoffset(_video_buffer),W1
-    add W0,W1,W0
-    mov.b [W0],W0
-    btss W3,#0
+    movpag #edspage(_video_buffer), DSRPAG
+    mov #edsoffset(_video_buffer),W2
+    mov [dsp--],W0 ; y
+    mov #BPL,W1
+    mul.uu W1,W0,W0 ; W0=y*BPL
+    lsr [dsp],W1
+    add W1,W0,W0
+    add W0,W2,W2
+    mov.b [W2],W0
+    btss [dsp],#0
     swap.b W0
     and #0xf,W0
     mov W0,[dsp]
@@ -128,8 +126,8 @@ _vm_xor_pixel: ; ( x,y, xor -- )
 _xor_pixel:    
     push DSRPAG
     push DSWPAG
-    movpag #1, DSRPAG
-    movpag #1, DSWPAG
+    movpag #edspage(_video_buffer), DSRPAG
+    movpag #edspage(_video_buffer), DSWPAG
     mov W0,W3
     mov #BPL,W0
     mul.uu W1,W0,W0 ; position ligne
@@ -332,65 +330,14 @@ _vm_scroll_left: ; ( n -- )
     bra ltu, 1b
     bra scroll_exit
 
-
-;ligne verticale
-    ; W0 x 
-    ; W1 y supérieur
-    ; W2 longueur
-    ; W3 couleur
-;vline:
-;    push.D W6
-;    mov W0,W4
-;    mov W1,W5
-;    add W1,W2,W6
-;    mov W3,W7
-;0:
-;    cp W5,W6
-;    bra z, 1f
-;    mov W5,W1
-;    mov W4,W0
-;    mov W7,W2
-;    call _draw_pixel
-;    inc W5,W5
-;    bra 0b
-;1:    
-;    pop.D W6
-;    return
-    
-;ligne horizontale
-    ; W0 x gauche
-    ; W1 y 
-    ; W2 longueur
-    ; W3 couleur
-;hline:
-;    push.D W6
-;    mov W0,W4
-;    mov W1,W5
-;    add W0,W2,W6
-;    mov W3,W7
-;0:
-;    cp W4,W6
-;    bra z, 1f
-;    mov W4,W0
-;    mov W5,W1
-;    mov W7,W2
-;    call _draw_pixel
-;    inc W4,W4
-;    bra 0b
-;1:    
-;    pop.D W6
-;    return
-    
 .global _vm_line
 _vm_line: ; ( x0 y0 x1 y1 c -- )
-    push W4
     mov [dsp--],W4
     mov [dsp--],W3
     mov [dsp--],W2
     mov [dsp--],W1
     mov [dsp--],W0
     callxfunc _draw_line
-    pop W4
     return
     
 .global _vm_sprite
@@ -417,7 +364,6 @@ _vm_sprite: ; ( x y w h sprite* -- )
 _box: ; ( x0,y0,w,h,c -- )  coin supérieur-gauche, largeur, hauteur, couleur
     ; ajuste frame pour les arguments
     mov fp, [++rsp]
-    mov.D CNTR,[++rsp]
     mov dsp, fp
     mov #4*CELL_SIZE, W0
     sub fp,W0,fp
@@ -467,7 +413,6 @@ row_completed:
     bra yloop
 box_completed:    
     ; jette arguments et variables locales
-    mov.D [rsp--],CNTR
     mov [rsp--],fp
     mov #5*CELL_SIZE,W0
     sub dsp,W0,dsp
@@ -537,7 +482,7 @@ _clreol: ; ( -- )
 .global _cls    
 _cls:  ; ( -- )
     push DSWPAG
-    movpag #1, DSWPAG
+    movpag #edspage(_video_buffer), DSWPAG
     mov.b _bg_color, WREG
     and #0xf, W0
     sl W0,#4,W1

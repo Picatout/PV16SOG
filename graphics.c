@@ -126,17 +126,6 @@ void draw_rect(int x1, int y1, int x2, int y2, color_t color){
     }
 }//f()
 
-//void draw_pixel(unsigned x, unsigned y, color_t color){
-//    if (x>=HRES || y>=VRES) return;
-//    if (x&1){
-//        video_buffer[y*BPL+(x>>1)]&=0xf0;
-//        video_buffer[y*BPL+(x>>1)]|=color&0xf;
-//    }else{
-//        video_buffer[y*BPL+(x>>1)]&=0xf;
-//        video_buffer[y*BPL+(x>>1)]|=(color&0xf)<<4;
-//    }
-//}//f
-
 bool draw_sprite(int x, int y, int width, int height, const uint8_t* sprite){
     bool collision=false;
     int c,r, sprt_w,xp,yp;
