@@ -1219,6 +1219,8 @@ static void cmd_del(){ // efface un fichier
     int count=0;
     filter_t filter;
     char target[32];
+    char key;
+    int err;
     
     filter.subs=target;
     set_filter(&filter);
@@ -1229,10 +1231,17 @@ static void cmd_del(){ // efface un fichier
             filter_accept(&filter,dir_entry.long_name)){
             print("delete ");
             print(dir_entry.long_name);
-            if (toupper(prompt(" (y/n)","yn"))=='Y'){
+            key=toupper(prompt(" (y/n)","yn"));
+            if (key==ESC) break;
+            if (key=='Y'){
                 fs_delete_file(dir_entry.long_name);
-                count++;
-                new_line();
+                if ((err=fs_last_error())==eERR_NONE){
+                    count++;
+                    new_line();
+                }else{
+                    error(err);
+                    break;
+                }
             }
         }//if
     }//while
@@ -1466,6 +1475,7 @@ static void cmd_clear(){
 
 
 static void cmd_reboot(){
+    fat_close_all_files();
     asm("reset");
 }//f()
 

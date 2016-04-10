@@ -179,8 +179,8 @@ void kbd_init(){
     IPC6bits.T4IP=2;
     // TCKPS 1:8
     KBD_TCON|=(1<<15)+(1<<4);
-    // période  7,5 msec. 
-    KBD_TMR_PER=65535;
+    // période  7 msec. 
+    KBD_TMR_PER= (FCY/8/1000*7)-1;
     
 }//f();
 

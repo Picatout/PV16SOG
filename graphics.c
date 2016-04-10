@@ -126,33 +126,46 @@ void draw_rect(int x1, int y1, int x2, int y2, color_t color){
     }
 }//f()
 
+//void draw_pixel(unsigned x, unsigned y, color_t color){
+//    if (x>=HRES || y>=VRES) return;
+//    if (x&1){
+//        video_buffer[y*BPL+(x>>1)]&=0xf0;
+//        video_buffer[y*BPL+(x>>1)]|=color&0xf;
+//    }else{
+//        video_buffer[y*BPL+(x>>1)]&=0xf;
+//        video_buffer[y*BPL+(x>>1)]|=(color&0xf)<<4;
+//    }
+//}//f
+
 bool draw_sprite(int x, int y, int width, int height, const uint8_t* sprite){
     bool collision=false;
-    int b,c,r, sprt_w;
-    color_t scr_pixel,pixel_color;
+    int c,r, sprt_w,xp,yp;
+    color_t b, scr_pixel,pixel_color;
     
     sprt_w=width>>1;
     if (width&1) sprt_w++;
     for (r=0;r<height;r++){
-        if ((r+y)<0) continue;
-        if ((r+y)>=VRES) break;
+        yp=r+y;
+        if (yp<0) continue;
+        if (yp>=VRES) break;
         for (c=0;c<width;c++){
-            if ((c+x)<0)continue;
-            if ((c+x)>=HRES) break;
-            if ((c+x)&1){
-                scr_pixel=video_buffer[(r+y)*BPL+((c+x)>>1)]&0xf;
+            xp=c+x;
+            if (xp<0)continue;
+            if (xp>=HRES) break;
+            if (xp&1){
+                scr_pixel=video_buffer[yp*BPL+(xp>>1)]&0xf;
             }else{
-                scr_pixel=(video_buffer[(r+y)*BPL+((c+x)>>1)]>>4);
+                scr_pixel=video_buffer[yp*BPL+(xp>>1)]>>4;
             }
             b=sprite[(sprt_w*r)+(c>>1)]; 
             if (c&1){
                 pixel_color=b&0xf;
             }else{
-                pixel_color=(b>>4)&0xf;
+                pixel_color=(b>>4);
             }
             scr_pixel ^= pixel_color;
-            collision = collision || !((pixel_color==bg_color) || ((pixel_color^scr_pixel)==bg_color));
-            draw_pixel(c+x,r+y,scr_pixel);
+            collision = collision || !((scr_pixel==bg_color) || ((scr_pixel^bg_color)==pixel_color));
+            draw_pixel(xp,yp,scr_pixel);
         }
     }
     return collision;

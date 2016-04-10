@@ -990,8 +990,7 @@ _interpret:
     mov.D fp, [W15++]
     mov DSRPAG, _page
     mov W0, ip // ip
-    mov #edspage(words),W0
-    mov W0, DSRPAG
+    movpag #edspage(words),DSRPAG
     mov #edsoffset(words),wp
     mov #_dstack,dsp   // pointeur pile arguments
     mov.b _dsp,WREG
@@ -1015,8 +1014,7 @@ trace_on:
     mov #SRAM_SIZE-2,W0
     mov ip, W1
     callxfunc _sram_write_word
-    mov.b [ip++],W0
-    ze W0,W0
+    ze [ip++],W0
     sl W0,W0
     mov [wp+W0],W0
     rcall W0
@@ -1028,8 +1026,7 @@ trace_on:
     rcall _cls
     mov #SRAM_SIZE-2,W0
     rcall _sram_read_word
-    mov.b [W0],W0
-    ze W0,W0
+    ze [W0],W0
     rcall dotW0
     rcall dots
     rcall _prompt_continue
@@ -1039,8 +1036,7 @@ trace_on:
     bra trace_on
     //interpréteur
 trace_off:
-    mov.b [ip++],W0
-    ze W0,W0
+    ze [ip++],W0
     sl W0,W0
     mov [wp+W0],W0
     call W0

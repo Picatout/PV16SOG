@@ -57,6 +57,7 @@
 #include "TVout.h"
 #include "tones.h"
 #include "../stackvm.h"
+#include "../FAT/fat.h"
 
 #define BREAK_CODE 0xF0
 #define XTD_CODE  0xE0
@@ -369,6 +370,7 @@ _ISR_NAPSV  void _T4Interrupt(){
                     break;
                 case DEL:
                     if ((key_state & (F_LALT|F_LCTRL))==(F_LALT|F_LCTRL)){
+                        fat_close_all_files();
                         asm("reset");
                     }
                 default:

@@ -56,7 +56,7 @@
 
 .text 
     
-.global _set_pixel, _draw_pixel
+.global _set_pixel,  _draw_pixel
  _set_pixel: ; ( x,y,color -- )
     mov [dsp--],W2 ; couleur
     mov [dsp--],W1 ; y
@@ -64,8 +64,8 @@
 _draw_pixel:
     push DSRPAG
     push DSWPAG
-    movpag #1, DSRPAG
-    movpag #1, DSWPAG
+    movpag #edspage(_video_buffer), DSRPAG
+    movpag #edspage(_video_buffer), DSWPAG
     cp W1, #YRES
     bra geu, 2f
     cp W0, #XRES
@@ -395,7 +395,6 @@ _vm_line: ; ( x0 y0 x1 y1 c -- )
     
 .global _vm_sprite
 _vm_sprite: ; ( x y w h sprite* -- )
-    push W4
     mov [dsp--],W4
     mov [dsp--],W3
     mov [dsp--],W2
@@ -403,7 +402,6 @@ _vm_sprite: ; ( x y w h sprite* -- )
     mov [dsp--],W0
     callxfunc _draw_sprite
     mov W0,[++dsp]
-    pop W4
     return
     
 .global _box

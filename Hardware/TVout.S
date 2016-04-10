@@ -321,14 +321,14 @@ __OC2Interrupt:
     push W4
     push RCOUNT
     push DSRPAG
-    movpag #1, DSRPAG
+    movpag #edspage(_video_buffer), DSRPAG
     ; calcul adresse de départ
     mov _top_line, WREG
     mov line_count, W2
     sub W2, W0,W2
     mov #BPL, W3
     mul.uu W2,W3, W0
-    mov #_video_buffer, W1
+    mov #edsoffset(_video_buffer), W1
     add W0, W1, W1
     mov LATB, W3
     mov #0xfff0, W2
