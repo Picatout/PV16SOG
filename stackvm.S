@@ -105,8 +105,10 @@ _vm_exit_code:  ; code de sortie de la machine virtuelle
 .space 2
 
 .global _pause_timer
-_pause_timer: .space 2  
-    
+_pause_timer: .space 2
+ 
+last_bytecode: .space 2
+ 
 .text
     
 //*********************
@@ -844,12 +846,13 @@ enter: // ( --  )
     mov.b [ip++],W0
     swap W0
     mov ip, [++rsp]
-    add W0,W1,ip
+    add W0,W1,W0
+    mov [W0],ip
     return
 
 // sortie sous-routine
 leave: // (R: link -- )
-    mov.b [W6++],W0
+    mov.b [ip++],W0
     ze W0,W0
     sl W0,W0
     sub dsp,W0,dsp
@@ -932,28 +935,22 @@ _interpret:
     bra z, trace_off
     // interpréteur mode trace
 trace_on:
-    mov #SRAM_SIZE-2,W0
-    mov ip, W1
-    callxfunc _sram_write_word
     ze [ip++],W0
+    mov W0, last_bytecode
     sl W0,W0
     mov [wp+W0],W0
-    rcall W0
+    call W0
     rcall dstack_bound_check
     rcall rstack_bound_check
-    saveregs
-    mov #SRAM_SIZE-2-(XRES/2)*YRES,W0
-    rcall _save_screen
+    mov #SRAM_SIZE-(XRES/2)*YRES,W0
+    callxfunc _save_screen
     rcall _cls
-    mov #SRAM_SIZE-2,W0
-    rcall _sram_read_word
-    ze [W0],W0
+    mov last_bytecode,W0
     rcall dotW0
     rcall dots
-    rcall _prompt_continue
-    mov #SRAM_SIZE-2-(XRES/2)*YRES,W0
+    callxfunc _prompt_continue
+    mov #SRAM_SIZE-(XRES/2)*YRES,W0
     callxfunc _restore_screen
-    restregs
     bra trace_on
     //interpréteur
 trace_off:

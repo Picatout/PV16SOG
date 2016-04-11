@@ -64,8 +64,8 @@ extern "C"{
     
 #define CELL_SIZE 2 // 2 octets.
 
-#define DSTACK_SIZE (64)
-#define RSTACK_SIZE (32)
+#define DSTACK_SIZE (128)
+#define RSTACK_SIZE (64)
 
     
 

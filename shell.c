@@ -935,8 +935,8 @@ static void factor(){
                         litc(0);
                         parse_arg_list(*((uint8_t*)(var->adr+1)));
                         bytecode(CALL);
-                        bytecode(low((uint16_t)var->adr));
-                        bytecode(high((uint16_t)var->adr));
+                        bytecode(low((uint16_t)&var->adr));
+                        bytecode(high((uint16_t)&var->adr));
                         break;
                     case eLCVAR:
                         bytecode(LCFETCH);
@@ -1921,6 +1921,14 @@ static void kw_bye(){
 // utilisé dans les fonctions
 static void kw_return(){
         expression();
+        bytecode(LCSTORE);
+        bytecode(0);
+       bytecode(LEAVE);
+        if (globals>varlist){
+            bytecode(varlist->n);
+        }else{
+            bytecode(0);
+        }
 }//f
 
 // CLS [color]
@@ -1988,18 +1996,22 @@ static void kw_else(){
 //déplace le code des sous-routine
 //à la fin de l'espace libre
 static void movecode(var_t *var){
-    uint16_t pos,size;
-    void *adr;
+    uint16_t size;
+    void *pos, *adr;
     
-    pos=(uint16_t)var->n;
-    size=(uint16_t)dp-pos;
+    pos=var->adr;
+    size=(uint16_t)&progspace[dp]-(uint16_t)pos;
     if (size&1) size++;
     adr=endmark-size;
-    memmove(adr,(void*)&progspace[pos],size);
+    memmove(adr,pos,size);
     endmark=adr;
-    dp=pos;
+    dp=(uint8_t*)pos-(uint8_t*)progspace;
     memset(&progspace[dp],0,size);
     var->adr=adr; 
+//    {
+//    int i;
+//    for (i=0;i<size;i++) print_int(*(uint8_t*)adr++,4);
+//    }
 }//f
 
 // END [IF|SUB|FUNC|SELECT]  termine les blocs conditionnels.
@@ -2719,7 +2731,7 @@ static void subrtn_create(int var_type, int blockend){
     if (var) throw(eERR_REDEF);
     var=var_create(token.str,NULL);
     var->vtype=var_type;
-    var->n=dp;
+    var->adr=(void*)&progspace[dp];
     globals=varlist;
     var_local=true;
     rstack[++rsp]=(uint16_t)endmark;
@@ -2749,7 +2761,7 @@ static void kw_sub(){
 // pour le débogage
 // expression -> 0|1 {off|on}
 static void kw_trace(){
-    parse_arg_list(1);
+    parse_arg_list(1); 
     bytecode(TRACE);
 }//f
 
@@ -2774,8 +2786,8 @@ void compile(){
                     adr=(uint16_t)var->adr;
                     parse_arg_list(*((uint8_t*)(adr+1)));
                     bytecode(CALL);
-                    bytecode(low(adr));
-                    bytecode(high(adr));
+                    bytecode(low((uint16_t)&var->adr));
+                    bytecode(high((uint16_t)&var->adr));
                 }else{
                     unget_token=true;
                     kw_let();
