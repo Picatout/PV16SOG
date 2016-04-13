@@ -136,12 +136,13 @@ extern void pause(uint16_t msec);
 #define SHL (SHR+1)
 #define SQRT (SHL+1)
 #define EQUAL (SQRT+1)
-#define GT (EQUAL+1)
+#define NOTEQUAL (EQUAL+1)
+#define GT (NOTEQUAL+1)
 #define GE (GT+1)
 #define LT (GE+1)
 #define LE (LT+1)
-#define BRANCH (LE+1)
-#define ZBRANCH (BRANCH+1)      //50
+#define BRANCH (LE+1)  //50
+#define ZBRANCH (BRANCH+1)    
 #define NZBRANCH (ZBRANCH+1)
 #define CALL (NZBRANCH+1)
 #define LEAVE (CALL+1)
@@ -150,8 +151,8 @@ extern void pause(uint16_t msec);
 #define SAVESTEP (DOTS+1)
 #define SAVELIMIT (SAVESTEP+1)
 #define NEXT (SAVELIMIT+1)
-#define BTEST (NEXT+1)
-#define ALLOC (BTEST+1)     //60
+#define BTEST (NEXT+1) //60
+#define ALLOC (BTEST+1)     
 #define LCSTORE (ALLOC+1)
 #define LCFETCH (LCSTORE+1)
 #define LCADR (LCFETCH+1)
@@ -160,8 +161,8 @@ extern void pause(uint16_t msec);
 #define IDLE (LCVARSPACE+1)
 #define JSTICK (IDLE+1)
 #define SETPIXEL (JSTICK+1)
-#define GETPIXEL (SETPIXEL+1)   
-#define INT (GETPIXEL+1)    //70
+#define GETPIXEL (SETPIXEL+1) //70   
+#define INT (GETPIXEL+1)    
 #define XORPIXEL (INT+1)
 #define SCRLUP (XORPIXEL+1)
 #define SCRLDN (SCRLUP+1)
@@ -170,13 +171,18 @@ extern void pause(uint16_t msec);
 #define LINE (SCRLLT+1)
 #define SPRITE (LINE+1)
 #define OR (SPRITE+1)
-#define XOR (OR+1)
-#define AND (XOR+1)     //80
+#define XOR (OR+1)    //80
+#define AND (XOR+1)     
 #define TRACE (AND+1)
 #define ROT (TRACE+1)
 #define BOX (ROT+1)
 #define KEY (BOX+1)
 #define RECT (KEY+1)
+#define OPEN (RECT+1)
+#define CLOSE (OPEN+1)
+#define WRITE (CLOSE+1)
+#define READ (WRITE+1) //90
+#define SEEK (READ+1)
 
 #ifdef __asm
 

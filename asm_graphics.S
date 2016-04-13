@@ -363,6 +363,8 @@ _vm_sprite: ; ( x y w h sprite* -- )
     
 _box: ; ( x0,y0,w,h,c -- )  coin supérieur-gauche, largeur, hauteur, couleur
     ; ajuste frame pour les arguments
+    mov CNTR, [++rsp]
+    mov LIMIT,[++rsp]
     mov fp, [++rsp]
     mov dsp, fp
     mov #4*CELL_SIZE, W0
@@ -414,6 +416,8 @@ row_completed:
 box_completed:    
     ; jette arguments et variables locales
     mov [rsp--],fp
+    mov [rsp--],LIMIT
+    mov [rsp--],CNTR
     mov #5*CELL_SIZE,W0
     sub dsp,W0,dsp
     return

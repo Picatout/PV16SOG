@@ -142,8 +142,9 @@ typedef struct _var{
     };
 }var_t;
 
-typedef enum {eNONE,eNL,eCOLON,eIDENT,eNUMBER,eVAR_STRING,ePLUS,eMINUS,eMUL,eDIV,
-              eMOD,eCOMMA,eLPAREN,eRPAREN,eSEMICOL,eEQUAL,eGT,eGE,eLT,eLE,
+// type d'unité lexicales
+typedef enum {eNONE,eNL,eCOLON,eIDENT,eNUMBER,eSTRING,ePLUS,eMINUS,eMUL,eDIV,
+              eMOD,eCOMMA,eLPAREN,eRPAREN,eSEMICOL,eEQUAL,eNOTEQUAL,eGT,eGE,eLT,eLE,
               eEND, eELSE,eCMD,eKWORD,eCHAR} tok_id_t;
 
 
@@ -200,13 +201,13 @@ static void kw_btest();
 static void kw_bye();
 static void kw_case();
 static void kw_cls();
+static void kw_close();
 static void kw_color();
 static void kw_const();
 static void kw_dim();
 static void kw_do();
 static void kw_else();
 static void kw_end();
-//static void kw_exec();
 static void kw_for();
 static void kw_func();
 static void kw_getpixel();
@@ -220,9 +221,11 @@ static void kw_locate();
 static void kw_loop();
 static void kw_next();
 static void kw_noise();
+static void kw_open();
 static void kw_pause();
 static void kw_print();
 static void kw_putc();
+static void kw_read();
 static void kw_read_jstick();
 static void kw_rect();
 static void kw_ref();
@@ -233,6 +236,7 @@ static void kw_scrlup();
 static void kw_scrldown();
 static void kw_scrlright();
 static void kw_scrlleft();
+static void kw_seek();
 static void kw_select();
 static void kw_setpixel();
 static void kw_set_timer();
@@ -249,18 +253,19 @@ static void kw_use();
 static void kw_waitkey();
 static void kw_wend();
 static void kw_while();
+static void kw_write();
 static void kw_xorpixel();
 
 //identifiant KEYWORD doit-être dans le même ordre que
 //dans la liste KEYWORD
-enum {eKW_ABS,eKW_AND,eKW_BEEP,eKW_BOX,eKW_BTEST,eKW_BYE,eKW_CASE,eKW_CLS,eKW_COLOR,
+enum {eKW_ABS,eKW_AND,eKW_BEEP,eKW_BOX,eKW_BTEST,eKW_BYE,eKW_CASE,eKW_CLOSE,eKW_CLS,eKW_COLOR,
       eKW_CONST,eKW_DIM,eKW_DO,eKW_ELSE,
       eKW_END,eKW_FOR,eKW_FUNC,eKW_GETPIXEL,eKW_IF,eKW_INPUT,eKW_KEY,
-      eKW_LET,eKW_LINE,eKW_LOCAL,eKW_LOCATE,eKW_LOOP,eKW_NEXT,eKW_NOISE,eKW_NOT,eKW_OR,eKW_PAUSE,
-      eKW_PRINT,eKW_PUTC,eKW_JSTICK,eKW_RECT,eKW_REF,eKW_REM,eKW_RETURN,eKW_RND,eKW_SCRLUP,eKW_SCRLDN,
-      eKW_SCRLRT,eKW_SCRLFT,eKW_SELECT,eKW_SETPIXEL,eKW_SETTMR,eKW_SHL,eKW_SHR,
+      eKW_LET,eKW_LINE,eKW_LOCAL,eKW_LOCATE,eKW_LOOP,eKW_NEXT,eKW_NOISE,eKW_NOT,eKW_OPEN,eKW_OR,eKW_PAUSE,
+      eKW_PRINT,eKW_PUTC,eKW_JSTICK,eKW_READ,eKW_RECT,eKW_REF,eKW_REM,eKW_RETURN,eKW_RND,eKW_SCRLUP,eKW_SCRLDN,
+      eKW_SCRLRT,eKW_SCRLFT,eKW_SEEK,eKW_SELECT,eKW_SETPIXEL,eKW_SETTMR,eKW_SHL,eKW_SHR,
       eKW_SPRITE,eKW_SUB,eKW_THEN,eKW_TICKS,
-      eKW_TIMEOUT,eKW_TONE,eKW_TRACE,eKW_USE,eKW_WAITKEY,eKW_WEND,eKW_WHILE,eKW_XORPIXEL
+      eKW_TIMEOUT,eKW_TONE,eKW_TRACE,eKW_USE,eKW_WAITKEY,eKW_WEND,eKW_WHILE,eKW_WRITE,eKW_XORPIXEL
 };
 
 //mots réservés BASIC
@@ -272,6 +277,7 @@ __eds__ static const dict_entry_t __attribute__((space(prog))) KEYWORD[]={
     {kw_btest,5+FUNCTION,"BTEST"},
     {kw_bye,3,"BYE"},
     {kw_case,4,"CASE"},
+    {kw_close,5,"CLOSE"},
     {kw_cls,3+AS_HELP,"CLS"},
     {kw_color,5+AS_HELP,"COLOR"},
     {kw_const,5,"CONST"},
@@ -279,7 +285,6 @@ __eds__ static const dict_entry_t __attribute__((space(prog))) KEYWORD[]={
     {kw_do,2,"DO"},
     {kw_else,4,"ELSE"},
     {kw_end,3,"END"},
-//    {kw_exec,4,"EXEC"},
     {kw_for,3,"FOR"},
     {kw_func,4,"FUNC"},
     {kw_getpixel,8+FUNCTION,"GETPIXEL"},
@@ -294,11 +299,13 @@ __eds__ static const dict_entry_t __attribute__((space(prog))) KEYWORD[]={
     {kw_next,4,"NEXT"},
     {kw_noise,5,"NOISE"},
     {bad_syntax,3,"NOT"},
+    {kw_open,4+FUNCTION,"OPEN"},
     {bad_syntax,2,"OR"},
     {kw_pause,5,"PAUSE"},
     {kw_print,5,"PRINT"},
     {kw_putc,4,"PUTC"},
     {kw_read_jstick,6+FUNCTION,"JSTICK"},
+    {kw_read,4+FUNCTION,"READ"},
     {kw_rect,4,"RECT"},
     {kw_ref,1+FUNCTION,"@"},
     {kw_rem,3,"REM"},
@@ -308,6 +315,7 @@ __eds__ static const dict_entry_t __attribute__((space(prog))) KEYWORD[]={
     {kw_scrldown,6,"SCRLDN"},
     {kw_scrlright,6,"SCRLRT"},
     {kw_scrlleft,6,"SCRLLT"},
+    {kw_seek,4+FUNCTION,"SEEK"},
     {kw_select,6,"SELECT"},
     {kw_setpixel,8,"SETPIXEL"},
     {kw_set_timer,6,"SETTMR"},
@@ -324,6 +332,7 @@ __eds__ static const dict_entry_t __attribute__((space(prog))) KEYWORD[]={
     {kw_waitkey,7+FUNCTION,"WAITKEY"},
     {kw_wend,4,"WEND"},
     {kw_while,5,"WHILE"},
+    {kw_write,4,"WRITE"},
     {kw_xorpixel,8,"XORPIXEL"},
     {NULL,0,""}
 };
@@ -402,7 +411,7 @@ void throw(int error){
         case eNL:
             print("unspected end of line.");
             break;
-        case eVAR_STRING:
+        case eSTRING:
         case eIDENT:
             print(token.str);
             break;
@@ -554,7 +563,7 @@ static void parse_string(){
     } else{
         throw(eERR_SYNTAX);
     }
-	token.id=eVAR_STRING;
+	token.id=eSTRING;
 }//f()
 
 
@@ -685,6 +694,10 @@ static void next_token(){
                     token.id=eGE;
                 token.str[1]='=';
                 token.str[2]=0;
+                }else if (c=='<'){
+                    token.id=eNOTEQUAL;
+                    token.str[1]='<';
+                    token.str[2]=0;
                 }else{
                     token.id=eGT;
                     token.str[1]=0;
@@ -698,6 +711,10 @@ static void next_token(){
                     token.id=eLE;
                 token.str[1]='=';
                 token.str[2]=0;
+                }else if (c=='>'){
+                    token.id=eNOTEQUAL;
+                    token.str[1]='<';
+                    token.str[2]=0;
                 }else{
                     token.id=eLT;
                     token.str[1]=0;
@@ -792,7 +809,7 @@ static void expect(tok_id_t t){
 
 static bool try_string(){
     next_token();
-    if (token.id==eVAR_STRING) return true;
+    if (token.id==eSTRING) return true;
     unget_token=true;
     return false;
 }//f
@@ -829,7 +846,7 @@ static void parse_filter(){
     }
     reader_ungetc(activ_reader);
     token.str[i]=0;
-    if (!i) token.id=eNONE; else token.id=eVAR_STRING;
+    if (!i) token.id=eNONE; else token.id=eSTRING;
 }//f
 
 static void set_filter(filter_t *filter){
@@ -1073,6 +1090,9 @@ static void condition(){
     switch(rel){
         case eEQUAL:
             bytecode(EQUAL);
+            break;
+        case eNOTEQUAL:
+            bytecode(NOTEQUAL);
             break;
         case eGT:
             bytecode(GT);
@@ -1442,7 +1462,7 @@ static void cmd_editor(){ // lance l'éditeur de texte
     parse_filter();
     if (token.id==eNONE){
         editor(NULL);
-    }else if (token.id==eVAR_STRING){
+    }else if (token.id==eSTRING){
         if (strchr(token.str,'*')) throw(eERR_BAD_ARG);
         editor(token.str);
     }
@@ -1594,7 +1614,7 @@ static void init_str_array(var_t *var){
     next_token();
     while(token.id!=eRPAREN){
         switch (token.id){
-            case eVAR_STRING: 
+            case eSTRING: 
                 if (state) throw(eERR_SYNTAX);
                 newstr=alloc_var_space(strlen(token.str)+1);
                 strcpy(newstr,token.str);
@@ -1692,7 +1712,7 @@ static void kw_dim(){
                 new_var=var_create(var_name,NULL);
                 if (new_var->vtype==eVAR_STR){
                     next_token();
-                    if (token.id!=eVAR_STRING) throw(eERR_BAD_ARG);
+                    if (token.id!=eSTRING) throw(eERR_BAD_ARG);
                     new_var->str=alloc_var_space(strlen(token.str)+1);
                     strcpy((char*)new_var->str,token.str);
                 }else{
@@ -1796,7 +1816,7 @@ static void kw_const(){
         expect(eEQUAL);
         var=var_create(name,NULL);
         if (var->vtype==eVAR_STR){
-            expect(eVAR_STRING);
+            expect(eSTRING);
             var->str=alloc_var_space(strlen(token.str)+1);
             strcpy(var->str,token.str);
         }else{
@@ -2366,6 +2386,33 @@ static void kw_loop(){
     complevel--;
 }//f
 
+//OPEN file_name as varname
+//ouvre un fichier, varname contient le handle du fichier
+static void kw_open(){
+    var_t *var;
+    expect(eSTRING); // nom du fichier
+    var=var_search(token.str);
+    if (var) throw(eERR_BAD_ARG);
+    
+}//f
+
+static void kw_close(){
+    
+}//f
+
+static void kw_write(){
+    
+}//f
+
+static void kw_read(){
+    
+}//f
+
+static void kw_seek(){
+    
+}//f
+
+
 // compile le calcul d'indice dans les variables vecteur
 static void code_array_address(var_t *var){
     expression();
@@ -2391,7 +2438,7 @@ static void array_let(char * name){
     expect(eEQUAL);
     switch (var->vtype){
         case eVAR_STRARRAY:
-            expect(eVAR_STRING);
+            expect(eSTRING);
             adr=(char*)alloc_var_space(strlen(token.str)+1);
             strcpy(adr,token.str);
             lit((uint16_t)adr);
@@ -2471,7 +2518,7 @@ static void kw_input(){
     var_t *var;
     
     next_token();
-    if (token.id==eVAR_STRING){
+    if (token.id==eSTRING){
         if ((((void*)&progspace[dp])+strlen(token.str)+2)>=endmark) throw(eERR_MEM);
         bytecode(PRTSTR);
         strcpy((char*)&progspace[dp],token.str);
@@ -2608,7 +2655,7 @@ static void kw_let(){
             expect(eEQUAL);
             if (name[strlen(name)-1]=='$'){
                 if (var->str) throw(eERR_ASSIGN);
-                expect(eVAR_STRING);
+                expect(eSTRING);
                 var->str=alloc_var_space(strlen(token.str)+1);
                 strcpy(var->str,token.str);
             }else{

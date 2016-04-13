@@ -143,8 +143,11 @@ _beep:
     dec W0,W0
     mov W0, AUDIO_R
     mov W0, AUDIO_RS
+    cp0 _tone_len
+    bra z, 2f
     mov #TOGGLE_MODE, W0
     ior AUDIO_OCCON1
+2:
     mov W5, _tone_len
     cp0 W2
     bra z, 1f

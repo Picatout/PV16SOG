@@ -719,57 +719,68 @@ read_stick: //( -- n )
 
 // n1==n2
 isequal:// ( n1 n2 -- flag )
-    clr W2
+    clr W1
     mov [dsp--],W0
-    mov [dsp],W1
-    cp W1,W0
+    cp W0,[dsp]
     bra nz, 1f
-    setm W2
-    1: mov W2,[dsp]
+    setm W1
+1:  
+    mov W1,[dsp]
     return
 
+// n1!=n2
+isnotequal:
+    clr W1
+    mov [dsp--],W0
+    cp W0,[dsp]
+    bra z, 1f
+    setm W1
+1:
+    mov W1,[dsp]
+    return
+    
 // n1>n2
 isgreater: // ( n1 n2 -- flag )
-    clr W2
+    setm W1
     mov [dsp--],W0
-    mov [dsp],W1
-    cp W1,W0
-    bra le, 1f
-    setm W2
-    1: mov W2,[dsp]
+    cp W0,[dsp]
+    bra n, 1f
+    clr W1
+1: 
+    mov W1,[dsp]
     return
 
 // n1>=n2
 isgrequal: // ( n1 n2 -- flag )
-    clr W2
+    setm W1
     mov [dsp--],W0
-    mov [dsp],W1
-    cp W1,W0
-    bra lt, 1f
-    setm W2
-    1: mov W2,[dsp]
+    cp W0,[dsp]
+    bra le, 1f
+    clr W1
+1: 
+    mov W1,[dsp]
     return
 
 // n1<n2
 islittlethan: // ( n1 n2 -- flag)    
-    clr W2
+    setm W1
     mov [dsp--],W0
-    mov [dsp],W1
-    cp W1,W0
-    bra ge, 1f
-    setm W2
-    1: mov W2,[dsp]
+    cp W0,[dsp]
+    bra gt, 1f
+    clr W1
+1:
+    mov W1,[dsp]
     return
 
 // n1<=n2
 isltequal: // ( n1 n2 -- flag )
-    clr W2
+    setm W1
     mov [dsp--],W0
-    mov [dsp],W1
-    cp W1,W0
-    bra gt, 1f
-    setm W2
-    1: mov W2,[dsp]
+    cp W0,[dsp]
+    bra ge, 1f
+    clr W1
+1: 
+    mov W1,[dsp]
     return
 
 //**************************
@@ -859,7 +870,36 @@ leave: // (R: link -- )
     mov [rsp--],fp
     mov [rsp--],ip
     return
+;***********************
+;  accès fichiers
+;***********************
 
+; ouverture d'un fichier
+vm_fopen: ; ( char* -- handle|NULL )
+    
+    return
+    
+; fermeture d'un fichier    
+vm_fclose:; ( handle  -- )
+    
+    return
+    
+; écriture d'un buffer dans un fichier
+vm_fwrite:; ( buffer size handle -- result_code)
+    
+    return
+
+; lecture d'un bloc d'octet d'un fihcier    
+vm_fread: ; ( buffer size hanle -- count )
+    
+    return
+
+; positionnement dans le fichier    
+vm_fseek: ; ( handle position -- position )
+    
+    return
+    
+    
 bye: // ( -- )
     sub #4,W15
     bra vm_quit
@@ -909,11 +949,12 @@ words:
 .word _vm_beep,_tone,vm_ticks,set_tmr,timeout,vm_noise,_cls,vm_locate,vm_back_color,vm_font_color
 .word emit,dot,wait_key,type,accept,space,_new_line,prt_str,lit,litc
 .word fetch,fetchc,store,storec,negate,not,vm_add,vm_sub,vm_mul,divide
-.word mod,shr,shl,sqroot,isequal,isgreater,isgrequal,islittlethan,isltequal,branch
-.word zerobranch,nzbranch,enter,leave,str_copy,dots,savestep,savelimit,for_next,btest
-.word alloc,local_store,local_fetch,local_address,frame,local_var,vm_pause,read_stick,_set_pixel,_vm_get_pixel
-.word to_int,_vm_xor_pixel,_vm_scroll_up,_vm_scroll_down,_vm_scroll_right,_vm_scroll_left,_vm_line,_vm_sprite,vm_ior,vm_xor
-.word vm_and,trace,rot,_box,key,_vm_rect
+.word mod,shr,shl,sqroot,isequal,isnotequal,isgreater,isgrequal,islittlethan,isltequal
+.word branch,zerobranch,nzbranch,enter,leave,str_copy,dots,savestep,savelimit,for_next
+.word btest,alloc,local_store,local_fetch,local_address,frame,local_var,vm_pause,read_stick,_set_pixel
+.word _vm_get_pixel,to_int,_vm_xor_pixel,_vm_scroll_up,_vm_scroll_down,_vm_scroll_right,_vm_scroll_left,_vm_line,_vm_sprite,vm_ior
+.word vm_xor,vm_and,trace,rot,_box,key,_vm_rect,vm_fopen,vm_fclose,vm_fwrite
+.word vm_fread,vm_fseek
     
 .global _interpret
 _interpret:
