@@ -56,14 +56,14 @@
  */
 /*
  *   utilisation des registres
- *   W4  step
- *   W5  limit
  *   W6  ip
  *   W7  pointeur words
  *   W8  pointeur dstack
  *   W9  pointeur rstack
  *   W10 pointeur frame
  *   W11 valeur DSRPAG avant appel interpréteur
+ *   W12  step
+ *   W13  limit
   */
 
 .include "p24EP512MC202.inc"  
@@ -898,6 +898,29 @@ vm_fread: ; ( buffer size hanle -- count )
 vm_fseek: ; ( handle position -- position )
     
     return
+
+; met à zéro un bloc de SPIRAM
+sr_clear: ; ( adr size -- )
+    mov [dsp--],W1
+    mov [dsp--],W0
+    callxfunc _sram_clear_block
+    return
+
+; lecture d'un bloc de mémoire SPIRAM
+sr_read: ; ( adr buffer size -- )
+    mov [dsp--],W2
+    mov [dsp--],W1
+    mov [dsp--],W0
+    callxfunc _sram_read_block
+    return
+
+; copie d'une variable dans le mémoire SPIRAM    
+sr_write: ; ( adr buffer size -- )
+    mov [dsp--],W2
+    mov [dsp--],W1
+    mov [dsp--],W0
+    callxfunc _sram_write_block
+    return
     
     
 bye: // ( -- )
@@ -954,7 +977,7 @@ words:
 .word btest,alloc,local_store,local_fetch,local_address,frame,local_var,vm_pause,read_stick,_set_pixel
 .word _vm_get_pixel,to_int,_vm_xor_pixel,_vm_scroll_up,_vm_scroll_down,_vm_scroll_right,_vm_scroll_left,_vm_line,_vm_sprite,vm_ior
 .word vm_xor,vm_and,trace,rot,_box,key,_vm_rect,vm_fopen,vm_fclose,vm_fwrite
-.word vm_fread,vm_fseek
+.word vm_fread,vm_fseek,sr_clear,sr_read,sr_write
     
 .global _interpret
 _interpret:

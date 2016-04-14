@@ -243,6 +243,9 @@ static void kw_set_timer();
 static void kw_shl();
 static void kw_shr();
 static void kw_sprite();
+static void kw_srclear();
+static void kw_srread();
+static void kw_srwrite();
 static void kw_sub();
 static void kw_then();
 static void kw_ticks();
@@ -264,7 +267,7 @@ enum {eKW_ABS,eKW_AND,eKW_BEEP,eKW_BOX,eKW_BTEST,eKW_BYE,eKW_CASE,eKW_CLOSE,eKW_
       eKW_LET,eKW_LINE,eKW_LOCAL,eKW_LOCATE,eKW_LOOP,eKW_NEXT,eKW_NOISE,eKW_NOT,eKW_OPEN,eKW_OR,eKW_PAUSE,
       eKW_PRINT,eKW_PUTC,eKW_JSTICK,eKW_READ,eKW_RECT,eKW_REF,eKW_REM,eKW_RETURN,eKW_RND,eKW_SCRLUP,eKW_SCRLDN,
       eKW_SCRLRT,eKW_SCRLFT,eKW_SEEK,eKW_SELECT,eKW_SETPIXEL,eKW_SETTMR,eKW_SHL,eKW_SHR,
-      eKW_SPRITE,eKW_SUB,eKW_THEN,eKW_TICKS,
+      eKW_SPRITE,eKW_SRCLEAR,eKW_SRREAD,eKW_SRWRITE,eKW_SUB,eKW_THEN,eKW_TICKS,
       eKW_TIMEOUT,eKW_TONE,eKW_TRACE,eKW_USE,eKW_WAITKEY,eKW_WEND,eKW_WHILE,eKW_WRITE,eKW_XORPIXEL
 };
 
@@ -322,6 +325,9 @@ __eds__ static const dict_entry_t __attribute__((space(prog))) KEYWORD[]={
     {kw_shl,3+FUNCTION,"SHL"},
     {kw_shr,3+FUNCTION,"SHR"},
     {kw_sprite,6+FUNCTION,"SPRITE"},
+    {kw_srclear,7,"SRCLEAR"},
+    {kw_srread,6,"SRREAD"},
+    {kw_srwrite,7,"SRWRITE"},
     {kw_sub,3,"SUB"},
     {kw_then,4,"THEN"},
     {kw_ticks,5+FUNCTION,"TICKS"},
@@ -791,21 +797,6 @@ static void expect(tok_id_t t){
     next_token();
     if (token.id!=t) throw(eERR_SYNTAX);
 }
-
-//static bool try_colon(){
-//    next_token();
-//    if (token.id==eCOLON) return true;
-//    unget_token=true;
-//    return false;
-//}//f
-
-//static bool try_semicolon(){
-//    next_token();
-//    if (token.id==eSEMICOL) return true;
-//    unget_token=true;
-//    return false;
-//}//f()
-
 
 static bool try_string(){
     next_token();
@@ -1572,6 +1563,7 @@ static void init_int_array(var_t *var){
     next_token();
     while (token.id!=eRPAREN){
         switch (token.id){
+            case eCHAR:
             case eNUMBER: 
                 if (state) throw(eERR_SYNTAX);
                 if (var->vtype==eVAR_INTARRAY){
@@ -2412,6 +2404,27 @@ static void kw_seek(){
     
 }//f
 
+//SRCLEAR(address,size)
+//met à zéro un bloc de mémoire SPIRAM
+static void kw_srclear(){
+    parse_arg_list(2);
+    bytecode(SRCLEAR);
+}//f
+
+//SRREAD(address,@var,size)
+//lit un bloc de mémoire SPIRAM
+//dans une variable
+static void kw_srread(){
+    parse_arg_list(3);
+    bytecode(SRREAD);
+}//f
+
+//SRWRITE(address,@var,size)
+//copie le contenu d'une variable dans la SPIRAM
+static void kw_srwrite(){
+    parse_arg_list(3);
+    bytecode(SRWRITE);
+}//f
 
 // compile le calcul d'indice dans les variables vecteur
 static void code_array_address(var_t *var){

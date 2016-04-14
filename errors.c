@@ -66,7 +66,7 @@ __eds__ static const char*  __attribute__((space(prog))) ERR_MSG[]={
     "DMA excpetion.",
     "Math exception.",
     "Stack exception.",
-    "clavier PS/2 absent!",
+    "PS/2 keyboard not detected.",
 };
 
 
@@ -82,16 +82,4 @@ void error(err_code_t error_code){
     }
 }//f()
 
-extern void fs_umount();
-void fatal(err_code_t error_code){
-    char msg[40];
-    if (error_code){
-        new_line();
-        print("FATAL ERROR: ");
-        pstrcpy(msg,ERR_MSG[error_code]);
-        prompt(msg,"*");
-        fs_umount();
-        asm("reset");
-    }
-}
 

@@ -183,6 +183,9 @@ extern void pause(uint16_t msec);
 #define WRITE (CLOSE+1)
 #define READ (WRITE+1) //90
 #define SEEK (READ+1)
+#define SRCLEAR (SEEK+1)
+#define SRREAD (SRCLEAR+1)
+#define SRWRITE (SRREAD+1)
 
 #ifdef __asm
 

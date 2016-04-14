@@ -65,7 +65,7 @@ typedef enum ERROR_CODE {eERR_NONE,eERR_MEM,eERR_SDC,eERR_PARTITION,
 
 
 void error(err_code_t error_code);
-void fatal(err_code_t error_code);
+
 #ifdef	__cplusplus
 }
 #endif
