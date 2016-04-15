@@ -193,16 +193,16 @@ uint16_t fs_write_file(struct fat_file_struct *fh,const uint8_t* buffer, uint16_
     return count; 
 }//f()
 
-// charge le fichier dans la SRAM
+// charge le fichier dans la SPIRAM
 // retourne nombres d'octets
-uint16_t fs_load_file(const char *file,uint16_t sram_address, uint16_t maxsize){
+uint16_t fs_load_spiram(const char *file,uint16_t sram_address, uint16_t maxsize){
 #define BUFF_SIZE (64)
     uint16_t byte_count=0;
     int count;
     uint8_t buffer[BUFF_SIZE];
     struct fat_file_struct *fh;
 
-    
+    uppercase(file);
     fs_error=eERR_NONE;
     if ((fh=fs_open_file(file))){
         while((count = fat_read_file(fh,buffer, BUFF_SIZE))>-1){
@@ -219,6 +219,34 @@ uint16_t fs_load_file(const char *file,uint16_t sram_address, uint16_t maxsize){
     }
     return byte_count;
 }//f()
+
+// sauvegarde la RAM SPI dans un fichier.
+void fs_save_spiram(const char *file,uint16_t sram_address, uint16_t size){
+#define BUFF_SIZE (64)
+    uint8_t buffer[BUFF_SIZE];
+    uint16_t count;
+    struct fat_file_struct *fh;
+    intptr_t result;
+    fs_error=eERR_NONE;
+    uppercase(file);
+    fs_create_file(file);
+    if (fs_error==eERR_NONE && (fh=fs_open_file(file))){
+        while(fs_error==eERR_NONE && size){
+            count=min(size,BUFF_SIZE);
+            sram_read_block(sram_address,buffer,count);
+            size-=count;
+            sram_address+=count;
+            result=fat_write_file(fh,buffer,count);
+            if (result!=count){
+                fs_error=eERR_FILEWRITE;
+                break;
+            }
+        }
+        fat_close_file(fh);
+    }else{
+        fs_error=eERR_OPENFAIL;
+    }
+}//f
 
 err_code_t fs_read_dir(struct fat_dir_entry_struct *dir_entry){
     fs_error=eERR_NONE;

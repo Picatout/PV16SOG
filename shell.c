@@ -201,7 +201,6 @@ static void kw_btest();
 static void kw_bye();
 static void kw_case();
 static void kw_cls();
-static void kw_close();
 static void kw_color();
 static void kw_const();
 static void kw_dim();
@@ -214,6 +213,7 @@ static void kw_getpixel();
 static void kw_if();
 static void kw_input();
 static void kw_key();
+static void kw_len();
 static void kw_let();
 static void kw_line();
 static void kw_local();
@@ -221,11 +221,9 @@ static void kw_locate();
 static void kw_loop();
 static void kw_next();
 static void kw_noise();
-static void kw_open();
 static void kw_pause();
 static void kw_print();
 static void kw_putc();
-static void kw_read();
 static void kw_read_jstick();
 static void kw_rect();
 static void kw_ref();
@@ -236,7 +234,6 @@ static void kw_scrlup();
 static void kw_scrldown();
 static void kw_scrlright();
 static void kw_scrlleft();
-static void kw_seek();
 static void kw_select();
 static void kw_setpixel();
 static void kw_set_timer();
@@ -244,7 +241,9 @@ static void kw_shl();
 static void kw_shr();
 static void kw_sprite();
 static void kw_srclear();
+static void kw_srload();
 static void kw_srread();
+static void kw_srsave();
 static void kw_srwrite();
 static void kw_sub();
 static void kw_then();
@@ -256,19 +255,18 @@ static void kw_use();
 static void kw_waitkey();
 static void kw_wend();
 static void kw_while();
-static void kw_write();
 static void kw_xorpixel();
 
 //identifiant KEYWORD doit-être dans le même ordre que
 //dans la liste KEYWORD
-enum {eKW_ABS,eKW_AND,eKW_BEEP,eKW_BOX,eKW_BTEST,eKW_BYE,eKW_CASE,eKW_CLOSE,eKW_CLS,eKW_COLOR,
+enum {eKW_ABS,eKW_AND,eKW_BEEP,eKW_BOX,eKW_BTEST,eKW_BYE,eKW_CASE,eKW_CLS,eKW_COLOR,
       eKW_CONST,eKW_DIM,eKW_DO,eKW_ELSE,
-      eKW_END,eKW_FOR,eKW_FUNC,eKW_GETPIXEL,eKW_IF,eKW_INPUT,eKW_KEY,
-      eKW_LET,eKW_LINE,eKW_LOCAL,eKW_LOCATE,eKW_LOOP,eKW_NEXT,eKW_NOISE,eKW_NOT,eKW_OPEN,eKW_OR,eKW_PAUSE,
-      eKW_PRINT,eKW_PUTC,eKW_JSTICK,eKW_READ,eKW_RECT,eKW_REF,eKW_REM,eKW_RETURN,eKW_RND,eKW_SCRLUP,eKW_SCRLDN,
-      eKW_SCRLRT,eKW_SCRLFT,eKW_SEEK,eKW_SELECT,eKW_SETPIXEL,eKW_SETTMR,eKW_SHL,eKW_SHR,
-      eKW_SPRITE,eKW_SRCLEAR,eKW_SRREAD,eKW_SRWRITE,eKW_SUB,eKW_THEN,eKW_TICKS,
-      eKW_TIMEOUT,eKW_TONE,eKW_TRACE,eKW_USE,eKW_WAITKEY,eKW_WEND,eKW_WHILE,eKW_WRITE,eKW_XORPIXEL
+      eKW_END,eKW_FOR,eKW_FUNC,eKW_GETPIXEL,eKW_IF,eKW_INPUT,eKW_KEY,eKW_LEN,
+      eKW_LET,eKW_LINE,eKW_LOCAL,eKW_LOCATE,eKW_LOOP,eKW_NEXT,eKW_NOISE,eKW_NOT,eKW_OR,eKW_PAUSE,
+      eKW_PRINT,eKW_PUTC,eKW_JSTICK,eKW_RECT,eKW_REF,eKW_REM,eKW_RETURN,eKW_RND,eKW_SCRLUP,eKW_SCRLDN,
+      eKW_SCRLRT,eKW_SCRLFT,eKW_SELECT,eKW_SETPIXEL,eKW_SETTMR,eKW_SHL,eKW_SHR,
+      eKW_SPRITE,eKW_SRCLEAR,eKW_SRLOAD,eKW_SRREAD,eKW_SRSSAVE,eKW_SRWRITE,eKW_SUB,eKW_THEN,eKW_TICKS,
+      eKW_TIMEOUT,eKW_TONE,eKW_TRACE,eKW_USE,eKW_WAITKEY,eKW_WEND,eKW_WHILE,eKW_XORPIXEL
 };
 
 //mots réservés BASIC
@@ -280,7 +278,6 @@ __eds__ static const dict_entry_t __attribute__((space(prog))) KEYWORD[]={
     {kw_btest,5+FUNCTION,"BTEST"},
     {kw_bye,3,"BYE"},
     {kw_case,4,"CASE"},
-    {kw_close,5,"CLOSE"},
     {kw_cls,3+AS_HELP,"CLS"},
     {kw_color,5+AS_HELP,"COLOR"},
     {kw_const,5,"CONST"},
@@ -294,6 +291,7 @@ __eds__ static const dict_entry_t __attribute__((space(prog))) KEYWORD[]={
     {kw_if,2,"IF"},
     {kw_input,5,"INPUT"},
     {kw_key,3+FUNCTION,"KEY"},
+    {kw_len,3+FUNCTION,"LEN"},
     {kw_let,3,"LET"},
     {kw_line,4,"LINE"},
     {kw_local,5,"LOCAL"},
@@ -302,13 +300,11 @@ __eds__ static const dict_entry_t __attribute__((space(prog))) KEYWORD[]={
     {kw_next,4,"NEXT"},
     {kw_noise,5,"NOISE"},
     {bad_syntax,3,"NOT"},
-    {kw_open,4+FUNCTION,"OPEN"},
     {bad_syntax,2,"OR"},
     {kw_pause,5,"PAUSE"},
     {kw_print,5,"PRINT"},
     {kw_putc,4,"PUTC"},
     {kw_read_jstick,6+FUNCTION,"JSTICK"},
-    {kw_read,4+FUNCTION,"READ"},
     {kw_rect,4,"RECT"},
     {kw_ref,1+FUNCTION,"@"},
     {kw_rem,3,"REM"},
@@ -318,7 +314,6 @@ __eds__ static const dict_entry_t __attribute__((space(prog))) KEYWORD[]={
     {kw_scrldown,6,"SCRLDN"},
     {kw_scrlright,6,"SCRLRT"},
     {kw_scrlleft,6,"SCRLLT"},
-    {kw_seek,4+FUNCTION,"SEEK"},
     {kw_select,6,"SELECT"},
     {kw_setpixel,8,"SETPIXEL"},
     {kw_set_timer,6,"SETTMR"},
@@ -326,7 +321,9 @@ __eds__ static const dict_entry_t __attribute__((space(prog))) KEYWORD[]={
     {kw_shr,3+FUNCTION,"SHR"},
     {kw_sprite,6+FUNCTION,"SPRITE"},
     {kw_srclear,7,"SRCLEAR"},
+    {kw_srload,6+FUNCTION,"SRLOAD"},
     {kw_srread,6,"SRREAD"},
+    {kw_srsave,6,"SRSAVE"},
     {kw_srwrite,7,"SRWRITE"},
     {kw_sub,3,"SUB"},
     {kw_then,4,"THEN"},
@@ -338,7 +335,6 @@ __eds__ static const dict_entry_t __attribute__((space(prog))) KEYWORD[]={
     {kw_waitkey,7+FUNCTION,"WAITKEY"},
     {kw_wend,4,"WEND"},
     {kw_while,5,"WHILE"},
-    {kw_write,4,"WRITE"},
     {kw_xorpixel,8,"XORPIXEL"},
     {NULL,0,""}
 };
@@ -367,7 +363,7 @@ static int dict_search(const __eds__ dict_entry_t *dict){
 //      si leur valeur change elles doivent aussi l'être dans stackvm.h
 enum {eERROR_NONE,eERR_DSTACK=1,eERR_RSTACK=2,eERR_MISSING_ARG,eERR_EXTRA_ARG,
       eERR_BAD_ARG,eERR_SYNTAX,eERR_ALLOC,eERR_REDEF,eERR_ASSIGN,
-      eERR_NOTDIM,eERR_CMDONLY,eERR_BOUND
+      eERR_NOTDIM,eERR_CMDONLY,eERR_BOUND,eERR_PROGSPACE
       };
 
  __eds__ static  PSTR error_msg[]={
@@ -382,8 +378,9 @@ enum {eERROR_NONE,eERR_DSTACK=1,eERR_RSTACK=2,eERR_MISSING_ARG,eERR_EXTRA_ARG,
     "can't be redefined\n",
     "can't be reassigned\n",
     "undefined array variable\n",
-    "command line only directive\n"
+    "command line only directive\n",
     "array index out of range\n",
+    "program space full\n",
  };
  
  
@@ -507,7 +504,7 @@ var_t *var_search(const char* name){
 }//f()
 
 static void bytecode(uint8_t bc){
-    if ((void*)&progspace[dp]>=endmark) throw(eERR_ALLOC);
+    if ((void*)&progspace[dp]>=endmark) throw(eERR_PROGSPACE);
     progspace[dp++]=bc;
 }//f
 
@@ -1528,6 +1525,7 @@ static void cmd_run(){
         activ_reader=&file_reader;
         cmd_clear();
         compiler_msg(COMPILING,token.str);
+        line_count=1;
         compile();
         fs_close_file(fh);
         activ_reader=&std_reader;
@@ -1763,6 +1761,7 @@ static void kw_ref(){
 static void kw_use(){
     reader_t *old_reader, freader;
     struct fat_file_struct *fh;
+    uint16_t lcount;
     
     if (activ_reader->device==STDIN) throw(eERR_SYNTAX);
     parse_filter();
@@ -1772,7 +1771,10 @@ static void kw_use(){
         old_reader=activ_reader;
         activ_reader=&freader;
         compiler_msg(COMPILING, token.str);
+        lcount=line_count;
+        line_count=1;
         compile();
+        line_count=lcount+1;
         fs_close_file(fh);
         activ_reader=old_reader;
         compiler_msg(COMP_END,NULL);
@@ -1973,6 +1975,7 @@ static void kw_locate(){
 static void kw_rem(){
     char c=0;
     while (!(activ_reader->eof || ((c=reader_getc(activ_reader))=='\n')));
+    line_count++;
 }//f()
 
 // IF condition THEN bloc_instructions ELSE bloc_instructions END IF
@@ -2378,30 +2381,34 @@ static void kw_loop(){
     complevel--;
 }//f
 
-//OPEN file_name as varname
-//ouvre un fichier, varname contient le handle du fichier
-static void kw_open(){
-    var_t *var;
+static void literal_string(){
+    int size;
+    size=strlen(token.str)+1;
+    if ((void*)&progspace[dp+size+2]>endmark) throw(eERR_PROGSPACE);
+    bytecode(LITS);
+    bytecode(size&0xff);
+    strcpy((char*)&progspace[dp],token.str);
+    dp+=size;
+}//f
+
+
+//SRLOAD file_name
+//charge un fichier dans la SPIRAM
+// retourne la grandeur en octet
+static void kw_srload(){
     expect(eSTRING); // nom du fichier
-    var=var_search(token.str);
-    if (var) throw(eERR_BAD_ARG);
-    
+    literal_string();
+    bytecode(SRLOAD);
 }//f
 
-static void kw_close(){
-    
-}//f
-
-static void kw_write(){
-    
-}//f
-
-static void kw_read(){
-    
-}//f
-
-static void kw_seek(){
-    
+//SRSAVE file_name, size
+//sauvegarde SPIRAM dans un fichier
+static void kw_srsave(){
+    expect(eSTRING);
+    literal_string();
+    expect(eCOMMA);
+    expression();
+    bytecode(SRSAVE);
 }//f
 
 //SRCLEAR(address,size)
@@ -2506,6 +2513,38 @@ static void kw_waitkey(){
     bytecode(WKEY);
 }//f
 
+//LEN var$|string
+static void kw_len(){
+    var_t *var;
+    next_token();
+    if (token.id==eSTRING){
+        literal_string();
+    }else if (token.id==eIDENT){
+        var=var_search(token.str);
+        if (!var) throw(eERR_BAD_ARG);
+        switch(var->vtype){
+            case eVAR_STR:
+                lit((uint16_t)var->str);
+                break;
+            case eVAR_STRARRAY:
+                lit((uint16_t)var->adr);
+                expect(eLPAREN);
+                expression();
+                expect(eRPAREN);
+                litc(1);
+                bytecode(ADD);
+                bytecode(SHL);
+                bytecode(ADD);
+                break;
+            default:
+                throw(eERR_BAD_ARG);
+        }//switch
+    }else{
+        throw(eERR_BAD_ARG);
+    }
+    bytecode(LEN);
+}//f
+
 //compile le code qui vérifie si une
 // chaine est déjà assignée à cette variable
 static void compile_accept_var(var_t* var){
@@ -2532,10 +2571,9 @@ static void kw_input(){
     
     next_token();
     if (token.id==eSTRING){
-        if ((((void*)&progspace[dp])+strlen(token.str)+2)>=endmark) throw(eERR_MEM);
-        bytecode(PRTSTR);
-        strcpy((char*)&progspace[dp],token.str);
-        dp+=strlen(token.str)+1;
+        literal_string();
+        bytecode(TYPE);
+        bytecode(CRLF);
         expect(eCOMMA);
         expect(eIDENT);
     }else if(token.id!=eIDENT) throw(eERR_BAD_ARG); 
@@ -2652,12 +2690,24 @@ static void kw_let(){
     expect(eIDENT);
     strcpy(name,token.str);
     next_token();
-    if (var_local){ // seul les variables scalères de type entier sont autorisées
-        if (token.id!=eEQUAL || name[strlen(name)-1]=='$' || name[strlen(name)-1]=='#') throw(eERR_SYNTAX);
+    if (var_local){ // on ne peut pas allouer de chaîne dans les sous-routine
+        if (name[strlen(name)-1]=='$') throw(eERR_SYNTAX);
         var=var_search(name);
         if (!var) throw(eERR_BAD_ARG); // pas d'auto création à l'intérieur des sous-routines
-        expression();
-        store_integer(var);
+        if (token.id==eLPAREN && (var->vtype==eVAR_INTARRAY || var->vtype==eVAR_BYTEARRAY)){
+            code_array_address(var);
+            expect(eEQUAL);
+            expression();
+            bytecode(SWAP);
+            if (var->vtype==eVAR_INTARRAY){
+                bytecode(STORE);
+            }else{
+                bytecode(STOREC);
+            }
+        }else if (token.id=eEQUAL){
+            expression();
+            store_integer(var);
+        }else throw(eERR_SYNTAX);
     }else{
         if (token.id==eLPAREN){
             array_let(name);
@@ -2710,10 +2760,8 @@ static void kw_print(){
     
     while (!activ_reader->eof){
         if (try_string()){
-            if ((((void*)&progspace[dp])+strlen(token.str)+2)>=endmark) throw(eERR_MEM);
-            bytecode(PRTSTR);
-            strcpy((char*)&progspace[dp],token.str);
-            dp+=strlen(token.str)+1;
+            literal_string();
+            bytecode(TYPE);
             bytecode(SPACE);
         }else if(token.id==eIDENT && token.str[strlen(token.str)-1]=='$'){
             unget_token=false;

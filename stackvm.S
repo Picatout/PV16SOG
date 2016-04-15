@@ -141,8 +141,8 @@ rot: // ( n1 n2 n3 -- n3 n1 n2 )
 
 .global over
 over: // (n1 n2 -- n1 n2 n1 )
-    mov #-4,W1
-    mov [dsp+W1],[++dsp]
+    mov [dsp-2],W0
+    mov W0,[++dsp]
     return
 
 // transfert l'élément au sommet de dstack
@@ -236,17 +236,14 @@ emit: // ( c -- )
     callxfunc(_put_char)
     return
 
-//imprime une chaîne literale, zéro terminée
-// ip pointe sur str
-// str-> chaîne à imprimer.
-prt_str: // ( -- )
+; chaîne litérale
+lits: // ( -- char* )
     clr W0
-    mov.b [ip++],W0
-    cp0 W0
-    bra z, 1f
-    callxfunc(_put_char)
-    bra prt_str
-1:  return
+    mov.b, [ip++],W0 ; longueur chaîne incluant zéro terminal
+    mov ip, [++dsp]
+    add W0,ip,ip
+1:  
+    return
 
 //imprime la valeur dans W0
 dotW0: // ( -- )
@@ -481,13 +478,13 @@ local_address: //( -- adr )
 
 //copie d'une chaîne zéro terminal
 str_copy: // ( src dest -- )
-    mov [dsp--],W1
-    mov [dsp--],W2
-0:  cp0.b [W2]
+    mov [dsp--],W0 ;dest
+    mov [dsp--],W1 ; src
+0:  cp0.b [W1]
     bra z, 1f
-    mov.b [W2++],[W1++]
+    mov.b [W1++],[W0++]
     bra  0b
-1:  clr.b [W1]
+1:  clr.b [W0]
     return
 
 //**************************
@@ -870,35 +867,46 @@ leave: // (R: link -- )
     mov [rsp--],fp
     mov [rsp--],ip
     return
+
+; retourne la longueur de la chaine    
+strlen: ; ( char* -- len )
+    clr W0
+    mov [dsp],W1
+0:    
+    cp0.b [W1++]
+    bra z, 1f
+    inc W0,W0
+    bra 0b
+ 1:
+    mov W0, [dsp]
+    return
+ 
+    
 ;***********************
-;  accès fichiers
+;  accès SPIRAM
 ;***********************
 
-; ouverture d'un fichier
-vm_fopen: ; ( char* -- handle|NULL )
-    
+; charge un fichier dans SPIRAM
+; char* -> nom du fichier
+; retourne: size -> nombre d'octets    
+sr_load: ; ( char* -- size )
+    mov [dsp],W0
+    clr W1 ; sram_address=0
+    mov #0xffff,W2 ; maxsize 65535
+    callxfunc _fs_load_spiram
+    mov W0, [dsp]
     return
     
-; fermeture d'un fichier    
-vm_fclose:; ( handle  -- )
-    
+; sauvegarde SPIRAM dans fichier
+; char* -> nom du fichier
+; size -> nombre d'octets    
+sr_save:; ( char* size  -- )
+    mov [dsp--],W2 ; size
+    clr W1         ; spi_ram address
+    mov [dsp--],W0 ; file_name*
+    callxfunc _fs_save_spiram
     return
     
-; écriture d'un buffer dans un fichier
-vm_fwrite:; ( buffer size handle -- result_code)
-    
-    return
-
-; lecture d'un bloc d'octet d'un fihcier    
-vm_fread: ; ( buffer size hanle -- count )
-    
-    return
-
-; positionnement dans le fichier    
-vm_fseek: ; ( handle position -- position )
-    
-    return
-
 ; met à zéro un bloc de SPIRAM
 sr_clear: ; ( adr size -- )
     mov [dsp--],W1
@@ -970,14 +978,14 @@ dstack_bound_check:
 words:    
 .word bye,drop,dup,vm_swap,over,saveloop,restloop,looptest,rnd,vm_abs
 .word _vm_beep,_tone,vm_ticks,set_tmr,timeout,vm_noise,_cls,vm_locate,vm_back_color,vm_font_color
-.word emit,dot,wait_key,type,accept,space,_new_line,prt_str,lit,litc
+.word emit,dot,wait_key,type,accept,space,_new_line,lits,lit,litc
 .word fetch,fetchc,store,storec,negate,not,vm_add,vm_sub,vm_mul,divide
 .word mod,shr,shl,sqroot,isequal,isnotequal,isgreater,isgrequal,islittlethan,isltequal
 .word branch,zerobranch,nzbranch,enter,leave,str_copy,dots,savestep,savelimit,for_next
 .word btest,alloc,local_store,local_fetch,local_address,frame,local_var,vm_pause,read_stick,_set_pixel
 .word _vm_get_pixel,to_int,_vm_xor_pixel,_vm_scroll_up,_vm_scroll_down,_vm_scroll_right,_vm_scroll_left,_vm_line,_vm_sprite,vm_ior
-.word vm_xor,vm_and,trace,rot,_box,key,_vm_rect,vm_fopen,vm_fclose,vm_fwrite
-.word vm_fread,vm_fseek,sr_clear,sr_read,sr_write
+.word vm_xor,vm_and,trace,rot,_box,key,_vm_rect,strlen,sr_load,sr_save
+.word sr_clear,sr_read,sr_write
     
 .global _interpret
 _interpret:

@@ -91,7 +91,7 @@ extern void pause(uint16_t msec);
 
     
     
-#define BYE (0)     
+#define BYE (0)       //0
 #define DROP (BYE+1)
 #define DUP (DROP+1)
 #define SWAP (DUP+1)
@@ -118,10 +118,10 @@ extern void pause(uint16_t msec);
 #define ACCEPT (TYPE+1)
 #define SPACE (ACCEPT+1)
 #define CRLF (SPACE+1)
-#define PRTSTR (CRLF+1)
-#define LIT (PRTSTR+1)
+#define LITS (CRLF+1)
+#define LIT (LITS+1)
 #define LITC (LIT+1)
-#define FETCH (LITC+1)  //30
+#define FETCH (LITC+1)   //30
 #define FETCHC (FETCH+1)
 #define STORE (FETCHC+1)
 #define STOREC (STORE+1)
@@ -178,12 +178,10 @@ extern void pause(uint16_t msec);
 #define BOX (ROT+1)
 #define KEY (BOX+1)
 #define RECT (KEY+1)
-#define OPEN (RECT+1)
-#define CLOSE (OPEN+1)
-#define WRITE (CLOSE+1)
-#define READ (WRITE+1) //90
-#define SEEK (READ+1)
-#define SRCLEAR (SEEK+1)
+#define LEN (RECT+1)
+#define SRLOAD (LEN+1)
+#define SRSAVE (SRLOAD+1)
+#define SRCLEAR (SRSAVE+1) //90
 #define SRREAD (SRCLEAR+1)
 #define SRWRITE (SRREAD+1)
 
