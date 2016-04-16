@@ -1178,35 +1178,16 @@ static void file_end(){
 }//f()
 
 static void page_up(){
-    int i=0,llen;
-    uint8_t line[CHAR_PER_LINE];
+    int i=0;
 
-    if (state.scr_first==0){
-        while (state.scr_line) line_up();
-        return;
-    }
-    i=state.scr_line+1;
-    line_home();
-    while (state.gap_first && i){
-        llen=get_line_back(line,state.gap_first);
-        state.gap_first-=llen;
-        sram_clear_block(state.gap_first,llen);
-        state.tail-=llen;
-        sram_write_block(state.tail,line,llen+1);
-        i--;
-    }
-    if (state.gap_first<state.scr_first){
-        state.scr_first=state.gap_first;
-        state.scr_line=0;
-    }
-    i=LAST_LINE;
+    while (state.scr_line) line_up();
+    i=LINE_PER_SCREEN;
+    dis_video=true;
     while (state.scr_first && i){
-        llen=get_line_back(line,state.scr_first);
-        state.scr_first-=llen+1;
+        line_up();
         i--;
     }
-    state.scr_line=LAST_LINE-i;
-    update_display();
+    dis_video=false;
 }
 
 static void page_down(){

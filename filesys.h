@@ -78,8 +78,8 @@ uint16_t fs_read_file(struct fat_file_struct *fh,uint8_t* buffer, uintptr_t buff
 uint16_t fs_write_file(struct fat_file_struct *fh,const uint8_t* buffer, uintptr_t buffer_len);
 err_code_t fs_file_reset(struct fat_file_struct *fh);
 #define fs_close_file(fh) fat_close_file(fh) //void fs_close_file(struct fat_file_struct *fh);
-uint16_t fs_load_spiram(const char *file,uint16_t sram_address, uint16_t maxsize);
-void fs_save_spiram(const char *file,uint16_t sram_address, uint16_t size);
+uint16_t fs_load_spiram(char *file,uint16_t sram_address, uint16_t maxsize);
+void fs_save_spiram(char *file,uint16_t sram_address, uint16_t size);
 err_code_t fs_read_dir(struct fat_dir_entry_struct *dir_entry);
 err_code_t fs_create_file(const char* file);
 err_code_t fs_delete_file(const char* name);

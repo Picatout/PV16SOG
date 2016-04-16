@@ -219,6 +219,9 @@ static void kw_line();
 static void kw_local();
 static void kw_locate();
 static void kw_loop();
+static void kw_max();
+static void kw_mdiv();
+static void kw_min();
 static void kw_next();
 static void kw_noise();
 static void kw_pause();
@@ -262,7 +265,8 @@ static void kw_xorpixel();
 enum {eKW_ABS,eKW_AND,eKW_BEEP,eKW_BOX,eKW_BTEST,eKW_BYE,eKW_CASE,eKW_CLS,eKW_COLOR,
       eKW_CONST,eKW_DIM,eKW_DO,eKW_ELSE,
       eKW_END,eKW_FOR,eKW_FUNC,eKW_GETPIXEL,eKW_IF,eKW_INPUT,eKW_KEY,eKW_LEN,
-      eKW_LET,eKW_LINE,eKW_LOCAL,eKW_LOCATE,eKW_LOOP,eKW_NEXT,eKW_NOISE,eKW_NOT,eKW_OR,eKW_PAUSE,
+      eKW_LET,eKW_LINE,eKW_LOCAL,eKW_LOCATE,eKW_LOOP,eKW_MAX,eKW_MDIV,eKW_MIN,eKW_NEXT,
+      eKW_NOISE,eKW_NOT,eKW_OR,eKW_PAUSE,
       eKW_PRINT,eKW_PUTC,eKW_JSTICK,eKW_RECT,eKW_REF,eKW_REM,eKW_RETURN,eKW_RND,eKW_SCRLUP,eKW_SCRLDN,
       eKW_SCRLRT,eKW_SCRLFT,eKW_SELECT,eKW_SETPIXEL,eKW_SETTMR,eKW_SHL,eKW_SHR,
       eKW_SPRITE,eKW_SRCLEAR,eKW_SRLOAD,eKW_SRREAD,eKW_SRSSAVE,eKW_SRWRITE,eKW_SUB,eKW_THEN,eKW_TICKS,
@@ -297,6 +301,9 @@ __eds__ static const dict_entry_t __attribute__((space(prog))) KEYWORD[]={
     {kw_local,5,"LOCAL"},
     {kw_locate,6,"LOCATE"},
     {kw_loop,4,"LOOP"},
+    {kw_max,3+FUNCTION,"MAX"},
+    {kw_mdiv,4+FUNCTION,"MDIV"},
+    {kw_min,3+FUNCTION,"MIN"},
     {kw_next,4,"NEXT"},
     {kw_noise,5,"NOISE"},
     {bad_syntax,3,"NOT"},
@@ -902,6 +909,24 @@ static bool filter_accept(filter_t *filter, const char* text){
 //static void checkbound(var_t* var, int index);
 static void expression();
 
+// compile le calcul d'indice dans les variables vecteur
+static void code_array_address(var_t *var){
+    expression();
+    expect(eRPAREN);
+    if (var->vtype==eVAR_INTARRAY || var->vtype==eVAR_STRARRAY){
+        bytecode(SHL);//2*index
+    }else{
+        // élément 0 et 1  réservé pour size
+        // index 1 correspond à array[2]
+        litc(1);
+        bytecode(ADD);
+    }
+    //index dans le tableau
+    lit((uint16_t)var->adr);
+    bytecode(ADD);
+}//f
+
+
 static void parse_arg_list(int arg_count){
     int count=0;
     expect(eLPAREN);
@@ -958,19 +983,21 @@ static void factor(){
                         break;
                     case eVAR_BYTEARRAY:
                         expect(eLPAREN);
-                        expression();
-                        expect(eRPAREN);
-                        lit((uint16_t)var->adr);
-                        bytecode(ADD);
+                        code_array_address(var);
+//                        expression();
+//                        expect(eRPAREN);
+//                        lit((uint16_t)var->adr);
+//                        bytecode(ADD);
                         bytecode(FETCHC);
                         break;
                     case eVAR_INTARRAY:
                         expect(eLPAREN);
-                        expression();
-                        expect(eRPAREN);
-                        bytecode(SHL);
-                        lit((uint16_t)var->adr);
-                        bytecode(ADD);
+                        code_array_address(var);
+//                        expression();
+//                        expect(eRPAREN);
+//                        bytecode(SHL);
+//                        lit((uint16_t)var->adr);
+//                        bytecode(ADD);
                         bytecode(FETCH);
                         break;
                     default:
@@ -1033,7 +1060,7 @@ static void term(){
                 break;
         }//switch
     }
-}//f
+}//f 
 
 static void expression(){
     int mark_dp=dp;
@@ -1644,13 +1671,13 @@ static void dim_array(char *var_name){
     len=strlen(var_name);
     if (size<1) throw(eERR_SYNTAX);
     if (var_name[len-1]=='#'){ //table d'octets
-        array=alloc_var_space(size+1);
-        memset(array,0,size+1);
-        ((uint8_t*)array)[0]=size;
+        array=alloc_var_space(size+2);
+        memset(array,0,size+2);
+        *((uint16_t*)array)=size;
     }else{ // table d'entiers ou de chaînes
         array=alloc_var_space(sizeof(int)*(size+1));
         memset(array,0,sizeof(int)*(size+1));
-        ((int*)array)[0]=size;
+        *((uint16_t*)array)=size;
     }
     new_var=(var_t*)alloc_var_space(sizeof(var_t));
     new_var->name=alloc_var_space(len+1);
@@ -2178,6 +2205,28 @@ static void kw_rnd(){
     bytecode(RND);
 }//f
 
+//MAX(expr1,expr2)
+static void kw_max(){
+    parse_arg_list(2);
+    bytecode(MAX);
+}//f
+
+//MIN(expr1,expr2)
+static void kw_min(){
+    parse_arg_list(2);
+    bytecode(MIN);
+}//f
+
+//MDIV(expr1,expr2,expr3)
+//multiplie expr1*expr2
+//garde résultat sur 32 bits
+//divise résultat 32 bits par
+// epxr3
+static void kw_mdiv(){
+    parse_arg_list(3);
+    bytecode(MDIV);
+}//f
+
 // GETPIXEL(x,y)
 // retourne la couleur du pixel
 // en position {x,y}
@@ -2433,18 +2482,6 @@ static void kw_srwrite(){
     bytecode(SRWRITE);
 }//f
 
-// compile le calcul d'indice dans les variables vecteur
-static void code_array_address(var_t *var){
-    expression();
-    expect(eRPAREN);
-    if (var->vtype==eVAR_INTARRAY || var->vtype==eVAR_STRARRAY){
-        bytecode(SHL);//2*index
-    }
-    //index dans le tableau
-    lit((uint16_t)var->adr);
-    bytecode(ADD);
-}//f
-
 //compile l'assignation pour élément de variable
 // vecteur
 static void array_let(char * name){
@@ -2630,29 +2667,20 @@ static void kw_input(){
                 bytecode(STORE);   //( void* _var_adr  -- )
                 fix_branch_address();
                 break;
+            case eLCVAR:
             case eVAR_INT:
-                lit((uint16_t)&var->n);
-                litc(7);
-                bytecode(ACCEPT);
-                bytecode(DROP);
-                bytecode(INT);
-                bytecode(SWAP);
-                bytecode(STORE);
-                break;
             case eVAR_BYTE:
-                lit((uint16_t)&var->byte);
-                litc(4);
+                litc(17);
                 bytecode(ACCEPT);
                 bytecode(DROP);
                 bytecode(INT);
-                bytecode(SWAP);
-                bytecode(STOREC);
+                store_integer(var);
                 break;
             case eVAR_INTARRAY:
                 bytecode(SHL);
                 lit((uint16_t)var->adr);
                 bytecode(ADD);
-                litc(7);
+                litc(17);
                 bytecode(ACCEPT);
                 bytecode(DROP);
                 bytecode(INT);
@@ -2660,9 +2688,11 @@ static void kw_input(){
                 bytecode(STORE);
                 break;
             case eVAR_BYTEARRAY:
+                litc(1);
+                bytecode(ADD);
                 lit((uint16_t)var->adr);
                 bytecode(ADD);
-                litc(4);
+                litc(9);
                 bytecode(ACCEPT);
                 bytecode(DROP);
                 bytecode(INT);
@@ -2704,7 +2734,7 @@ static void kw_let(){
             }else{
                 bytecode(STOREC);
             }
-        }else if (token.id=eEQUAL){
+        }else if (token.id==eEQUAL){
             expression();
             store_integer(var);
         }else throw(eERR_SYNTAX);
@@ -2738,6 +2768,8 @@ static void kw_local(){
     if (!var_local) throw(eERR_SYNTAX);
     next_token();
     while(token.id==eIDENT){
+        if (token.str[strlen(token.str)-1]=='#' || 
+                token.str[strlen(token.str)-1]=='$' ) throw(eERR_BAD_ARG);
         if (globals>varlist){
             i=varlist->n+1; 
         }else{

@@ -267,17 +267,24 @@ dot: // (n --)
 // affiche le contenu de la pile
 dots:
     rcall _new_line
-    mov #_dstack,W3
+    mov #'R',W0
+    callxfunc _put_char
+    mov #':',W0
+    callxfunc _put_char
+    mov #_rstack_empty,W0
+    sub rsp,W0,W0
+    asr W0,W0
+    rcall dotW0
+    rcall _new_line
+    mov #_dstack_empty,W3
     sub dsp,W3,W0
     asr W0,W0
-    add #1,W0
-    push W3
     rcall dotW0
     mov #':',W0
     callxfunc(_put_char)
     mov #32, W0
     callxfunc(_put_char)
-    pop W3
+    mov #_dstack,W3
 0:  cp dsp,W3
     bra n, 1f
     mov [W3++],W0
@@ -334,32 +341,49 @@ accept:  // ( n -- adr len )
 ; adr -> adresse chaîne    
 to_int: ; (adr -- n )
     push W6
-    clr W6
-    clr W4
-    mov #10, W2
+    clr W6  ; signe
+    clr W4  ; n
+    mov #10, W2  ; base décimale
     mov [dsp--], W3
     mov.b [W3++],W0
-    ze W0,W0
-    cp W0,#'-'
+    cp.b W0,#'$'
+    bra neq, 1f
+    mov #16,W2 ; base hexadécimale
+    bra 3f
+1:
+    cp.b W0,#'#'
     bra neq, 2f
+    mov #2,W2  ; base 2
+    bra 3f
+2:    
+    cp.b W0,#'-'
+    bra neq, 4f
     com W6,W6
-0:
+3:
     mov.b [W3++],W0
+4:
     ze W0,W0
-2:   
+    cp W0,#'a'
+    bra ltu, 5f
+    sub #32,W0
+5:    
     cp W0,#'0'
-    bra lt, 3f
-    cp W0,#'9'
-    bra gt, 3f
+    bra ltu, 8f
     sub #'0',W0
+    cp W0,#9
+    bra leu, 6f
+    sub #7,W0
+6:    
+    cp W0,W2
+    bra geu, 8f
     mul.uu W4,W2,W4
     add W0,W4,W4
-    bra 0b 
-3:
+    bra 3b 
+8:
     cp0 W6
-    bra eq, 4f
+    bra eq, 9f
     neg W4,W4
-4:    
+9:    
     mov W4,[++dsp]
     pop W6
     return
@@ -561,6 +585,31 @@ shl: // ( u -- u<<1)
     sl [dsp],[dsp]
     return
 
+ min: ; ( n1 n2 -- min(n1,n2) )
+    mov [dsp--],W0
+    cp W0,[dsp]
+    bra ge, 1f
+    mov W0,[dsp]
+ 1:   
+    return
+
+max: ; ( n1 n2 -- max(n1,n2) )
+    mov [dsp--],W0
+    cp W0, [dsp]
+    bra le, 1f
+    mov W0,[dsp]
+1:    
+    return
+    
+muldiv: ; ( n1 n2 n3 -- n ) n1*n2/n3  résultat intermédiaire sur 32 bits
+    mov [dsp--],W4
+    mov [dsp--],W0
+    mov [dsp],W2
+    mul.ss w0,w2,w0
+    repeat #17
+    div.sd W0,W4 
+    mov W0,[dsp]
+    return
     
 //racine carree
 //REF: https://fr.wikipedia.org/wiki/M%C3%A9thode_de_H%C3%A9ron
@@ -948,10 +997,10 @@ trace: // ( f -- )
 rstack_bound_check:
     mov #_rstack_empty, W0
     cp rsp,W0
-    bra lt, 1f
+    bra ltu, 1f
     add #RSTACK_SIZE, W0
     cp rsp,W0
-    bra gt, 1f
+    bra geu, 1f
     return
 1:  mov #RSTACK_ERROR, W0
     mov W0, _vm_exit_code
@@ -963,10 +1012,10 @@ rstack_bound_check:
 dstack_bound_check:
     mov #_dstack_empty, W0
     cp dsp,W0
-    bra lt, 1f
+    bra ltu, 1f
     add #DSTACK_SIZE, W0
     cp dsp,W0
-    bra gt, 1f
+    bra geu, 1f
     return
 1:  mov #DSTACK_ERROR, W0
     mov W0, _vm_exit_code
@@ -985,7 +1034,7 @@ words:
 .word btest,alloc,local_store,local_fetch,local_address,frame,local_var,vm_pause,read_stick,_set_pixel
 .word _vm_get_pixel,to_int,_vm_xor_pixel,_vm_scroll_up,_vm_scroll_down,_vm_scroll_right,_vm_scroll_left,_vm_line,_vm_sprite,vm_ior
 .word vm_xor,vm_and,trace,rot,_box,key,_vm_rect,strlen,sr_load,sr_save
-.word sr_clear,sr_read,sr_write
+.word sr_clear,sr_read,sr_write, min, max, muldiv
     
 .global _interpret
 _interpret:
@@ -1021,9 +1070,13 @@ trace_on:
     rcall dotW0
     rcall dots
     callxfunc _prompt_continue
+    push W0
     mov #SRAM_SIZE-(XRES/2)*YRES,W0
     callxfunc _restore_screen
-    bra trace_on
+    pop W0
+    cp.b W0,#27
+    bra nz, trace_on
+    clr _ftrace
     //interpréteur
 trace_off:
     ze [ip++],W0

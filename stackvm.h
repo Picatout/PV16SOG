@@ -184,6 +184,9 @@ extern void pause(uint16_t msec);
 #define SRCLEAR (SRSAVE+1) //90
 #define SRREAD (SRCLEAR+1)
 #define SRWRITE (SRREAD+1)
+#define MIN (SRWRITE+1)
+#define MAX (MIN+1)
+#define MDIV (MAX+1)
 
 #ifdef __asm
 

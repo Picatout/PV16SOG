@@ -195,7 +195,7 @@ uint16_t fs_write_file(struct fat_file_struct *fh,const uint8_t* buffer, uint16_
 
 // charge le fichier dans la SPIRAM
 // retourne nombres d'octets
-uint16_t fs_load_spiram(const char *file,uint16_t sram_address, uint16_t maxsize){
+uint16_t fs_load_spiram(char *file,uint16_t sram_address, uint16_t maxsize){
 #define BUFF_SIZE (64)
     uint16_t byte_count=0;
     int count;
@@ -221,7 +221,7 @@ uint16_t fs_load_spiram(const char *file,uint16_t sram_address, uint16_t maxsize
 }//f()
 
 // sauvegarde la RAM SPI dans un fichier.
-void fs_save_spiram(const char *file,uint16_t sram_address, uint16_t size){
+void fs_save_spiram(char *file,uint16_t sram_address, uint16_t size){
 #define BUFF_SIZE (64)
     uint8_t buffer[BUFF_SIZE];
     uint16_t count;
