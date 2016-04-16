@@ -2175,23 +2175,23 @@ static void kw_case(){
     next_token();
     if (token.id==eKWORD && token.n==eKW_ELSE){
         if (rstack[rsp]){
-            rsp++;
-            rstack[rsp]=rstack[rsp-3]; //( br_adr blockend n ? -- br_adr blockend n bra_adr)
-            fix_branch_address();
-            rstack[rsp-2]=rstack[rsp-1];
-            rstack[rsp-1]=rstack[rsp]-1; 
-            rsp--;  // ( -- blockend n )
+            adr=rstack[rsp-2]; //( br_adr blockend n  -- br_adr blockend n)
+            bytecode(BRANCH);  // branchement à la sortie du select case
+            rstack[rsp-2]=dp; // (adr blockend n -- dp blockend n )
+            dp+=2;
+            rstack[++rsp]=adr;
+            fix_branch_address(); // fixe branchement vers CASE ELSE
         }else
             throw(eERR_SYNTAX);
     }else{
         unget_token=true;
-        if (rstack[rsp]){
-            adr=rstack[rsp-2]; //( br_adr blockend n ? -- br_adr blockend n)
-            bytecode(BRANCH);
+        if (rstack[rsp]){//y a-t-il un case avant celui-ci?
+            adr=rstack[rsp-2]; //( br_adr blockend n  -- br_adr blockend n)
+            bytecode(BRANCH);  // branchement à la sortie du select case
             rstack[rsp-2]=dp; // (adr blockend n -- dp blockend n )
             dp+=2;
             rstack[++rsp]=adr;
-            fix_branch_address();
+            fix_branch_address(); // fixe branchement vers ce case
         }
         compile_case_list();
     }
