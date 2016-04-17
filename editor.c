@@ -701,6 +701,14 @@ void editor(const char* name){
             case VK_PGDN:
                 page_down();
                 break;
+            case VK_INSERT:
+                state.flags.insert=~state.flags.insert;
+                if (state.flags.insert){
+                    set_cursor_shape(cVLINE);
+                }else{
+                    set_cursor_shape(cBLOCK);
+                }
+                break;
             case VK_DELETE:
                 if ((key_state & F_LCTRL)){
                     delete_to_end();

@@ -187,6 +187,7 @@ extern void pause(uint16_t msec);
 #define MIN (SRWRITE+1)
 #define MAX (MIN+1)
 #define MDIV (MAX+1)
+#define UBOUND (MDIV+1)
 
 #ifdef __asm
 

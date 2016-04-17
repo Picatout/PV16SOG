@@ -500,6 +500,15 @@ local_address: //( -- adr )
     mov W0,[++dsp]
     return
 
+//retourne la grandeur d'une table
+// cette valeur précède le premier
+// élément de la table    
+ubound: ; ( adr -- size )
+    mov [dsp],W0
+    mov [W0],[dsp]
+    return
+    
+    
 //copie d'une chaîne zéro terminal
 str_copy: // ( src dest -- )
     mov [dsp--],W0 ;dest
@@ -1034,7 +1043,7 @@ words:
 .word btest,alloc,local_store,local_fetch,local_address,frame,local_var,vm_pause,read_stick,_set_pixel
 .word _vm_get_pixel,to_int,_vm_xor_pixel,_vm_scroll_up,_vm_scroll_down,_vm_scroll_right,_vm_scroll_left,_vm_line,_vm_sprite,vm_ior
 .word vm_xor,vm_and,trace,rot,_box,key,_vm_rect,strlen,sr_load,sr_save
-.word sr_clear,sr_read,sr_write, min, max, muldiv
+.word sr_clear,sr_read,sr_write, min, max, muldiv, ubound
     
 .global _interpret
 _interpret:

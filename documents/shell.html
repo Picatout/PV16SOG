@@ -1,0 +1,174 @@
+<!doctype html>
+<html>
+<header>
+<title>PV16SOG commands shell</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="Author" content="Jacques Deschênes">
+<meta name="Created on" content="2016-04-16">
+<meta name="version" content="1.0">
+<meta name="licence" content="CC-NC-SA-BY V3.0">
+<link rel="stylesheet" type="text/css" href="style.css">
+</header>
+<body>
+<h2>Interpréteur de commandes du PV16SOG</h2>
+<h4>Licence</h4>
+<p>  
+  Ce document fait partie du projet <a href="https://github.com/picatout/pv16sog">PV16SOG</a> et est fourni sous licence <a href="https://creativecommons.org/">CC-NC-SA-BY V3.0</a><br><br>
+  <b>auteur:</b> Jacques Deschênes<br>
+  <b>révision</b> 1.0</br>
+  <b>Copyright:</b> 2015,2016, Jacques Deschênes<br>	
+</p>
+<h3>Présentation</h3>
+<p>Au démarrage l'ordinateur entre dans l'interpréteur de commande. Au début de la ligne apparaît un <b>&gt;</b> suivit d'un curseur clignotant. Ceci 
+indique que l'ordinateur est prêt à recevoir des commandes. Les commandes sont insensible à la casse. voici de quoi a l'air la console au démarrage:
+</p>
+<div style="left-margin:200px;">
+<pre><code>
+PV16SOG shell
+vesion 1.0
+
+RAM libre: 20512
+&gt;<blink>|</blink>
+</code></pre></div>
+<p>
+	<b>L'ordinateur peut-être réinitialisé (redémarrage à froid) en tout temps, même pendant l'exécution d'un programme BASIC par la 
+	combinaison de touches &lt;CTRL-ALT-SUP&gt; comme à l'époque de MS-DOS.</b> Pratique lorsqu'un progamme BASIC est bloqué dans une
+	boucle infinie.
+</p>
+<p>
+Il faut distinguer les commandes du 
+<i>shell</i> et les commandes <i>BASIC</i>. L'interpréteur accepte les 2 types de commandes mais elles sont traitées différemment.</p>
+<p>
+	Les commandes du <i>shell</i> sont interprétées directement et ne peuvent pas être utlisées dans un progamme BASIC. Une telle tentative
+	résulte en un messsage d'erreur du compilateur BASIC. Les commandes BASIC sont pré-compilées en bytecode et le dit bytecode est passé
+	à la machine virtuelelle BASIC pour exécution. L'interpréteur de comamnde du <i>shell</i> est en mesure de distinguer les 2 types de commandes
+	et de diriger les commandes BASIC au compilateur. 
+</p>
+<p>
+	Ce document décris seulement les commandes du <i>shell</i> pour les commandes BASIC il faut consulter le manuel 
+	<a href="./BASIC.html">BASIC du PV16SOG</a>.
+</p>
+<p>
+	Le <i>shell</i> possède un éditeur de ligne avec un historique de comamndes de 10 lignes. La navigation sur la ligne de commande se fait
+	avec les touches suivantes:
+	<ul>
+		<li><b>FLÈCHE-GAUCHE</b> déplacement du curseur vers la gauche d'un caractère.</li>
+		<li><b>FLÈCHE-DROITE</b> déplacement du curseur vers la droite d'un caractère.</li>
+		<li><b>FLÈCHE-HAUT</b> déplacement dans l'historique de commande vers les plus anciennes.</li>
+		<li><b>FLÈCHE-BAS</b> déplacement dans l'historique de commande vers les plus récentes.</li>
+		<li><b>INSERT</b> basculement entre mode insertion/écrasement.</li>
+		<li><b>SUP</b> suppression du caractère à la position du curseur.</li>
+		<li><b>ARRIÈRE</b> suppression du caractère avant la position du curseur.</li>
+		<li><b>RETOUR</b> termine la saisie de cette ligne et passe la commande à l'interpréteur.</li>
+	</ul>
+</p>
+<h3>Référence des commandes du shell</h3>
+<p>
+  La majoritée des commandes du <i>shell</i> servent à la gestions des fichiers enregistrés sur la carte SD. PV16SOG ne supporte
+  pas les répertoires, tous les fichiers sont dans le répertoire racine. Certaines commandes de gestion de fichiers peuvent affecter
+  plus d'un fichier par l'utilisation du caractère <b>*</b>. Ce caractère peut-être placé au début, à la fin ou au 2 extrémités d'un 
+  paramètre <i>nom_de_fichier</i> d'une commande. Placé au début la commande accepte tous les fichiers se terminant pas la chaîne qui le suit.
+  Placé à la fin la commande accepte tous les fichiers commençant par la chaîne qui le précède. Lorsque placé au 2 extrémités la commande
+  accepte tous les fichiers contenant la chaîne encadrée.
+</p>
+<p>
+	Dans ce qui suis ce qui est entre les caractères <b>[</b> et <b>]</b> est optionnel. Les commandes peuvent-être entrées en
+	minuscules ou majuscules. L'interpréteur les converties automatiquement en majuscules.
+</p>
+<p>
+	<ul>
+		<li><b>CLEAR</b> efface le contenu de l'espace RAM réservé au programmes BASIC.</li>
+		<li><b>COPY <i>original nouveau</i></b> copie du fichier <i>original</i> vers <i>nouveau</i>.
+		<div><pre><code>example:
+		&gt;COPY fichier1 fichier2
+  	    Cré une copie de <i>fichier1</i> avec le nom <i>fichier2</i>. Les noms de fichiers sont capitalisés.
+		</code></pre>
+		</div>
+		</li>
+		<li><b>DEL [*]fichier[*]</b> supprime 1 ou plusieurs fichiers.
+		<div><pre><code>example:
+		&gt;DEL *.tmp
+		Cette commande vas supprimer tous les fichiers dont le nom se termine par <b>.TMP</b>
+		Lorsque la commande affecte plusieurs fichiers une demande de confirmation est faite pour chacun d'eux.
+		</code></pre></div></li>
+		<li><b>DIR [[*]test[*]]</b> affiche à l'écran les fichiers contenus sur la carte SD. S'il y a plus de fichiers que le nombre 
+		pouvant apparaître dans un seul écran, un pause se fait à chaque écran. Cette commande peut utiliser le filtre <b>*</b>.
+		<div><pre><code>example:
+		&gt;DIR *BAS         
+		SPRTEST.BAS          297
+		SELECT.BAS           527
+		TEST.BAS              87
+		TONES.BAS            151
+		RECT.BAS             156
+		.
+		.
+		.
+		</code></pre></div>
+		</li>
+		<li><b>EDIT [nom_fichier]</b> démarre l'éditeur de texte.
+		<div><pre><code>example:
+		&gt;EDIT carre.bas
+		démarre l'éditeur. Si le fichier <i>carre.bas</i> existe il sera chargé dans l'éditeur, sinon le nouveau fichier sera
+		sauvegardé sous ce nom.</code></pre></div>
+		</li>
+		<li><b>FREE</b> affiche la quantité de mémoire restante pour les programmes BASIC.
+		<pre><code>example:
+		&gt;free
+		RAM free bytes: 20512</code></pre></li>
+		<li><b>HDUMP nom_fichier</b> affiche en hexadécimal le contenu d'un fichier. L'affichage fait une pause à chaque page.
+		<div><pre><code>example:
+		&gt;HDUMP tones.bas
+		
+		0000  69 6E 70 75 74 20 22 64 input "d
+		0008  75 72 65 65 22 2C 20 64 uree", d
+		.
+		.
+		.
+		</code></pre></div></li>
+		<li><b>HELP [commande]</b> sans arguments affiche la liste des commandes. Suivit d'un nom de commande affiche un court texte
+		d'aide relatif à cette commande.<pre><code>example:
+		&gt;HELP dir
+		DIR [filter]
+		List file in root directory, may use '*'
+		filter
+		</code></pre></li>
+		<li><b>MORE nom_fichier</b> Affiche un fichier texte à l'écran. Fait une pause à chaque page.
+		<pre><code>example:
+		&gt;more tone.bas
+		
+		input "duree", d
+		while 1
+		 n=abs(rnd())%48
+		 tone(n,d,1)
+		 if key() then bye end if
+		 wend
+		</code></pre>
+		</li>
+		<li><b>RASTER</b> C'est un utilitaire pour centrer l'image sur l'écran du téléviseur. Affiche un rectangle qui représente
+		le périmètre de l'affichage. En utilisant les flèches on centre le rectangle sur l'écran. La touche <b>ESC</b> permet de
+		quitter l'utilitaire.</li>
+		<li><b>REBOOT</b> Cette commande effectue un redémarrage à froid de l'ordinateur. Cette commande a le même effet que la combinaison
+		de touches &lt;CTRL-ALT-SUP&gt;</li>
+		<li><b>REN nom_actuel nouveau_nom</b> Renomme un fichier existant.
+		<pre><code>example:
+		&gt;REN tones.bas beep.bas
+		Le fichier <i>tones.bas</i> sera renommé <i>beep.bas</i></code></pre></li>
+		<li><b>RUN [progam.bas]</b> Compile et exécute un fichier BASIC existant sur la carte SD.
+		<pre><code>example:
+		&gt;RUN conway.bas
+		Ouvre le fichier <i>conway.bas</i>, le compile et exécute le programme. Le programme compilé reste en mémoire et tant qu'il 
+		n'est pas remplacé par un autre on peu le réexécuter simple en tapant: <b>RUN</b> sur la ligne de commande.
+		</code></pre></li>
+	</ul>
+</p>
+<hr width="50%" align="center">
+<p>
+	<ul>
+		<li><a href="./pv16sog.html">ordinateur PV16SOG</a></li>
+		<li><a href="./shell.html">shell du PV16SOG</a></li>
+		<li><a href="./editor.html">Éditeur du PV16SOG</a></li>
+        <li><a href="./BASIC.html">BASIC du PV16SOG</a></li>
+	</ul>
+</p>
+</body>
+</html>

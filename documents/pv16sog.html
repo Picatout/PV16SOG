@@ -13,7 +13,7 @@
 <h2>Ordindateur PV16SOG</h2>
 <h4>Licence</h4>
 <p>  
-  Ce document fait partie du projet <a href="./pv16sog.html">PV16SOG</a> et est fourni sous licence <a href="https://creativecommons.org/">CC-NC-SA-BY V3.0</a><br><br>
+  Ce document fait partie du projet <a href="https://github.com/picatout/pv16sog">PV16SOG</a> et est fourni sous licence <a href="https://creativecommons.org/">CC-NC-SA-BY V3.0</a><br><br>
   <b>auteur:</b> Jacques Deschênes<br>
   <b>révision</b> 1.0</br>
   <b>Copyright:</b> 2015,2016, Jacques Deschênes<br>	
@@ -39,9 +39,9 @@ un minimum d'expérience en électronique.</p>
 <li>mémoire RAM externe de 64Ko à interface SPI. Microchip 23LC512</li> 
 <li>logiciels en firwmare:
 <ul>
-<li><b>shell de commande</b></li>
-<li><b>interpréteur BASIC</b> <a href="./BASIC.html">BASIC.html</a> qui exécute un programme compilé en bytecode stocké dans la RAM.</li>
-<li><b>éditeur de texte</b> servant écrire les programmes <b>BASIC</b>. Fichiers stockés sur la carte SD.</li>
+<li><a href="./shell.html">shell de commande</a></li>
+<li><a href="./BASIC.html">interpréteur BASIC</a> qui exécute un programme compilé en bytecode stocké dans la RAM.</li>
+<li><a href="./editor.html">éditeur de texte</a> servant écrire les programmes <b>BASIC</b>. Fichiers stockés sur la carte SD.</li>
 </ul>
 <h4>schéma électronique</h4>
 <p>
@@ -56,9 +56,9 @@ un minimum d'expérience en électronique.</p>
 <li>Mémoire SPI RAM 23LC512, mémoire sérielle à interface SPi de 64Ko.</li>
 <li>Régulateur de tension LD33V.</li>
 <li>Une embase pour la carte SD.</li>
-<li>Un connecteur MINI-DIN-6 pour le clavier PS/2.</li>
+<li>Un connecteur MINI-DIN-6 pour le clavier PS/2<sup>1</sup>.</li>
 <li>Deux Connecteurs RCA audio pour les sorties son et vidéo NTSC.</li>
-<li>Un connecteur barrel jack 2,1mm pour l'adapteur d'alimentation.</li>
+<li>Un connecteur barrel jack 2,1mm pour l'adapteur d'alimentation<sup>2</sup>.</li>
 <li>Un cristal de 8Mhz.</li>
 <li>Un bouton momentané pour le <b>RESET</b>.</li>
 <li>1 LED indicateur d'alimentation</li>
@@ -91,6 +91,30 @@ De plus la présence de la carte SD est détecté sur l'entrée RA4.</li>
 </p>
 <p>   
    <div><img src="boitier-vue-arrière.png" width=800</div><center>vue arrière</center>
+</p>
+<hr width="50%" align="center">
+<p>
+	<ul>
+		<li><a href="./pv16sog.html">ordinateur PV16SOG</a></li>
+		<li><a href="./shell.html">shell du PV16SOG</a></li>
+		<li><a href="./editor.html">Éditeur du PV16SOG</a></li>
+        <li><a href="./BASIC.html">BASIC du PV16SOG</a></li>
+	</ul>
+</p>
+<hr width="50%" align="center">
+<p>
+	<h4>NOTES</h4>
+	<ol>
+		<li>Le clavier PS/2 est alimenté en 3,3 volt comme le MCU au lieu des 5 volts spécifiés pour ces claviers. Celà ne semble pas
+		poser de problèmes. Si votre clavier pose problème à ce voltage il faudra ajouter un deuxième régulateur de tension à 5 volt et
+		l'alimenter à cette tension sans autre modification au circuit. L'interface PS/2 fonctionnant en collecteur ouvert il n'est pas
+		nécessaire que les pull-up R13 et R14 soient au même voltage que l'alimentation du clavier.</li>
+		<li>L'adapteur d'alimentation doit fournir un voltage DC avec le positif connecté à l'anneau central. Le voltage doit-être d'au 
+		    moins 5 volts. Si un deuxième régulateur 5 volts a été ajouté ce voltage doit-être d'au moins 7 volts. Il ne faut pas que le
+		    voltage soit trop élevé non plus car ça augmente la puissance dissipée dans le régulateur de tension. Donc un adapteur qui
+		    fourni un voltage DC entre 5 et 9 volt avec un courant de 500 mA est adéquat.
+		</li>
+	</ol>
 </p>
 </body>
 </html>

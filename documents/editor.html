@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <header>
-<title>editeur</title>
+<title>PV16SOG editor</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <meta name="Author" content="Jacques Deschênes">
 <meta name="Created on" content="2016-01-18">
@@ -10,10 +10,10 @@
 <link rel="stylesheet" type="text/css" href="style.css">
 </header>
 <body>
-<h2>editeur</h2>
+<h2>Éditeur de texte</h2>
 <h4>Licence</h4>
 <p>  
-  Ce document fait partie du projet <a href="./pv16sog.html">PV16SOG</a> et est fourni sous licence <a href="https://creativecommons.org/">CC-NC-SA-BY V3.0</a><br><br>
+  Ce document fait partie du projet <a href="https://github.com/picatout/pv16sog">PV16SOG</a> et est fourni sous licence <a href="https://creativecommons.org/">CC-NC-SA-BY V3.0</a><br><br>
   <b>auteur:</b> Jacques Deschênes<br>
   <b>révision</b> 1.0</br>
   <b>Copyright:</b> 2015,2016, Jacques Deschênes<br>	
@@ -21,7 +21,9 @@
 </p>
 <h3>Présentation</h3>
 <p>
- PV16SOG possède un éditeur de texte qui permet de le rendre autonome en ce qui concerne l'écriture de programmes. Cet éditeur permet de naviger dans le texte en utilisant les touches de directions et possède en plus un jeux de commandes accessible par une combinaison de touche.
+ PV16SOG possède un éditeur de texte qui permet de le rendre autonome en ce qui concerne l'écriture de programmes. 
+ Cet éditeur permet de naviguer dans le texte en utilisant les touches de directions et possède en plus un jeux de 
+ commandes accessible par une combinaison de touche.
 </p>
 <h4>commandes de l'éditeur</h4>
 <p>
@@ -34,13 +36,22 @@
 <li><b>END</b>: déplace le curseur à la fin de la ligne.</li>
 <li><b>PGUP</b>: déplace le curseur d'un écran vers le haut.</li>
 <li><b>PGDN</b>: déplace le curseur d'un écran vers le bas.</li>
+<li><b>INSERT</b>: bascule entre mode insertion et écrasement. En mode inserstion le curseur est une ligne verticale. 
+En mode écrasement le curseur est un bloc.En mode insertion si le curseur est au milieu d'une ligne un espace est ouvert
+dans la ligne pour faire de la place pour le nouveau caractère. En mode écrasement si le curseur est au milieu d'une ligne,
+un nouveau caractère remplace le caractère à la position du curseur.</li>
+<li><b>F1</b>: affiche le nom et la taille du fichier.</li>
+<li><b>F3</b>: recherche d'une chaîne ASCII dans le texte.</li>
+<li><b>SHIFT-F3</b>: recherche l'occurence suivante de la même chaîne.</li>
 <li><b>CTRL-LEFT ARROW</b>: déplace le curseur au début du mot ou à la fin du mot précédent.</li>
 <li><b>CTRL-RIGHT ARROW</b>: déplace le curseur à la fin du mot ou au début du mot suivant.</li>
 <li><b>CTRL-HOME</b>: déplace le curseur au début du fichier.</li>
 <li><b>CTRL-END</b>: déplace le curseur à la fin du fichier.</li>
 <li><b>CTRL-G</b>: déplace le curseur à la ligne donnée par l'utilisateur.</li>
+<li><b>DEL</b>: efface le caractère à la position du curseur.</li>
 <li><b>CTRL-DEL</b>: efface de la position du curseur jusqu'à la fin de la ligne. Supprime la ligne si le curseur est au début de celle-ci.</li>
-<li><b>CTRL-PREC</b>: efface le début de la ligne jusqu'à la position du curseur.</li>
+<li><b>BACK</b>: efface le caractère à gauche du curseur</li>
+<li><b>CTRL-BACK</b>: efface le début de la ligne jusqu'à la position du curseur.</li>
 <li><b>CTRL-A</b>: sauvegarde le fichier sous le nom donné par  l'utlisateur.</li>
 <li><b>CTRL-S</b>: sauvegarde les modifications du fichier actuel sous le même nom.</li>
 <li><b>CTRL-F</b>: affiche la liste des fichiers qui sont sur la carte SD.</li>
@@ -50,6 +61,23 @@
 <li><b>CTRL-Q</b>: quitte l'éditeur.</li>  
 </ul>
 </p>
-
+<p>
+ Comme l'affichage est de 40 caractères par ligne et que l'éditeur réserve un caractère pour marquer les fins de lignes, chaque ligne de texte
+ a une longueur maximale de 39 caractères. Il y a 21 lignes de texte affichées à l'écran. Le texte est conservé dans la mémoire RAM SPI. 
+ La taille maximale d'un fichier texte est de 65534 caractères incluant les marqueurs de fin de ligne. Les fichiers sont conservés sur la carte SD.
+</p>
+<p>
+ La longueur maximale de 39 caractères par ligne a un impact sur l'écriture des programmes BASIC puisque les expressions doivent-être complétées
+ sur une seule ligne. Si le compilateur BASIC rencontre une fin de ligne au milieu d'une expression il génère une erreur de syntaxe et s'arrête.
+</p>
+<hr width="50%" align="center">
+<p>
+	<ul>
+		<li><a href="./pv16sog.html">ordinateur PV16SOG</a></li>
+		<li><a href="./shell.html">shell du PV16SOG</a></li>
+		<li><a href="./editor.html">Éditeur du PV16SOG</a></li>
+        <li><a href="./BASIC.html">BASIC du PV16SOG</a></li>
+	</ul>
+</p>
 </body>
 </html>

@@ -254,6 +254,7 @@ static void kw_ticks();
 static void kw_timeout();
 static void kw_tone();
 static void kw_trace();
+static void kw_ubound();
 static void kw_use();
 static void kw_waitkey();
 static void kw_wend();
@@ -270,7 +271,7 @@ enum {eKW_ABS,eKW_AND,eKW_BEEP,eKW_BOX,eKW_BTEST,eKW_BYE,eKW_CASE,eKW_CLS,eKW_CO
       eKW_PRINT,eKW_PUTC,eKW_JSTICK,eKW_RECT,eKW_REF,eKW_REM,eKW_RETURN,eKW_RND,eKW_SCRLUP,eKW_SCRLDN,
       eKW_SCRLRT,eKW_SCRLFT,eKW_SELECT,eKW_SETPIXEL,eKW_SETTMR,eKW_SHL,eKW_SHR,
       eKW_SPRITE,eKW_SRCLEAR,eKW_SRLOAD,eKW_SRREAD,eKW_SRSSAVE,eKW_SRWRITE,eKW_SUB,eKW_THEN,eKW_TICKS,
-      eKW_TIMEOUT,eKW_TONE,eKW_TRACE,eKW_USE,eKW_WAITKEY,eKW_WEND,eKW_WHILE,eKW_XORPIXEL
+      eKW_TIMEOUT,eKW_TONE,eKW_TRACE,eKW_USE,eKW_UBOUND,eKW_WAITKEY,eKW_WEND,eKW_WHILE,eKW_XORPIXEL
 };
 
 //mots réservés BASIC
@@ -338,6 +339,7 @@ __eds__ static const dict_entry_t __attribute__((space(prog))) KEYWORD[]={
     {kw_timeout,7+FUNCTION,"TIMEOUT"},
     {kw_tone,4,"TONE"},
     {kw_trace,5,"TRACE"},
+    {kw_ubound,6+FUNCTION,"UBOUND"},
     {kw_use,3,"USE"},
     {kw_waitkey,7+FUNCTION,"WAITKEY"},
     {kw_wend,4,"WEND"},
@@ -1487,7 +1489,7 @@ static void cmd_editor(){ // lance l'éditeur de texte
 //affiche l'espace pool disponible
 static void cmd_free_pool(){
     new_line();
-    print("RAM libre: ");
+    print("RAM free bytes: ");
     print_int(endmark-(void*)&progspace[dp],0);
 }
 
@@ -1770,12 +1772,9 @@ static void kw_ref(){
         break;
     case eVAR_INTARRAY:
     case eVAR_STRARRAY:
+    case eVAR_BYTEARRAY:
         bytecode(low(((uint16_t)var->adr)+2));
         bytecode(high(((uint16_t)var->adr)+2));
-        break;
-    case eVAR_BYTEARRAY:
-        bytecode(low(((uint16_t)var->adr)+1));
-        bytecode(high(((uint16_t)var->adr)+1));
         break;
     case eVAR_FUNC:
     case eVAR_SUB:
@@ -1786,6 +1785,22 @@ static void kw_ref(){
     default:
         throw(eERR_BAD_ARG);
     }//switch
+}//f
+
+// UBOUND(var_name)
+// retourne le dernier indice
+// du tableau
+static void kw_ubound(){
+    var_t *var;
+    char name[32];
+    expect(eLPAREN);
+    expect(eIDENT);
+    strcpy(name,token.str);
+    expect(eRPAREN);
+    var=var_search(name);
+    if (!var || !(var->vtype>=eVAR_INTARRAY && var->vtype<=eVAR_STRARRAY)) throw(eERR_BAD_ARG);
+    lit((uint16_t)var->adr);
+    bytecode(UBOUND);
 }//f
 
 static void kw_use(){
