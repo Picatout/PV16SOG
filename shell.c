@@ -1584,6 +1584,7 @@ static void init_int_array(var_t *var){
         barray=var->adr;
         size=*barray;
     }
+    if (var->vtype==eVAR_BYTEARRAY) count=2;
     expect(eLPAREN);
     next_token();
     while (token.id!=eRPAREN){
@@ -1616,7 +1617,8 @@ static void init_int_array(var_t *var){
         next_token();
     }
     if (count<size) throw(eERR_MISSING_ARG);
-    if (count>(size+1)) throw(eERR_EXTRA_ARG);
+    if (((var->vtype==eVAR_BYTEARRAY) && (count>(size+2))) ||
+        ((var->vtype!=eVAR_BYTEARRAY) && (count>(size+1)))) throw(eERR_EXTRA_ARG);
 }//f
 
 static void init_str_array(var_t *var){
@@ -1709,6 +1711,7 @@ static void dim_array(char *var_name){
 //     identifier$= STRING|
 //     identifier$='('string{,string}')'
 //     identifier['#']='('number{,number}')'
+
 static void kw_dim(){
     char var_name[32];
     var_t *new_var;
