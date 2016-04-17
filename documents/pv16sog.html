@@ -8,7 +8,6 @@
 <meta name="version" content="1.0">
 <meta name="licence" content="CC-NC-SA-BY V3.0">
 <link rel="stylesheet" type="text/css" href="style.css">
-<link rel="stylesheet" type="text/css" href="style.css">
 </header>
 <body>
 <h2>Ordindateur PV16SOG</h2>
@@ -41,9 +40,8 @@ un minimum d'expérience en électronique.</p>
 <li>logiciels en firwmare:
 <ul>
 <li><b>shell de commande</b></li>
-<li><b>machine virtuelle</b> <a href="./pv16vm.html">pv16vm.html</a> qui exécute un programme stocké dans la RAM SPI. voir <a href="./pv16asm.html">pv16asm.html</a></li>
-<li><b>éditeur de texte</b> servant écrire les programmes pour <b>PV16ASM</b>. Fichiers stockés sur la carte SD.</li>
-<li><b>assembleur PV16ASM</b> pour convertir les fichiers créer dans l'éditeur de texte en fichiers binaires exécutable par <b>PV16VM</b> aussi conservés sur la carte SD. Ces fichiers binaires sont chargés dans la SPI-RAM pour exécution.</li>
+<li><b>interpréteur BASIC</b> <a href="./BASIC.html">BASIC.html</a> qui exécute un programme compilé en bytecode stocké dans la RAM.</li>
+<li><b>éditeur de texte</b> servant écrire les programmes <b>BASIC</b>. Fichiers stockés sur la carte SD.</li>
 </ul>
 <h4>schéma électronique</h4>
 <p>
@@ -54,23 +52,45 @@ un minimum d'expérience en électronique.</p>
 <p>
 </p>
 <ul>
-<li>MCU PIC24EP512MC202, ce processeur contient 512Ko de mémoire flash et 48Ko de RAM.</li>
+<li>MCU PIC24EP512MC202, ce processeur 16 bits contient 512Ko de mémoire flash et 48Ko de RAM.</li>
 <li>Mémoire SPI RAM 23LC512, mémoire sérielle à interface SPi de 64Ko.</li>
 <li>Régulateur de tension LD33V.</li>
 <li>Une embase pour la carte SD.</li>
 <li>Un connecteur MINI-DIN-6 pour le clavier PS/2.</li>
-<li>Deux Connecteurs RCA audio pour les sorties son et NTSc</li>
+<li>Deux Connecteurs RCA audio pour les sorties son et vidéo NTSC.</li>
 <li>Un connecteur barrel jack 2,1mm pour l'adapteur d'alimentation.</li>
 <li>Un cristal de 8Mhz.</li>
 <li>Un bouton momentané pour le <b>RESET</b>.</li>
-<li>1 porte piles pour 2 piles AA.</li>
 <li>1 LED indicateur d'alimentation</li>
 </ul>
 Le reste sont des résistances et condensateurs. Les résistances R1-R5, R7,R8,R10,R11 pour le convertissseur numérique/analogique doivent avoir une présicion d'au moins 1%. 
 </p>
 <h4>prototype</h4>
 <p>
-<img src="prototype.png" width=800>
+	<div>
+<img src="plaquette-circuit.png" width=800></div>
+</p>
+<p>
+<ul>
+<li>Le MCU fonctionne à 70Mhz ce qui donne une bonne vitessse d'exécution pour les programmes BASIC.</li>   
+<li>Le 16 niveaux de gris sont produits par un convertisseur R-2R de 4 bits branché sur les sorties RA0:3. La synchronisation vidéo est assuré par une sortie <i>Output compare</i> configurée en PWM sur la broche RB4.</li>   
+<li>Le son est assuré par génération d'ondes carrées en sortie sur la broche RB5.</li>
+<li>L'interface clavier requiert les broches RA0 pour le signal clock et RA1 pour le signal data.</li>   
+<li>L'interface joystick utilise les 5 broches RB11:15. Il s'agit d'un joystick Atari 2600 à contact ON/OFF.</li>   
+<li>La carte SD et le RAM SPI utilise la même interface sur RB7:RB9 avec un signal de sélection respectif sur RB6 pour la RAM et RB10 pour la carte. 
+De plus la présence de la carte SD est détecté sur l'entrée RA4.</li>
+</ul>    
+</p>
+<p>
+	Ce montage simple peut-être réalisé rapidement et à peu de frais. J'ai exécuté celui-ci sur un carte à pastille Vector electronics modèle 8015.
+</p>
+<p>
+   J'ai aussi réalisé un boitier en contre-plaqué de merisier 3mm d'épaisseur.
+   <div><img src="boitier-vue-face.png" width=800><center>vue de face</center>
+   </div>
+</p>
+<p>   
+   <div><img src="boitier-vue-arrière.png" width=800</div><center>vue arrière</center>
 </p>
 </body>
 </html>
