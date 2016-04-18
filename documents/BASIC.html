@@ -19,29 +19,48 @@
   <b>Copyright:</b> 2015,2016, Jacques Deschênes<br>	
 
 </p>
-<h3>Présentation</h3>
+<h3></a>Présentation</h3>
 <p>
-	L'ordinateur PV16SOG possède un interpréteur BASIC inspiré de QBASIC. Le code source BASIC est d'abord compilé en bytecode pour être exécuter sur
+	L'ordinateur PV16SOG possède un interpréteur BASIC inspiré de QBASIC. Le code source BASIC est d'abord compilé en bytecode pour être exécuté sur
 	une machine virtuelle à piles. Ce document décris ce langage BASIC et son utilisation. 
 </p>
-<h3>Caractéristques du langage.</h3>
+<p>
+<ul>
+<li><a href="#language">Caractéristiques du langage.</a></li>
+<li><a href="#reference">référence du langage</a></li>
+<li><a href="#examples">examples</a></li>
+</ul>
+</p>
+<h3><a name="language"></a></a>Caractéristques du langage.</h3>
 <p>
 <ul>
 <li>Types de données<br>
   <ul>
-	  <li>Entier 16 bits</li>
-	  <li>Entier 8 bits (octets)</li>
-	  <li>Chaîne de caractères ASCII</li>
+	  <li>Entier 16 bits signé, {-32768-32767}</li>
+	  <li>Entier 8 bits (octet) non signé, {0-255}</li>
+	  <li>Chaîne de caractères ASCII, {0-127}</li>
 	  <li>Tableau unidimensionnel de ces 3 types de données</li>
   </ul>
 </li>
-<li>Structures<br>
-  Il s'agit d'un langage procédural basé sur les fonctions déclarées avec le mot réservé <b>FUNC</b> ainsi que des sous-routines déclarées avec
+<li>Programmation structurée<br>
+  Contrairement au BASIC des années 70-80 <b>PV16SOG BASIC</b> est un language de programmation structuré de type procédural basé sur
+  des fonctions déclarées avec le mot réservé <b>FUNC</b> ainsi que des sous-routines déclarées avec
   le mot résservé <b>SUB</b>. Il n'y a pas de numéros de lignes ni de <b>GOTO</b> ou <b>GOSUB</b> comme dans les versions plus ancienne de BASIC.
+  Pour l'essentiel je me suis inspiré de <a href="https://fr.wikipedia.org/wiki/QBasic">QBASIC</a> qui venait avec MS-DOS à partir de 1991.<br>
+  La compilation se fait en 1 seule passe, il n'est donc pas possible d'appeller des fonctions ou sous-routines définies plus loin dans le texte.
+  Il en va de même avec les variables tableaux qui doivent-être définies avec la commande <b>DIM</b> avant d'être référencées. Par contre les variables
+  scalaire globales sont créées automatiquement lors de la première référence si elle n'existe pas déjà. Cette auto-création des variables
+  scalaire n'est valide qu'à l'extérieur des fonctions et sous-routines.
 </li>
 
 </li>
 </ul>	
+</p>
+<h3><a name="reference">Référence des commandes BASIC</a></h3>
+<p>
+</p>
+<h3><a name="examples">Examples de programmes</a></h3>
+<p>
 </p>
 <hr width="50%" align="center">
 <p>

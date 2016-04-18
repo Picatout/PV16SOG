@@ -207,6 +207,7 @@ static void kw_dim();
 static void kw_do();
 static void kw_else();
 static void kw_end();
+static void kw_exit();
 static void kw_for();
 static void kw_func();
 static void kw_getpixel();
@@ -264,8 +265,8 @@ static void kw_xorpixel();
 //identifiant KEYWORD doit-être dans le même ordre que
 //dans la liste KEYWORD
 enum {eKW_ABS,eKW_AND,eKW_BEEP,eKW_BOX,eKW_BTEST,eKW_BYE,eKW_CASE,eKW_CLS,eKW_COLOR,
-      eKW_CONST,eKW_DIM,eKW_DO,eKW_ELSE,
-      eKW_END,eKW_FOR,eKW_FUNC,eKW_GETPIXEL,eKW_IF,eKW_INPUT,eKW_KEY,eKW_LEN,
+      eKW_CONST,eKW_DIM,eKW_DO,eKW_ELSE,eKW_END,eKW_EXIT,
+      eKW_FOR,eKW_FUNC,eKW_GETPIXEL,eKW_IF,eKW_INPUT,eKW_KEY,eKW_LEN,
       eKW_LET,eKW_LINE,eKW_LOCAL,eKW_LOCATE,eKW_LOOP,eKW_MAX,eKW_MDIV,eKW_MIN,eKW_NEXT,
       eKW_NOISE,eKW_NOT,eKW_OR,eKW_PAUSE,
       eKW_PRINT,eKW_PUTC,eKW_JSTICK,eKW_RECT,eKW_REF,eKW_REM,eKW_RETURN,eKW_RND,eKW_SCRLUP,eKW_SCRLDN,
@@ -290,6 +291,7 @@ __eds__ static const dict_entry_t __attribute__((space(prog))) KEYWORD[]={
     {kw_do,2,"DO"},
     {kw_else,4,"ELSE"},
     {kw_end,3,"END"},
+    {kw_exit,4,"EXIT"},
     {kw_for,3,"FOR"},
     {kw_func,4,"FUNC"},
     {kw_getpixel,8+FUNCTION,"GETPIXEL"},
@@ -1982,12 +1984,27 @@ static void kw_return(){
         expression();
         bytecode(LCSTORE);
         bytecode(0);
-       bytecode(LEAVE);
+        bytecode(LEAVE);
         if (globals>varlist){
             bytecode(varlist->n);
         }else{
             bytecode(0);
         }
+}//f
+
+// EXIT SUB
+// termine l'exécution d'une sous-routine
+// en n'importe quel point de celle-ci.
+// sauf à l'intérieur d'une boucle FOR
+static void kw_exit(){
+    expect(eKWORD);
+    if (token.n != eKW_SUB) throw(eERR_SYNTAX);
+    bytecode(LEAVE);
+    if (globals>varlist){
+        bytecode(varlist->n);
+    }else{
+        bytecode(0);
+    }
 }//f
 
 // CLS [color]
@@ -2937,15 +2954,33 @@ void compile(){
                 COMMAND[token.n].cfn();
                 break;
             case eKWORD:
-                KEYWORD[token.n].cfn();
+                if ((KEYWORD[token.n].len&FUNCTION)==FUNCTION){
+                    KEYWORD[token.n].cfn();
+                    bytecode(DROP);
+                }else{
+                    KEYWORD[token.n].cfn();
+                }
                 break;
             case eIDENT:
-                if ((var=var_search(token.str)) && (var->vtype==eVAR_SUB)){
-                    adr=(uint16_t)var->adr;
-                    parse_arg_list(*((uint8_t*)(adr+1)));
-                    bytecode(CALL);
-                    bytecode(low((uint16_t)&var->adr));
-                    bytecode(high((uint16_t)&var->adr));
+                if ((var=var_search(token.str))){
+                    if (var->vtype==eVAR_SUB){
+                        adr=(uint16_t)var->adr;
+                        parse_arg_list(*((uint8_t*)(adr+1)));
+                        bytecode(CALL);
+                        bytecode(low((uint16_t)&var->adr));
+                        bytecode(high((uint16_t)&var->adr));
+                    }else if (var->vtype==eVAR_FUNC){
+                        litc(0);
+                        adr=(uint16_t)var->adr;
+                        parse_arg_list(*((uint8_t*)(adr+1)));
+                        bytecode(CALL);
+                        bytecode(low((uint16_t)&var->adr));
+                        bytecode(high((uint16_t)&var->adr));
+                        bytecode(DROP);
+                    }else{
+                        unget_token=true;
+                        kw_let();
+                    }
                 }else{
                     unget_token=true;
                     kw_let();
