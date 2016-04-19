@@ -48,8 +48,8 @@
   le mot résservé <b>SUB</b>. Il n'y a pas de numéros de lignes ni de <b>GOTO</b> ou <b>GOSUB</b> comme dans les versions plus ancienne de BASIC.
   Pour l'essentiel je me suis inspiré de <a href="https://fr.wikipedia.org/wiki/QBasic">QBASIC</a> qui venait avec MS-DOS à partir de 1991.<br>
   La compilation se fait en 1 seule passe, il n'est donc pas possible d'appeller des fonctions ou sous-routines définies plus loin dans le texte.
-  Il en va de même avec les variables tableaux qui doivent-être définies avec la commande <b>DIM</b> avant d'être référencées. Par contre les variables
-  scalaire globales sont créées automatiquement lors de la première référence si elle n'existe pas déjà. Cette auto-création des variables
+  Il en va de même avec les variables tableaux qui doivent-être définies avec la commande <b>DIM</b> avant d'être référencées. Par contre une variable
+  scalaire globale est créée automatiquement lors de la première référence si elle n'existe pas. Cette auto-création des variables
   scalaire n'est valide qu'à l'extérieur des fonctions et sous-routines.
 </li>
 
@@ -58,6 +58,189 @@
 </p>
 <h3><a name="reference">Référence des commandes BASIC</a></h3>
 <p>
+	PV16SOG BASIC est insensible à casse tous les mots réservés et indentificateurs de variables sont convertis en majuscules par le compilateur.
+</p>
+<h4>conventions typographiques
+</h4>
+<p>
+	les éléments de syntaxe indiqués entre <b>'['</b> et <b>']'</b> sont des éléments optionnels. si le caractère <b>'+'</b>
+	suit le caractère <b>']'</b> l'élément peut-être répété un nombre abritraire de fois.
+</p>
+<p>
+	<i>expr</i>  signifit une expression arithmétique.<br>
+	<i>expr_list</i> liste d'expression numérique. Les éléments sont séparés par la virgule <b>','</b>.<br>
+	<i>cond</i>  signifit une condition logique résultant de la comparaison de 2 <i>expr</i>.<br>
+	<i>log_expr</i> signigit un ensemble de <i>cond</i> reliées par les opérateurs logiques <b>AND</b> et <b>OR</b>.<br>
+	<i>arg_list</i> est la liste des arguments passés à une sous-routine ou fonction. La virgule <b>','</b> est le séparateur de liste.<br>
+	<i>val_list</i> est une liste de valeur numérique ou chaîne servant à initialiser un tableau lors de sa déclaration.<br>
+	<i>var</i> représente un nom de variable.<br>
+	<i>num</i> représente un nombre entier.<br>
+	<i>const</i> représente une constante numérique.<br>
+	<i>block</i> groupe d'instructions BASIC.<br>
+</p>
+<h4>Opérateurs par ordre de précédence</h4>
+<p>Cette table montre les opérateurs par ordre de précédence. À précédence égale les opérateurs sont traités de gauche à droite.</p>
+<table border="single">
+<tr><th>opérateur</th><th>description</th></tr>
+<tr><td>()</td><td>Parenthèse de groupement d'expression. Le groupement entre parenthèses est réservé aux expression arithmétiques. 
+Les <i>cond</i> et les <i>log_expr</i> ne peuvent pas être regroupées.</td></tr>
+<tr><td>func()</td><td>Les fonctions ont la plus haute priorité dans les expression arithmétiques.</td></tr>
+<tr><td>* / %</td><td>multiplication, division entière, modulo</td></tr>
+<tr><td>+ -</td><td>addition soustraction</td></tr>
+<tr><td>= >= < <= <> >< </td><td>les opérateurs de comparaison utilisés dans les <i>cond</i></td></tr>
+<tr><td>NOT</td><td> négation logique appliquée au résultat d'une <i>cond</i></td> </tr>
+<tr><td>AND</td><td>conjonction logique appliqué entre les <i>cond</i></td> </tr>
+<tr><td>OR</td><td>alternative logique appliqué entre les <i>cond</i></td> </tr>
+</table>
+<h4>nom de variables</h4>
+<p>
+	Les noms de variables sont insensibles à la casse. Tous les noms sont convertis en majuscules par le compilateur. Un nom peut 
+	avoir un maximum de 31 caractères, doit commencer par une lettre mais peut contenir des chiffres et le caractère <b>'_'</b>.
+	Si le nom de la variable se termine par le caractère <b>'$'</b> il s'agit d'une variable chaîne. Si le nom se termine par le
+	caractère <b>'#'</b> il s'agit d'une variable octet {0-255}. Autrement il s'agit d'une variable de type entier 16 bits dans l'interval
+	de valeurs {-32768 - 32767}. Les tableaux peuvent-être de ces 3 types de données et ne peuvent avoir qu'une seule dimension.
+</p>
+<p>
+	Les variables chaîne sont en fait des constantes, une fois une valeur assignée à une telle variable celle-ci ne peut-être changée
+	sauf en utilisant un truc de programmation avancé.
+</p>
+<h4>valeurs litérales</h4>
+<p>
+Les valeurs litérales numérique peuvent-être saisie sous 3 formes:
+<ol>
+	<li><b>décimal</b>  23, -267 , -32560, 255</li>
+	<li><b>hexadécimal</b> $23f2, $fff3</li>
+	<li><b>binaire</b> #101, #100011</li>
+</ol>
+</p>
+<p>
+Les chaînes de caractères sont saisies entre guillemets <b>'"'</b> example: "Hello world"<br>
+Un caractère ASCII est saisie en le précédent de la barre oblique <b>'\'</b> example: \a
+</p>
+<h4>fonctions et sous-routines</h4>
+<p>
+	Les paramètres des fonctions et sous-routines sont passées par valeur sauf si le nom de la variable est précédé du 
+	caractère <b>'@'</b>. Dans ce cas le paramètre doit-être le nom d'une variable qui est passée par référence.
+	<div>
+    <pre><code>example:
+    sprite(10,10,8,8,@lem#) ' lem# est le nom d'une variable taleau qui contient un sprite.
+                            ' ce tableau doit-être passé par référence.</code></pre></div>
+</p><p>                            
+    La valeur de retour d'une fonction peut-être ignorée comme c'est le cas dans cet example puisque <b>sprite()</b> est
+    une fonction.
+</p>
+<h4>commandes BASIC</h4>
+<p>
+	<ul>
+	<li><b>ABS(expr)</b> Fonction qui retourne la valeur absolue de l'expresssion passée comme paramètre.
+	<pre><code>example:
+	? abs(3*b)
+	REM imprime la valeur absolue de la variable <b>b</b> multipliée par <b>3</b>.
+	</code></pre>
+	</li>
+	<li><b>AND</b> conjonction logique <b>ET</b> utilisé dans les <i>log_expr</i>.
+	<pre><code>example:
+	if hour>=12 and hour<=17 then print "afternoon" end if
+	REM si la varialbe <i>hour</i> a une valeur entre 12 et 17 imprime le mot <i>afternoon</i>.
+	</code></pre>
+	</li>
+	<li><b>BEEP(freq,msec,wait)</b> sous-routine qui génère une tonalité.
+	<ul>
+	<li><b>freq</b> fréquence en Hertz.</li>
+	<li><b>msec</b> durée en millisecondes.</li>
+	<li><b>wait</b> représente une valeur booléenne {0,1} et indique si l'exécution du programme doit-être 
+	suspendue pour la durée de la tonalitée. Si on passe la valeur
+	<b>0</b> les instructions qui suivent s'exécutent immédiatement sans attendre la fin de la tonalité.
+	</li></ul>
+	<pre><code>example:
+	BEEP(440,1000,1)
+	REM génère une tonalitée de 440Hertz pour une durée de 1 seconde. Suspend l'exécution.</code></pre></li>
+	<li><b>BOX(x0,y0,width,height,color)</b> sous-routine qui dessine un rectangle plein. 
+	<ul><li><b>{x0,y0}</b> représente la position du coin supérieur gauche.</li>
+	<li><b>width</b> représente la largeur de la boite.</li>
+	<li><b>height</b> représente la hauteur de la boite.</li>
+	<li><b>color</b> est la couleur de la boite (ton de gris).</li></ul>
+	<pre><code>example:
+	BOX(10,20,100,50,7)
+	REM boite dont le coin supérieur gauche est à la position {10,20} de largeur 100 pixels,
+	REM hauteur de 50 pixels avec un ton de gris de 7.</code></pre>
+	</li>
+	<li><b>BTEST(<i>expr</i>,bit)</b> fonction qui vérifie l'état d'un bit. Retourne <i>vrai</i> si le bit est à 1 sinon
+	retourne <i>faux</i>.
+	<ul>
+	<li><b>expr</b> valeur pour laquelle on veut vérifier l'état d'un bit.</li>
+	<li><b>bit</b> bit est une expression de valeur comprise entre 0 et 15 puisque les entiers sont de 16 bits. <b>0</b> est le bit 
+	le plus faible et <b>15</b> le plus fort.</li>
+	</ul>
+	<pre><code>example:
+	if btest(v1,0) then print "nombre impair" end if
+	REM si le bit zéro est à 1 il s'agit d'un nombre impair.
+	if btest(v2,15) then print "nombre negatif" end if
+	REM si le bit 15 est à 1 il s'agit d'un nombre négatif.</code></pre>
+	</li>
+	<li><b>BYE</b> Cette commande termine l'éxécution d'un programme et peut-être utilisée n'importe où à l'intérieur
+	d'un programme.
+	<pre><code>example:
+	if key()='q' then BYE end if
+	REM termine l'exécution si la touche 'Q' est enfoncée.
+	</code></pre></li>
+	<li><b>CASE</b> mot réservé utilisé à l'intérieur des <a href="#selectcase">SELECT CASE</a></li>
+	<li><b>CLS [color]</b> Efface l'écran. Si le paramètre <i>color</i> est présent assigne cette valeur
+	comme nouvelle couleur de fond avant d'effacer l'écran.
+	<pre><code>example:
+	CLS 7
+	REM la nouvelle couleur de fond sera <b>7</b> et tous les pixels auront cette couleur après cette commande.</code></pre></li>
+	<li><b>COLOR(police,fond)</b> Fixe la couleur de la police de caractère et du fond d'écran.
+	<ul>
+	<li><b>police</b> expression arithmétique dont la valeur doit-être entre 0 et 15. Détermine la couleur des caractères.</li>
+	<li><b>fond</b> expression arithmétqiue dont la valeur doit-être entre 0 et 15. Détermine la couleur de fond d'écran.
+	<pre><code>example:
+	COLOR(15,0)
+	REM caractère blanc sur fond noir.</code></pre></li></ul>
+	</li>
+	<li><b>CONST nom=valeur [,nom=valeur]</b> Déclare une ou plusieurs constantes séparées par une virgule <b>','</b>.
+	<ul><li><b>nom</b> est le nom de la constante.</li>
+	<li><b>valeur</b> selon le type de la variable il s'agit d'un entier, d'un octet ou d'une chaîne ASCII.</li></ul>
+	<pre><code>example:
+	CONST age#=30, salaire=32000, nom$="Capitaine Bonhomme"
+	REM défini 3 constantes de 3 types différents dans la même déclaration.</code></pre>
+	</li>
+	<li><b>DIM <i>var</i>[=<i>value</i>] [,<i>var</i>[=<i>value</i>]]</b><br>
+	 <b>DIM <i>var</i>(<i>number</i>)[=(value_list)] [,<i>var</i>(<i>number</i>)[=(value_list)]]</b><br>
+	 Cette commande sert à déclarer des variables. Les variables peuvent-être initialisées lors de leur déclaration.
+	 Les variables tableaux doivent-être initialisées avec le nombre exact d'éléments déclarés dans la dimension  du tableau.
+	 <pre><code>example:
+	 DIM v1=34, v2#=234 ' la variable entier 16 bits v1 prend la valeur 34
+	                    ' la variable octet v2 prend la valeur 234
+	 DIM t1(4)=(1,2,3,4) ' le tableau t1 contient 4 éléments qui sont initialisées.
+	 DIM msg$(3)=("nom","prenom","age") ' tableau de 3 chaînes initialisé.
+	 </code></pre></li>
+	<li><a name="selectcase"></a><b>SELECT CASE expr</b><br>
+	<b>CASE </b><i>expr_list</i><br>
+	<i>block</i><br>
+	[<B>case </B><i>expr_list</i><br>
+	<i>block</i>]+<br>
+	[<b>CASE ELSE</b><br>
+	<i>block</i>]<br>
+	<b>END SELECT</b><br> 
+	Cette structure de contrôle permet de sélectionnr un bloc d'instruction en fonction de la valeur d'une expression. Contrairement au
+	<i>switch</i> du langage 'C' l'exécution d'un bloc se termine au prochain <b>CASE</b> sans besoin de mettre un <i>break</i>.
+	<pre><code>example:
+	select case jstick()
+	case 1 ' bouton du joystick enfoncé
+	   bye
+	case 2 ' levier à droite
+	  move_right()
+	case 4 ' levier vers la gauche
+	  move_left()
+	case 8 ' levier vers le bas
+	  move_down()
+	case 16 ' levier vers le haut
+	  move_up()
+	end select
+	REM contrôle du mouvement d'un sprite à l'écran à l'aide du joystick     
+	  </code></pre></li>
+	</ul>
 </p>
 <h3><a name="examples">Examples de programmes</a></h3>
 <p>
