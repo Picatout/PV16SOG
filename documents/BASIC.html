@@ -678,6 +678,112 @@ Un caractère ASCII est saisie en le précédent de la barre oblique <b>'\'</b> 
 	 ? "temps écoulé pour 10000 itération FOR ", ticks()-t0
 	 </code></pre>
 	 </li>
+	 <li><b>TIMEOUT()</b><br>
+	 Cett fonction vérifie la valeur de la minuterie de pause et retourne vrai si elle est expirée.
+	 <pre><code>example:
+	 settmr(1000)
+	 while not timeout()
+	   ? "pas encore expiree"
+	 wend
+	 </code></pre>
+	 </li>
+	 <li><b>TONE(<i>note,msec,wait</i>)</b><br>
+	 Fait entendre une note de la gamme tempérée.
+	 <ul>
+		 <li><b>note</b> note de la gamme dans l'intervalle {0-47}. <b>0</b> correspond à DO2# et <b>47</b> à DO6. L'étendu est de 4 octaves. On peut
+		 utiliser un nombre négatif pour faire une pause.</li>
+		 <li><b>msec</b> durée de la note en millisecondes.</li>
+		 <li><b>wait</b> Si cette valeur vaut <b>0</b> l'exécution du programme se poursuit pendant l'exécution de cette note. Autrement le programme
+		 attend la fin de la note avant de poursuivre.</li>
+	 </ul>
+	 <pre><code>example:
+	 REM ce programme joue les 5 premières notes
+	 REM du thème musical du film rencontre du 3ième type.
+	 dim ce3k#(10)=(13,200,15,200,11,200,1,200,6,200)
+	 for i=1 to ubound(ce3k#) step 2
+	     tone(ce3k#(i)+12,3*ce3k#(i+1),1)
+	 next i
+	 </code></pre>
+	 </li>
+	 <li><b>TRACE(0|1)</b><br>
+	 C'est un outil de débogage des programmes BASIC pour les utilisateurs avancés. 
+	 Pour l'utiliser il faut connaître le fonctionnement de la machine virtuelle et ses
+	 <a href="./stackvm.html#opcoddes">opcodes</a>.<br>
+	 la commande <b>trace(1)</b> active le mode trace et <b>trace(0)</b> le désactive. Le mode trace exécute le programme pas à pas et affiche
+	 après chaque instruction de la machine virtuelle le contenu de la pile des arguments ainsi que le nombre
+	 d'éléments sur la pile des retours. La touche <b>ESC</b> permet de quitter le mode trace, toute autre touche exécute le code machine
+	 suivant et revient à pause.  La mode peut-être activé/désactivé n'importe où dans le programme. L'état de l'écran est sauvegarder dans 
+	 la RAM SPI avant que les informations de traçage soit affichée et l'écran est restauré avant de continuer l'exécution. Pour plus 
+	 d'information consultez le document <a href="./stackvm.html">stackvm.html</a>
+	 <pre><code>example:
+	 REM activation conditionnelle de trace
+	 for i=1 to 100
+	   if (i=50) then trace(1) end if
+	   ? i
+	 next i
+	 
+	 
+	 REM information qui vont apparaître 
+	 REM à l'écran de traçage lors de l'activation
+     
+     28
+     R:2
+     1 : 31726	 
+     
+     ' 28 est le dernier opcode exécuté et correspond à l'intruction <b>LIT</b>
+     ' R:2 signifit qu'il y a 2 éléments sur la pile <b>rstack</b>
+     ' 1 : 31726  signifit qu'il y a 1 élément sur la pile des arguments
+     '           31726 est la valeur de cet argument. Il s'agit d'un pointeur
+     '           sur la variable <i>i</i> qui va être imprimé par l'instrution
+     '           suivante.
+	 </code></pre></li>
+	 <li><b>UBOUND(<i>var</i>)</b><br>
+	 Cette fonction retourne la valeur du dernier indice d'une variable tableau.
+	 <pre><code>example:
+	 &gt;dim vector(100)
+	 &gt;? ubound(vector)
+	 100
+	 &gt;|
+	 </code>
+	 </pre></li>
+	 <li><b>USE "<i>file</i>"</b><br>
+	 Cette directive sert à compiler un fichier BASIC utilisé par le fichier principal. <i>file</i> est le nom du fichier à inclure. 
+	 Il doit s'agir d'un fichier existant sur la carte SD. Un fichier inclus peut aussi utiliser la directive <b>USE</b> 
+	 jusqu'à un niveau d'imbrication de 4. 4 étant le nombre maximal de fichiers pouvant-être ouvert simultanément.
+	 <pre><code>example:
+	 use "joystick.inc" ' fichier définissant des constantes pour le joystick
+	 use "lem.spr"      ' fichier définissant un sprite appellé LEM.
+	 ' code du programme principal
+	 .
+	 .
+	 .
+	 </code></pre>
+	 </li>
+	 <li><b>WAITKEY()</b><br>
+	 Cette fonction attend que l'utilisateur enfonce une touche au clavier et retourne la valeur de cette touche.
+	 <pre><code>example:
+	 &gt;putc waitkey()
+	 r
+	 &gt;|
+	 REM l'utilisateur a enfoncé la touche 'r'</code></pre></li>
+	 <li><b>WHILE <i>log_expr</i></b><br>
+	 [<i>block</i>]<br>
+	 <b>WEND</b><br>
+	 La structure de contrôle <b>WHILE</b> exécute le bloc d'instructions <i>block</i> terminé par le <b>WEND</b> tant que <i>log_expr</i>
+	 retourne vrai.<br>
+	 <pre><code>example:
+	 dim i=0
+	 while i<100
+	   ? i
+	   i=i+1
+	 wend
+	 0
+	 1
+	 2
+	 ...
+	 99
+	 </code></pre>
+	 </li>
 	</ul>
 </p>
 <h3><a name="examples">Examples de programmes</a></h3>
@@ -690,6 +796,7 @@ Un caractère ASCII est saisie en le précédent de la barre oblique <b>'\'</b> 
 		<li><a href="./shell.html">shell du PV16SOG</a></li>
 		<li><a href="./editor.html">Éditeur du PV16SOG</a></li>
         <li><a href="./BASIC.html">BASIC du PV16SOG</a></li>
+        <li><a href="./stackvm.html">machine virtuelle du PV16SOG</a></li>
 	</ul>
 </p>
 

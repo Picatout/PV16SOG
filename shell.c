@@ -1811,8 +1811,8 @@ static void kw_use(){
     uint16_t lcount;
     
     if (activ_reader->device==STDIN) throw(eERR_SYNTAX);
-    parse_filter();
-    if (token.id==eNONE) throw(eERR_MISSING_ARG);
+    expect(eSTRING);
+    uppercase(token.str);
     if ((fh=fs_open_file(token.str))){
         reader_init(&freader,eDEV_SDCARD,fh);
         old_reader=activ_reader;

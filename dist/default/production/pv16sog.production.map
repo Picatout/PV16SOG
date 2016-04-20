@@ -147,15 +147,15 @@ section                    address   length (PC units)   length (bytes) (dec)
 -------                    -------   -----------------   --------------------
 .text                        0x200               0xf62          0x1713  (5907)
 .dinit                      0x1162              0x3eea          0x5e5f  (24159)
-.text                       0x504c              0x6674          0x99ae  (39342)
-_f6a8745057169e81           0xb6c0               0x3dc           0x5ca  (1482)
-.text                       0xba9c               0xa64           0xf96  (3990)
-_f6d3895857164e02           0xc500               0x328           0x4bc  (1212)
-.text                       0xc828               0x860           0xc90  (3216)
-_f6a873f457169e81           0xd088                0xbc           0x11a  (282)
-.text                       0xd144               0x260           0x390  (912)
+.text                       0x504c              0x6670          0x99a8  (39336)
+_f6a804505717c2b8           0xb6bc               0x3dc           0x5ca  (1482)
+.text                       0xba98               0xa64           0xf96  (3990)
+_f6dff9585717c215           0xc4fc               0x328           0x4bc  (1212)
+.text                       0xc824               0x860           0xc90  (3216)
+_f6a803f45717c2b8           0xd084                0xbc           0x11a  (282)
+.text                       0xd140               0x260           0x390  (912)
 
-                     Total program memory used (bytes):        0x13a76  (80502) 15%
+                     Total program memory used (bytes):        0x13a70  (80496) 15%
 
 
 Data Memory  [Origin = 0x1000, Length = 0xc000]
@@ -339,7 +339,7 @@ External Symbols in Program Memory (by address):
                   0x005080                  build/default/production/shell.o:_kw_do
                   0x005094                  build/default/production/shell.o:_cmd_clear
                   0x0050b6                  build/default/production/shell.o:_cmd_free_pool
-                  0x0050ca                  build/default/production/shell.o:_kw_rem
+                  0x00510a                  build/default/production/shell.o:_kw_rem
                   0x005248                  build/default/production/shell.o:_cmd_reboot
                   0x00547c                  _cmd_dir
                   0x00550e                  _throw
@@ -417,179 +417,179 @@ External Symbols in Program Memory (by address):
                   0x00720e                  build/default/production/shell.o:_kw_const
                   0x00730a                  build/default/production/shell.o:_kw_let
                   0x007576                  build/default/production/shell.o:_kw_use
-                  0x0075e0                  build/default/production/shell.o:_cmd_run
-                  0x007652                  build/default/production/shell.o:_kw_for
-                  0x007708                  _shell
-                  0x007d84                  build/default/production/FAT/fat.o:_fat_clear_cluster_callback
-                  0x007dce                  build/default/production/FAT/fat.o:_fat_get_fs_free_32_callback
-                  0x007e02                  build/default/production/FAT/fat.o:_fat_get_fs_free_16_callback
-                  0x007f7e                  build/default/production/FAT/fat.o:_fat_dir_entry_read_callback
-                  0x00839e                  _fat_open
-                  0x0083d2                  _fat_close
-                  0x0083da                  _fat_open_file
-                  0x008434                  _fat_close_file
-                  0x008444                  _fat_close_all_files
-                  0x008456                  _fat_read_file
-                  0x0085d6                  _fat_write_file
-                  0x0087e4                  _fat_resize_file
-                  0x008920                  _fat_seek_file
-                  0x00898e                  _fat_open_dir
-                  0x0089c2                  _fat_close_dir
-                  0x0089d2                  _fat_reset_dir
-                  0x0089ea                  _fat_read_dir
-                  0x008b0a                  _fat_get_dir_entry_of_path
-                  0x008bca                  _fat_create_file
-                  0x008c44                  _fat_delete_file
-                  0x008c9a                  _fat_move_file
-                  0x008d26                  _fat_create_dir
-                  0x008e4e                  _fat_get_fs_size
-                  0x008e94                  _fat_get_fs_free
-                  0x00a17e                  _editor
-                  0x00a344                  _sd_raw_available
-                  0x00a34e                  _sd_raw_send_byte
-                  0x00a3b4                  _sd_raw_sync
-                  0x00a3d4                  _sd_raw_read
-                  0x00a4de                  _sd_raw_read_interval
-                  0x00a568                  _sd_raw_init
-                  0x00a686                  _sd_raw_write
-                  0x00a79e                  _sd_raw_write_interval
-                  0x00a826                  _sd_raw_get_info
-                  0x00aad6                  _put_char
-                  0x00ab4e                  _get_cursor
-                  0x00ab6c                  _set_cursor
-                  0x00ab88                  _text_clear_line
-                  0x00aba6                  _print
-                  0x00abdc                  _print_int
-                  0x00ac66                  _print_hex
-                  0x00acd4                  _update_cursor
-                  0x00ad2c                  _cursor_show
-                  0x00ad34                  _wait_key
-                  0x00ad5a                  _set_cursor_shape
-                  0x00ad5e                  _prompt
-                  0x00ad94                  _prompt_continue
-                  0x00ad9c                  _readln
-                  0x00afd4                  _pstrcpy
-                  0x00b012                  _pstrcmp
-                  0x00b056                  _uppercase
-                  0x00b08c                  over
-                  0x00b0c4                  alloc
-                  0x00b3b6                  _pause
-                  0x00b63e                  _interpret
-                  0x00ba9c                  _kbd_ready
-                  0x00baa6                  _kbd_queue_empty
-                  0x00bab2                  _search_table
-                  0x00bae8                  _kbd_send
-                  0x00bb46                  _kbd_update_leds
-                  0x00bb5c                  _kbd_get_key
-                  0x00bbec                  _kbd_wait_key
-                  0x00bbf4                  _kbd_reset
-                  0x00bc1c                  __CNInterrupt
-                  0x00bcae                  __T4Interrupt
-                  0x00be5e                  _dalloc
-                  0x00be7e                  _dfree
-                  0x00be9a                  _dfree_size
-                  0x00bea2                  _dmark
-                  0x00bea6                  _systicks_init
-                  0x00bece                  _TVout_init
-                  0x00bf14                  _spi_init
-                  0x00bf38                  _kbd_init
-                  0x00bf74                  _audio_init
-                  0x00bf92                  _random
-                  0x00bfbc                  _randomize
-                  0x00bfc8                  _hardware_init
-                  0x00c03e                  _video_adjust
-                  0x00c0fe                  __AddressError
-                  0x00c136                  __MathError
-                  0x00c17a                  __StackError
-                  0x00c1b2                  _fs_last_error
-                  0x00c1b8                  _fs_umount
-                  0x00c1c8                  _fs_mount
-                  0x00c21c                  _fs_close_dir
-                  0x00c222                  _fs_open_dir
-                  0x00c256                  _fs_open_file
-                  0x00c2b2                  _fs_file_reset
-                  0x00c2c6                  _fs_read_file
-                  0x00c2d4                  _fs_write_file
-                  0x00c2e2                  _fs_load_spiram
-                  0x00c356                  _fs_read_dir
-                  0x00c36a                  _fs_create_file
-                  0x00c386                  _fs_save_spiram
-                  0x00c3f8                  _fs_file_size
-                  0x00c44c                  _fs_reset_dir
-                  0x00c45e                  _fs_find_file
-                  0x00c4ae                  _fs_rename_file
-                  0x00c4dc                  _fs_delete_file
-                  0x00c500                  _font_6x8
-                  0x00c828                  _set_pixel
-                  0x00c82e                  _draw_pixel
-                  0x00c868                  _vm_get_pixel
-                  0x00c888                  _vm_xor_pixel
-                  0x00c88e                  _xor_pixel
-                  0x00c8b6                  _vm_scroll_up
-                  0x00c8b8                  _scroll_up
-                  0x00c8f4                  _vm_scroll_down
-                  0x00c8f6                  _scroll_down
-                  0x00c934                  _vm_scroll_right
-                  0x00c98a                  _vm_scroll_left
-                  0x00c9ca                  _vm_line
-                  0x00c9e4                  _vm_sprite
-                  0x00ca00                  _box
-                  0x00ca6a                  _vm_rect
-                  0x00ca90                  _clreol
-                  0x00cace                  _cls
-                  0x00cae8                  _gray_scale
-                  0x00cb0a                  _text_line
-                  0x00cb16                  _text_colon
-                  0x00cb22                  _new_line
-                  0x00cb3a                  _draw_line
-                  0x00cbda                  _draw_rect
-                  0x00cc42                  _draw_sprite
-                  0x00cd1e                  _save_screen
-                  0x00cd46                  _restore_screen
-                  0x00cd60                  _sram_set_mode
-                  0x00cd74                  _sram_get_mode
-                  0x00cd82                  _sram_send_address
-                  0x00cd92                  _sram_write_byte
-                  0x00cdac                  _sram_write_word
-                  0x00cdca                  _sram_read_byte
-                  0x00cde2                  _sram_read_word
-                  0x00ce04                  _sram_write_block
-                  0x00ce2e                  _sram_read_block
-                  0x00ce5c                  _sram_clear
-                  0x00ce8c                  _sram_clear_block
-                  0x00cf6e                  _reader_init
-                  0x00cf7c                  _reader_getc
-                  0x00cfb4                  _reader_ungetc
-                  0x00cfbc                  __T2Interrupt
-                  0x00d032                  __OC2Interrupt
-                  0x00d1a4                  _tone
-                  0x00d1c0                  _vm_beep
-                  0x00d1c6                  _beep
-                  0x00d1ec                  _partition_open
-                  0x00d272                  _partition_close
-                  0x00d280                  _read16
-                  0x00d28a                  _read32
-                  0x00d2b6                  _write16
-                  0x00d2be                  _write32
-                  0x00d2da                  _main
-                  0x00d326                  _store_init
-                  0x00d32c                  _spi_clock_speed
-                  0x00d350                  _spi_write
-                  0x00d35c                  _error
-                  0x00d388                  __T1Interrupt
+                  0x0075dc                  build/default/production/shell.o:_cmd_run
+                  0x00764e                  build/default/production/shell.o:_kw_for
+                  0x007704                  _shell
+                  0x007d80                  build/default/production/FAT/fat.o:_fat_clear_cluster_callback
+                  0x007dca                  build/default/production/FAT/fat.o:_fat_get_fs_free_32_callback
+                  0x007dfe                  build/default/production/FAT/fat.o:_fat_get_fs_free_16_callback
+                  0x007f7a                  build/default/production/FAT/fat.o:_fat_dir_entry_read_callback
+                  0x00839a                  _fat_open
+                  0x0083ce                  _fat_close
+                  0x0083d6                  _fat_open_file
+                  0x008430                  _fat_close_file
+                  0x008440                  _fat_close_all_files
+                  0x008452                  _fat_read_file
+                  0x0085d2                  _fat_write_file
+                  0x0087e0                  _fat_resize_file
+                  0x00891c                  _fat_seek_file
+                  0x00898a                  _fat_open_dir
+                  0x0089be                  _fat_close_dir
+                  0x0089ce                  _fat_reset_dir
+                  0x0089e6                  _fat_read_dir
+                  0x008b06                  _fat_get_dir_entry_of_path
+                  0x008bc6                  _fat_create_file
+                  0x008c40                  _fat_delete_file
+                  0x008c96                  _fat_move_file
+                  0x008d22                  _fat_create_dir
+                  0x008e4a                  _fat_get_fs_size
+                  0x008e90                  _fat_get_fs_free
+                  0x00a17a                  _editor
+                  0x00a340                  _sd_raw_available
+                  0x00a34a                  _sd_raw_send_byte
+                  0x00a3b0                  _sd_raw_sync
+                  0x00a3d0                  _sd_raw_read
+                  0x00a4da                  _sd_raw_read_interval
+                  0x00a564                  _sd_raw_init
+                  0x00a682                  _sd_raw_write
+                  0x00a79a                  _sd_raw_write_interval
+                  0x00a822                  _sd_raw_get_info
+                  0x00aad2                  _put_char
+                  0x00ab4a                  _get_cursor
+                  0x00ab68                  _set_cursor
+                  0x00ab84                  _text_clear_line
+                  0x00aba2                  _print
+                  0x00abd8                  _print_int
+                  0x00ac62                  _print_hex
+                  0x00acd0                  _update_cursor
+                  0x00ad28                  _cursor_show
+                  0x00ad30                  _wait_key
+                  0x00ad56                  _set_cursor_shape
+                  0x00ad5a                  _prompt
+                  0x00ad90                  _prompt_continue
+                  0x00ad98                  _readln
+                  0x00afd0                  _pstrcpy
+                  0x00b00e                  _pstrcmp
+                  0x00b052                  _uppercase
+                  0x00b088                  over
+                  0x00b0c0                  alloc
+                  0x00b3b2                  _pause
+                  0x00b63a                  _interpret
+                  0x00ba98                  _kbd_ready
+                  0x00baa2                  _kbd_queue_empty
+                  0x00baae                  _search_table
+                  0x00bae4                  _kbd_send
+                  0x00bb42                  _kbd_update_leds
+                  0x00bb58                  _kbd_get_key
+                  0x00bbe8                  _kbd_wait_key
+                  0x00bbf0                  _kbd_reset
+                  0x00bc18                  __CNInterrupt
+                  0x00bcaa                  __T4Interrupt
+                  0x00be5a                  _dalloc
+                  0x00be7a                  _dfree
+                  0x00be96                  _dfree_size
+                  0x00be9e                  _dmark
+                  0x00bea2                  _systicks_init
+                  0x00beca                  _TVout_init
+                  0x00bf10                  _spi_init
+                  0x00bf34                  _kbd_init
+                  0x00bf70                  _audio_init
+                  0x00bf8e                  _random
+                  0x00bfb8                  _randomize
+                  0x00bfc4                  _hardware_init
+                  0x00c03a                  _video_adjust
+                  0x00c0fa                  __AddressError
+                  0x00c132                  __MathError
+                  0x00c176                  __StackError
+                  0x00c1ae                  _fs_last_error
+                  0x00c1b4                  _fs_umount
+                  0x00c1c4                  _fs_mount
+                  0x00c218                  _fs_close_dir
+                  0x00c21e                  _fs_open_dir
+                  0x00c252                  _fs_open_file
+                  0x00c2ae                  _fs_file_reset
+                  0x00c2c2                  _fs_read_file
+                  0x00c2d0                  _fs_write_file
+                  0x00c2de                  _fs_load_spiram
+                  0x00c352                  _fs_read_dir
+                  0x00c366                  _fs_create_file
+                  0x00c382                  _fs_save_spiram
+                  0x00c3f4                  _fs_file_size
+                  0x00c448                  _fs_reset_dir
+                  0x00c45a                  _fs_find_file
+                  0x00c4aa                  _fs_rename_file
+                  0x00c4d8                  _fs_delete_file
+                  0x00c4fc                  _font_6x8
+                  0x00c824                  _set_pixel
+                  0x00c82a                  _draw_pixel
+                  0x00c864                  _vm_get_pixel
+                  0x00c884                  _vm_xor_pixel
+                  0x00c88a                  _xor_pixel
+                  0x00c8b2                  _vm_scroll_up
+                  0x00c8b4                  _scroll_up
+                  0x00c8f0                  _vm_scroll_down
+                  0x00c8f2                  _scroll_down
+                  0x00c930                  _vm_scroll_right
+                  0x00c986                  _vm_scroll_left
+                  0x00c9c6                  _vm_line
+                  0x00c9e0                  _vm_sprite
+                  0x00c9fc                  _box
+                  0x00ca66                  _vm_rect
+                  0x00ca8c                  _clreol
+                  0x00caca                  _cls
+                  0x00cae4                  _gray_scale
+                  0x00cb06                  _text_line
+                  0x00cb12                  _text_colon
+                  0x00cb1e                  _new_line
+                  0x00cb36                  _draw_line
+                  0x00cbd6                  _draw_rect
+                  0x00cc3e                  _draw_sprite
+                  0x00cd1a                  _save_screen
+                  0x00cd42                  _restore_screen
+                  0x00cd5c                  _sram_set_mode
+                  0x00cd70                  _sram_get_mode
+                  0x00cd7e                  _sram_send_address
+                  0x00cd8e                  _sram_write_byte
+                  0x00cda8                  _sram_write_word
+                  0x00cdc6                  _sram_read_byte
+                  0x00cdde                  _sram_read_word
+                  0x00ce00                  _sram_write_block
+                  0x00ce2a                  _sram_read_block
+                  0x00ce58                  _sram_clear
+                  0x00ce88                  _sram_clear_block
+                  0x00cf6a                  _reader_init
+                  0x00cf78                  _reader_getc
+                  0x00cfb0                  _reader_ungetc
+                  0x00cfb8                  __T2Interrupt
+                  0x00d02e                  __OC2Interrupt
+                  0x00d1a0                  _tone
+                  0x00d1bc                  _vm_beep
+                  0x00d1c2                  _beep
+                  0x00d1e8                  _partition_open
+                  0x00d26e                  _partition_close
+                  0x00d27c                  _read16
+                  0x00d286                  _read32
+                  0x00d2b2                  _write16
+                  0x00d2ba                  _write32
+                  0x00d2d6                  _main
+                  0x00d322                  _store_init
+                  0x00d328                  _spi_clock_speed
+                  0x00d34c                  _spi_write
+                  0x00d358                  _error
+                  0x00d384                  __T1Interrupt
 
 External Symbols in Program Memory (by name):
 
-                  0x00bece                  _TVout_init
-                  0x00c0fe                  __AddressError
-                  0x00bc1c                  __CNInterrupt
+                  0x00beca                  _TVout_init
+                  0x00c0fa                  __AddressError
+                  0x00bc18                  __CNInterrupt
                   0x000436                  __DefaultInterrupt
-                  0x00c136                  __MathError
-                  0x00d032                  __OC2Interrupt
-                  0x00c17a                  __StackError
-                  0x00d388                  __T1Interrupt
-                  0x00cfbc                  __T2Interrupt
-                  0x00bcae                  __T4Interrupt
+                  0x00c132                  __MathError
+                  0x00d02e                  __OC2Interrupt
+                  0x00c176                  __StackError
+                  0x00d384                  __T1Interrupt
+                  0x00cfb8                  __T2Interrupt
+                  0x00bcaa                  __T4Interrupt
                   0x0010a6                  ___divdi3
                   0x00052e                  ___divsi3
                   0x001106                  ___moddi3
@@ -611,136 +611,136 @@ External Symbols in Program Memory (by name):
                   0x000766                  __sprintf_cdnopsuxX
                   0x0007a4                  __vfprintf_cdnopsuxX
                   0x000626                  _atoi
-                  0x00bf74                  _audio_init
-                  0x00d1c6                  _beep
-                  0x00ca00                  _box
-                  0x00ca90                  _clreol
-                  0x00cace                  _cls
+                  0x00bf70                  _audio_init
+                  0x00d1c2                  _beep
+                  0x00c9fc                  _box
+                  0x00ca8c                  _clreol
+                  0x00caca                  _cls
                   0x00547c                  _cmd_dir
-                  0x00ad2c                  _cursor_show
-                  0x00be5e                  _dalloc
-                  0x00be7e                  _dfree
-                  0x00be9a                  _dfree_size
-                  0x00bea2                  _dmark
-                  0x00cb3a                  _draw_line
-                  0x00c82e                  _draw_pixel
-                  0x00cbda                  _draw_rect
-                  0x00cc42                  _draw_sprite
-                  0x00a17e                  _editor
-                  0x00d35c                  _error
-                  0x0083d2                  _fat_close
-                  0x008444                  _fat_close_all_files
-                  0x0089c2                  _fat_close_dir
-                  0x008434                  _fat_close_file
-                  0x008d26                  _fat_create_dir
-                  0x008bca                  _fat_create_file
-                  0x008c44                  _fat_delete_file
-                  0x008b0a                  _fat_get_dir_entry_of_path
-                  0x008e94                  _fat_get_fs_free
-                  0x008e4e                  _fat_get_fs_size
-                  0x008c9a                  _fat_move_file
-                  0x00839e                  _fat_open
-                  0x00898e                  _fat_open_dir
-                  0x0083da                  _fat_open_file
-                  0x0089ea                  _fat_read_dir
-                  0x008456                  _fat_read_file
-                  0x0089d2                  _fat_reset_dir
-                  0x0087e4                  _fat_resize_file
-                  0x008920                  _fat_seek_file
-                  0x0085d6                  _fat_write_file
-                  0x00c500                  _font_6x8
-                  0x00c21c                  _fs_close_dir
-                  0x00c36a                  _fs_create_file
-                  0x00c4dc                  _fs_delete_file
-                  0x00c2b2                  _fs_file_reset
-                  0x00c3f8                  _fs_file_size
-                  0x00c45e                  _fs_find_file
-                  0x00c1b2                  _fs_last_error
-                  0x00c2e2                  _fs_load_spiram
-                  0x00c1c8                  _fs_mount
-                  0x00c222                  _fs_open_dir
-                  0x00c256                  _fs_open_file
-                  0x00c356                  _fs_read_dir
-                  0x00c2c6                  _fs_read_file
-                  0x00c4ae                  _fs_rename_file
-                  0x00c44c                  _fs_reset_dir
-                  0x00c386                  _fs_save_spiram
-                  0x00c1b8                  _fs_umount
-                  0x00c2d4                  _fs_write_file
-                  0x00ab4e                  _get_cursor
-                  0x00cae8                  _gray_scale
-                  0x00bfc8                  _hardware_init
-                  0x00b63e                  _interpret
+                  0x00ad28                  _cursor_show
+                  0x00be5a                  _dalloc
+                  0x00be7a                  _dfree
+                  0x00be96                  _dfree_size
+                  0x00be9e                  _dmark
+                  0x00cb36                  _draw_line
+                  0x00c82a                  _draw_pixel
+                  0x00cbd6                  _draw_rect
+                  0x00cc3e                  _draw_sprite
+                  0x00a17a                  _editor
+                  0x00d358                  _error
+                  0x0083ce                  _fat_close
+                  0x008440                  _fat_close_all_files
+                  0x0089be                  _fat_close_dir
+                  0x008430                  _fat_close_file
+                  0x008d22                  _fat_create_dir
+                  0x008bc6                  _fat_create_file
+                  0x008c40                  _fat_delete_file
+                  0x008b06                  _fat_get_dir_entry_of_path
+                  0x008e90                  _fat_get_fs_free
+                  0x008e4a                  _fat_get_fs_size
+                  0x008c96                  _fat_move_file
+                  0x00839a                  _fat_open
+                  0x00898a                  _fat_open_dir
+                  0x0083d6                  _fat_open_file
+                  0x0089e6                  _fat_read_dir
+                  0x008452                  _fat_read_file
+                  0x0089ce                  _fat_reset_dir
+                  0x0087e0                  _fat_resize_file
+                  0x00891c                  _fat_seek_file
+                  0x0085d2                  _fat_write_file
+                  0x00c4fc                  _font_6x8
+                  0x00c218                  _fs_close_dir
+                  0x00c366                  _fs_create_file
+                  0x00c4d8                  _fs_delete_file
+                  0x00c2ae                  _fs_file_reset
+                  0x00c3f4                  _fs_file_size
+                  0x00c45a                  _fs_find_file
+                  0x00c1ae                  _fs_last_error
+                  0x00c2de                  _fs_load_spiram
+                  0x00c1c4                  _fs_mount
+                  0x00c21e                  _fs_open_dir
+                  0x00c252                  _fs_open_file
+                  0x00c352                  _fs_read_dir
+                  0x00c2c2                  _fs_read_file
+                  0x00c4aa                  _fs_rename_file
+                  0x00c448                  _fs_reset_dir
+                  0x00c382                  _fs_save_spiram
+                  0x00c1b4                  _fs_umount
+                  0x00c2d0                  _fs_write_file
+                  0x00ab4a                  _get_cursor
+                  0x00cae4                  _gray_scale
+                  0x00bfc4                  _hardware_init
+                  0x00b63a                  _interpret
                   0x00043a                  _isalnum
                   0x000456                  _isalpha
                   0x00046a                  _isxdigit
-                  0x00bb5c                  _kbd_get_key
-                  0x00bf38                  _kbd_init
-                  0x00baa6                  _kbd_queue_empty
-                  0x00ba9c                  _kbd_ready
-                  0x00bbf4                  _kbd_reset
-                  0x00bae8                  _kbd_send
-                  0x00bb46                  _kbd_update_leds
-                  0x00bbec                  _kbd_wait_key
+                  0x00bb58                  _kbd_get_key
+                  0x00bf34                  _kbd_init
+                  0x00baa2                  _kbd_queue_empty
+                  0x00ba98                  _kbd_ready
+                  0x00bbf0                  _kbd_reset
+                  0x00bae4                  _kbd_send
+                  0x00bb42                  _kbd_update_leds
+                  0x00bbe8                  _kbd_wait_key
                   0x000486                  _longjmp
-                  0x00d2da                  _main
+                  0x00d2d6                  _main
                   0x000664                  _memcpy
                   0x000672                  _memmove
                   0x000696                  _memset
-                  0x00cb22                  _new_line
-                  0x00d272                  _partition_close
-                  0x00d1ec                  _partition_open
-                  0x00b3b6                  _pause
-                  0x00aba6                  _print
-                  0x00ac66                  _print_hex
-                  0x00abdc                  _print_int
-                  0x00ad5e                  _prompt
-                  0x00ad94                  _prompt_continue
-                  0x00b012                  _pstrcmp
-                  0x00afd4                  _pstrcpy
-                  0x00aad6                  _put_char
-                  0x00bf92                  _random
-                  0x00bfbc                  _randomize
-                  0x00d280                  _read16
-                  0x00d28a                  _read32
-                  0x00cf7c                  _reader_getc
-                  0x00cf6e                  _reader_init
-                  0x00cfb4                  _reader_ungetc
-                  0x00ad9c                  _readln
-                  0x00cd46                  _restore_screen
-                  0x00cd1e                  _save_screen
-                  0x00c8f6                  _scroll_down
-                  0x00c8b8                  _scroll_up
-                  0x00a344                  _sd_raw_available
-                  0x00a826                  _sd_raw_get_info
-                  0x00a568                  _sd_raw_init
-                  0x00a3d4                  _sd_raw_read
-                  0x00a4de                  _sd_raw_read_interval
-                  0x00a34e                  _sd_raw_send_byte
-                  0x00a3b4                  _sd_raw_sync
-                  0x00a686                  _sd_raw_write
-                  0x00a79e                  _sd_raw_write_interval
-                  0x00bab2                  _search_table
-                  0x00ab6c                  _set_cursor
-                  0x00ad5a                  _set_cursor_shape
-                  0x00c828                  _set_pixel
+                  0x00cb1e                  _new_line
+                  0x00d26e                  _partition_close
+                  0x00d1e8                  _partition_open
+                  0x00b3b2                  _pause
+                  0x00aba2                  _print
+                  0x00ac62                  _print_hex
+                  0x00abd8                  _print_int
+                  0x00ad5a                  _prompt
+                  0x00ad90                  _prompt_continue
+                  0x00b00e                  _pstrcmp
+                  0x00afd0                  _pstrcpy
+                  0x00aad2                  _put_char
+                  0x00bf8e                  _random
+                  0x00bfb8                  _randomize
+                  0x00d27c                  _read16
+                  0x00d286                  _read32
+                  0x00cf78                  _reader_getc
+                  0x00cf6a                  _reader_init
+                  0x00cfb0                  _reader_ungetc
+                  0x00ad98                  _readln
+                  0x00cd42                  _restore_screen
+                  0x00cd1a                  _save_screen
+                  0x00c8f2                  _scroll_down
+                  0x00c8b4                  _scroll_up
+                  0x00a340                  _sd_raw_available
+                  0x00a822                  _sd_raw_get_info
+                  0x00a564                  _sd_raw_init
+                  0x00a3d0                  _sd_raw_read
+                  0x00a4da                  _sd_raw_read_interval
+                  0x00a34a                  _sd_raw_send_byte
+                  0x00a3b0                  _sd_raw_sync
+                  0x00a682                  _sd_raw_write
+                  0x00a79a                  _sd_raw_write_interval
+                  0x00baae                  _search_table
+                  0x00ab68                  _set_cursor
+                  0x00ad56                  _set_cursor_shape
+                  0x00c824                  _set_pixel
                   0x0004a8                  _setjmp
-                  0x007708                  _shell
-                  0x00d32c                  _spi_clock_speed
-                  0x00bf14                  _spi_init
-                  0x00d350                  _spi_write
-                  0x00ce5c                  _sram_clear
-                  0x00ce8c                  _sram_clear_block
-                  0x00cd74                  _sram_get_mode
-                  0x00ce2e                  _sram_read_block
-                  0x00cdca                  _sram_read_byte
-                  0x00cde2                  _sram_read_word
-                  0x00cd82                  _sram_send_address
-                  0x00cd60                  _sram_set_mode
-                  0x00ce04                  _sram_write_block
-                  0x00cd92                  _sram_write_byte
-                  0x00cdac                  _sram_write_word
-                  0x00d326                  _store_init
+                  0x007704                  _shell
+                  0x00d328                  _spi_clock_speed
+                  0x00bf10                  _spi_init
+                  0x00d34c                  _spi_write
+                  0x00ce58                  _sram_clear
+                  0x00ce88                  _sram_clear_block
+                  0x00cd70                  _sram_get_mode
+                  0x00ce2a                  _sram_read_block
+                  0x00cdc6                  _sram_read_byte
+                  0x00cdde                  _sram_read_word
+                  0x00cd7e                  _sram_send_address
+                  0x00cd5c                  _sram_set_mode
+                  0x00ce00                  _sram_write_block
+                  0x00cd8e                  _sram_write_byte
+                  0x00cda8                  _sram_write_word
+                  0x00d322                  _store_init
                   0x0006a4                  _strchr
                   0x0006b8                  _strcmp
                   0x0006c6                  _strcpy
@@ -749,37 +749,37 @@ External Symbols in Program Memory (by name):
                   0x0006fc                  _strncpy
                   0x00071e                  _strrchr
                   0x00073a                  _strstr
-                  0x00bea6                  _systicks_init
-                  0x00ab88                  _text_clear_line
-                  0x00cb16                  _text_colon
-                  0x00cb0a                  _text_line
+                  0x00bea2                  _systicks_init
+                  0x00ab84                  _text_clear_line
+                  0x00cb12                  _text_colon
+                  0x00cb06                  _text_line
                   0x00550e                  _throw
-                  0x00d1a4                  _tone
+                  0x00d1a0                  _tone
                   0x0004c4                  _toupper
-                  0x00acd4                  _update_cursor
-                  0x00b056                  _uppercase
+                  0x00acd0                  _update_cursor
+                  0x00b052                  _uppercase
                   0x006368                  _var_create
                   0x0064b6                  _var_search
-                  0x00c03e                  _video_adjust
-                  0x00d1c0                  _vm_beep
-                  0x00c868                  _vm_get_pixel
-                  0x00c9ca                  _vm_line
-                  0x00ca6a                  _vm_rect
-                  0x00c8f4                  _vm_scroll_down
-                  0x00c98a                  _vm_scroll_left
-                  0x00c934                  _vm_scroll_right
-                  0x00c8b6                  _vm_scroll_up
-                  0x00c9e4                  _vm_sprite
-                  0x00c888                  _vm_xor_pixel
-                  0x00ad34                  _wait_key
-                  0x00d2b6                  _write16
-                  0x00d2be                  _write32
-                  0x00c88e                  _xor_pixel
-                  0x00b0c4                  alloc
-                  0x007d84                  build/default/production/FAT/fat.o:_fat_clear_cluster_callback
-                  0x007f7e                  build/default/production/FAT/fat.o:_fat_dir_entry_read_callback
-                  0x007e02                  build/default/production/FAT/fat.o:_fat_get_fs_free_16_callback
-                  0x007dce                  build/default/production/FAT/fat.o:_fat_get_fs_free_32_callback
+                  0x00c03a                  _video_adjust
+                  0x00d1bc                  _vm_beep
+                  0x00c864                  _vm_get_pixel
+                  0x00c9c6                  _vm_line
+                  0x00ca66                  _vm_rect
+                  0x00c8f0                  _vm_scroll_down
+                  0x00c986                  _vm_scroll_left
+                  0x00c930                  _vm_scroll_right
+                  0x00c8b2                  _vm_scroll_up
+                  0x00c9e0                  _vm_sprite
+                  0x00c884                  _vm_xor_pixel
+                  0x00ad30                  _wait_key
+                  0x00d2b2                  _write16
+                  0x00d2ba                  _write32
+                  0x00c88a                  _xor_pixel
+                  0x00b0c0                  alloc
+                  0x007d80                  build/default/production/FAT/fat.o:_fat_clear_cluster_callback
+                  0x007f7a                  build/default/production/FAT/fat.o:_fat_dir_entry_read_callback
+                  0x007dfe                  build/default/production/FAT/fat.o:_fat_get_fs_free_16_callback
+                  0x007dca                  build/default/production/FAT/fat.o:_fat_get_fs_free_32_callback
                   0x005660                  build/default/production/shell.o:_bad_syntax
                   0x005094                  build/default/production/shell.o:_cmd_clear
                   0x005ff8                  build/default/production/shell.o:_cmd_copy
@@ -791,7 +791,7 @@ External Symbols in Program Memory (by name):
                   0x005d98                  build/default/production/shell.o:_cmd_more
                   0x005248                  build/default/production/shell.o:_cmd_reboot
                   0x005d4c                  build/default/production/shell.o:_cmd_ren
-                  0x0075e0                  build/default/production/shell.o:_cmd_run
+                  0x0075dc                  build/default/production/shell.o:_cmd_run
                   0x006c4e                  build/default/production/shell.o:_kw_abs
                   0x006c44                  build/default/production/shell.o:_kw_beep
                   0x006c3a                  build/default/production/shell.o:_kw_box
@@ -806,7 +806,7 @@ External Symbols in Program Memory (by name):
                   0x0061a0                  build/default/production/shell.o:_kw_else
                   0x0062aa                  build/default/production/shell.o:_kw_end
                   0x006284                  build/default/production/shell.o:_kw_exit
-                  0x007652                  build/default/production/shell.o:_kw_for
+                  0x00764e                  build/default/production/shell.o:_kw_for
                   0x006d1a                  build/default/production/shell.o:_kw_func
                   0x006c18                  build/default/production/shell.o:_kw_getpixel
                   0x0068e4                  build/default/production/shell.o:_kw_if
@@ -829,7 +829,7 @@ External Symbols in Program Memory (by name):
                   0x00613e                  build/default/production/shell.o:_kw_read_jstick
                   0x006bc8                  build/default/production/shell.o:_kw_rect
                   0x006d22                  build/default/production/shell.o:_kw_ref
-                  0x0050ca                  build/default/production/shell.o:_kw_rem
+                  0x00510a                  build/default/production/shell.o:_kw_rem
                   0x006976                  build/default/production/shell.o:_kw_return
                   0x006130                  build/default/production/shell.o:_kw_rnd
                   0x006bb4                  build/default/production/shell.o:_kw_scrldown
@@ -859,7 +859,7 @@ External Symbols in Program Memory (by name):
                   0x0060ae                  build/default/production/shell.o:_kw_wend
                   0x00684a                  build/default/production/shell.o:_kw_while
                   0x006b28                  build/default/production/shell.o:_kw_xorpixel
-                  0x00b08c                  over
+                  0x00b088                  over
 
 Configuration mémoire
 
@@ -1282,21 +1282,21 @@ __FUID3
 
 .ivt              0x000004        0x13e
                   0x000004          0x4 LONG 0x436 DEFINED (__OscillatorFail)?ABSOLUTE (__OscillatorFail):ABSOLUTE (__DefaultInterrupt)
-                  0x000006          0x4 LONG 0xc0fe DEFINED (__AddressError)?ABSOLUTE (__AddressError):ABSOLUTE (__DefaultInterrupt)
+                  0x000006          0x4 LONG 0xc0fa DEFINED (__AddressError)?ABSOLUTE (__AddressError):ABSOLUTE (__DefaultInterrupt)
                   0x000008          0x4 LONG 0x436 DEFINED (__HardTrapError)?ABSOLUTE (__HardTrapError):ABSOLUTE (__DefaultInterrupt)
-                  0x00000a          0x4 LONG 0xc17a DEFINED (__StackError)?ABSOLUTE (__StackError):ABSOLUTE (__DefaultInterrupt)
-                  0x00000c          0x4 LONG 0xc136 DEFINED (__MathError)?ABSOLUTE (__MathError):ABSOLUTE (__DefaultInterrupt)
+                  0x00000a          0x4 LONG 0xc176 DEFINED (__StackError)?ABSOLUTE (__StackError):ABSOLUTE (__DefaultInterrupt)
+                  0x00000c          0x4 LONG 0xc132 DEFINED (__MathError)?ABSOLUTE (__MathError):ABSOLUTE (__DefaultInterrupt)
                   0x00000e          0x4 LONG 0x436 DEFINED (__DMACError)?ABSOLUTE (__DMACError):ABSOLUTE (__DefaultInterrupt)
                   0x000010          0x4 LONG 0x436 DEFINED (__SoftTrapError)?ABSOLUTE (__SoftTrapError):ABSOLUTE (__DefaultInterrupt)
                   0x000012          0x4 LONG 0x436 DEFINED (__ReservedTrap7)?ABSOLUTE (__ReservedTrap7):ABSOLUTE (__DefaultInterrupt)
                   0x000014          0x4 LONG 0x436 DEFINED (__INT0Interrupt)?ABSOLUTE (__INT0Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000016          0x4 LONG 0x436 DEFINED (__IC1Interrupt)?ABSOLUTE (__IC1Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000018          0x4 LONG 0x436 DEFINED (__OC1Interrupt)?ABSOLUTE (__OC1Interrupt):ABSOLUTE (__DefaultInterrupt)
-                  0x00001a          0x4 LONG 0xd388 DEFINED (__T1Interrupt)?ABSOLUTE (__T1Interrupt):ABSOLUTE (__DefaultInterrupt)
+                  0x00001a          0x4 LONG 0xd384 DEFINED (__T1Interrupt)?ABSOLUTE (__T1Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x00001c          0x4 LONG 0x436 DEFINED (__DMA0Interrupt)?ABSOLUTE (__DMA0Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x00001e          0x4 LONG 0x436 DEFINED (__IC2Interrupt)?ABSOLUTE (__IC2Interrupt):ABSOLUTE (__DefaultInterrupt)
-                  0x000020          0x4 LONG 0xd032 DEFINED (__OC2Interrupt)?ABSOLUTE (__OC2Interrupt):ABSOLUTE (__DefaultInterrupt)
-                  0x000022          0x4 LONG 0xcfbc DEFINED (__T2Interrupt)?ABSOLUTE (__T2Interrupt):ABSOLUTE (__DefaultInterrupt)
+                  0x000020          0x4 LONG 0xd02e DEFINED (__OC2Interrupt)?ABSOLUTE (__OC2Interrupt):ABSOLUTE (__DefaultInterrupt)
+                  0x000022          0x4 LONG 0xcfb8 DEFINED (__T2Interrupt)?ABSOLUTE (__T2Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000024          0x4 LONG 0x436 DEFINED (__T3Interrupt)?ABSOLUTE (__T3Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000026          0x4 LONG 0x436 DEFINED (__SPI1ErrInterrupt)?ABSOLUTE (__SPI1ErrInterrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000028          0x4 LONG 0x436 DEFINED (__SPI1Interrupt)?ABSOLUTE (__SPI1Interrupt):ABSOLUTE (__DefaultInterrupt)
@@ -1308,7 +1308,7 @@ __FUID3
                   0x000034          0x4 LONG 0x436 DEFINED (__SI2C1Interrupt)?ABSOLUTE (__SI2C1Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000036          0x4 LONG 0x436 DEFINED (__MI2C1Interrupt)?ABSOLUTE (__MI2C1Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000038          0x4 LONG 0x436 DEFINED (__CM1Interrupt)?ABSOLUTE (__CM1Interrupt):ABSOLUTE (__DefaultInterrupt)
-                  0x00003a          0x4 LONG 0xbc1c DEFINED (__CNInterrupt)?ABSOLUTE (__CNInterrupt):ABSOLUTE (__DefaultInterrupt)
+                  0x00003a          0x4 LONG 0xbc18 DEFINED (__CNInterrupt)?ABSOLUTE (__CNInterrupt):ABSOLUTE (__DefaultInterrupt)
                   0x00003c          0x4 LONG 0x436 DEFINED (__INT1Interrupt)?ABSOLUTE (__INT1Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x00003e          0x4 LONG 0x436 DEFINED (__Interrupt21)?ABSOLUTE (__Interrupt21):ABSOLUTE (__DefaultInterrupt)
                   0x000040          0x4 LONG 0x436 DEFINED (__Interrupt22)?ABSOLUTE (__Interrupt22):ABSOLUTE (__DefaultInterrupt)
@@ -1316,7 +1316,7 @@ __FUID3
                   0x000044          0x4 LONG 0x436 DEFINED (__DMA2Interrupt)?ABSOLUTE (__DMA2Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000046          0x4 LONG 0x436 DEFINED (__OC3Interrupt)?ABSOLUTE (__OC3Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000048          0x4 LONG 0x436 DEFINED (__OC4Interrupt)?ABSOLUTE (__OC4Interrupt):ABSOLUTE (__DefaultInterrupt)
-                  0x00004a          0x4 LONG 0xbcae DEFINED (__T4Interrupt)?ABSOLUTE (__T4Interrupt):ABSOLUTE (__DefaultInterrupt)
+                  0x00004a          0x4 LONG 0xbcaa DEFINED (__T4Interrupt)?ABSOLUTE (__T4Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x00004c          0x4 LONG 0x436 DEFINED (__T5Interrupt)?ABSOLUTE (__T5Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x00004e          0x4 LONG 0x436 DEFINED (__INT2Interrupt)?ABSOLUTE (__INT2Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000050          0x4 LONG 0x436 DEFINED (__U2RXInterrupt)?ABSOLUTE (__U2RXInterrupt):ABSOLUTE (__DefaultInterrupt)
@@ -2784,12 +2784,12 @@ ndata               0x1000         0xfc
 .dinit            0x001162       0x3eea
  .dinit           0x001162       0x3eea data_init
 
-.text             0x00504c       0x6674
- .text            0x00504c       0x274e build/default/production/shell.o
+.text             0x00504c       0x6670
+ .text            0x00504c       0x274a build/default/production/shell.o
                   0x005080                  build/default/production/shell.o:_kw_do
                   0x005094                  build/default/production/shell.o:_cmd_clear
                   0x0050b6                  build/default/production/shell.o:_cmd_free_pool
-                  0x0050ca                  build/default/production/shell.o:_kw_rem
+                  0x00510a                  build/default/production/shell.o:_kw_rem
                   0x005248                  build/default/production/shell.o:_cmd_reboot
                   0x00547c                  _cmd_dir
                   0x00550e                  _throw
@@ -2867,204 +2867,204 @@ ndata               0x1000         0xfc
                   0x00720e                  build/default/production/shell.o:_kw_const
                   0x00730a                  build/default/production/shell.o:_kw_let
                   0x007576                  build/default/production/shell.o:_kw_use
-                  0x0075e0                  build/default/production/shell.o:_cmd_run
-                  0x007652                  build/default/production/shell.o:_kw_for
-                  0x007708                  _shell
- .text            0x00779a       0x17a0 build/default/production/FAT/fat.o
-                  0x007d84                  build/default/production/FAT/fat.o:_fat_clear_cluster_callback
-                  0x007dce                  build/default/production/FAT/fat.o:_fat_get_fs_free_32_callback
-                  0x007e02                  build/default/production/FAT/fat.o:_fat_get_fs_free_16_callback
-                  0x007f7e                  build/default/production/FAT/fat.o:_fat_dir_entry_read_callback
-                  0x00839e                  _fat_open
-                  0x0083d2                  _fat_close
-                  0x0083da                  _fat_open_file
-                  0x008434                  _fat_close_file
-                  0x008444                  _fat_close_all_files
-                  0x008456                  _fat_read_file
-                  0x0085d6                  _fat_write_file
-                  0x0087e4                  _fat_resize_file
-                  0x008920                  _fat_seek_file
-                  0x00898e                  _fat_open_dir
-                  0x0089c2                  _fat_close_dir
-                  0x0089d2                  _fat_reset_dir
-                  0x0089ea                  _fat_read_dir
-                  0x008b0a                  _fat_get_dir_entry_of_path
-                  0x008bca                  _fat_create_file
-                  0x008c44                  _fat_delete_file
-                  0x008c9a                  _fat_move_file
-                  0x008d26                  _fat_create_dir
-                  0x008e4e                  _fat_get_fs_size
-                  0x008e94                  _fat_get_fs_free
- .text            0x008f3a       0x13fe build/default/production/editor.o
-                  0x00a17e                  _editor
- .text            0x00a338        0x6d4 build/default/production/FAT/sd_raw.o
-                  0x00a344                  _sd_raw_available
-                  0x00a34e                  _sd_raw_send_byte
-                  0x00a3b4                  _sd_raw_sync
-                  0x00a3d4                  _sd_raw_read
-                  0x00a4de                  _sd_raw_read_interval
-                  0x00a568                  _sd_raw_init
-                  0x00a686                  _sd_raw_write
-                  0x00a79e                  _sd_raw_write_interval
-                  0x00a826                  _sd_raw_get_info
- .text            0x00aa0c        0x662 build/default/production/text.o
-                  0x00aad6                  _put_char
-                  0x00ab4e                  _get_cursor
-                  0x00ab6c                  _set_cursor
-                  0x00ab88                  _text_clear_line
-                  0x00aba6                  _print
-                  0x00abdc                  _print_int
-                  0x00ac66                  _print_hex
-                  0x00acd4                  _update_cursor
-                  0x00ad2c                  _cursor_show
-                  0x00ad34                  _wait_key
-                  0x00ad5a                  _set_cursor_shape
-                  0x00ad5e                  _prompt
-                  0x00ad94                  _prompt_continue
-                  0x00ad9c                  _readln
-                  0x00afd4                  _pstrcpy
-                  0x00b012                  _pstrcmp
-                  0x00b056                  _uppercase
- .text            0x00b06e        0x652 build/default/production/stackvm.o
-                  0x00b08c                  over
-                  0x00b0c4                  alloc
-                  0x00b3b6                  _pause
-                  0x00b63e                  _interpret
+                  0x0075dc                  build/default/production/shell.o:_cmd_run
+                  0x00764e                  build/default/production/shell.o:_kw_for
+                  0x007704                  _shell
+ .text            0x007796       0x17a0 build/default/production/FAT/fat.o
+                  0x007d80                  build/default/production/FAT/fat.o:_fat_clear_cluster_callback
+                  0x007dca                  build/default/production/FAT/fat.o:_fat_get_fs_free_32_callback
+                  0x007dfe                  build/default/production/FAT/fat.o:_fat_get_fs_free_16_callback
+                  0x007f7a                  build/default/production/FAT/fat.o:_fat_dir_entry_read_callback
+                  0x00839a                  _fat_open
+                  0x0083ce                  _fat_close
+                  0x0083d6                  _fat_open_file
+                  0x008430                  _fat_close_file
+                  0x008440                  _fat_close_all_files
+                  0x008452                  _fat_read_file
+                  0x0085d2                  _fat_write_file
+                  0x0087e0                  _fat_resize_file
+                  0x00891c                  _fat_seek_file
+                  0x00898a                  _fat_open_dir
+                  0x0089be                  _fat_close_dir
+                  0x0089ce                  _fat_reset_dir
+                  0x0089e6                  _fat_read_dir
+                  0x008b06                  _fat_get_dir_entry_of_path
+                  0x008bc6                  _fat_create_file
+                  0x008c40                  _fat_delete_file
+                  0x008c96                  _fat_move_file
+                  0x008d22                  _fat_create_dir
+                  0x008e4a                  _fat_get_fs_size
+                  0x008e90                  _fat_get_fs_free
+ .text            0x008f36       0x13fe build/default/production/editor.o
+                  0x00a17a                  _editor
+ .text            0x00a334        0x6d4 build/default/production/FAT/sd_raw.o
+                  0x00a340                  _sd_raw_available
+                  0x00a34a                  _sd_raw_send_byte
+                  0x00a3b0                  _sd_raw_sync
+                  0x00a3d0                  _sd_raw_read
+                  0x00a4da                  _sd_raw_read_interval
+                  0x00a564                  _sd_raw_init
+                  0x00a682                  _sd_raw_write
+                  0x00a79a                  _sd_raw_write_interval
+                  0x00a822                  _sd_raw_get_info
+ .text            0x00aa08        0x662 build/default/production/text.o
+                  0x00aad2                  _put_char
+                  0x00ab4a                  _get_cursor
+                  0x00ab68                  _set_cursor
+                  0x00ab84                  _text_clear_line
+                  0x00aba2                  _print
+                  0x00abd8                  _print_int
+                  0x00ac62                  _print_hex
+                  0x00acd0                  _update_cursor
+                  0x00ad28                  _cursor_show
+                  0x00ad30                  _wait_key
+                  0x00ad56                  _set_cursor_shape
+                  0x00ad5a                  _prompt
+                  0x00ad90                  _prompt_continue
+                  0x00ad98                  _readln
+                  0x00afd0                  _pstrcpy
+                  0x00b00e                  _pstrcmp
+                  0x00b052                  _uppercase
+ .text            0x00b06a        0x652 build/default/production/stackvm.o
+                  0x00b088                  over
+                  0x00b0c0                  alloc
+                  0x00b3b2                  _pause
+                  0x00b63a                  _interpret
 
-_f6a8745057169e81
-                  0x00b6c0        0x3dc
- _f6a8745057169e81
-                  0x00b6c0        0x3dc build/default/production/shell.o
+_f6a804505717c2b8
+                  0x00b6bc        0x3dc
+ _f6a804505717c2b8
+                  0x00b6bc        0x3dc build/default/production/shell.o
 
-.text             0x00ba9c        0xa64
- .text            0x00ba9c        0x3aa build/default/production/Hardware/ps2_kbd.o
-                  0x00ba9c                  _kbd_ready
-                  0x00baa6                  _kbd_queue_empty
-                  0x00bab2                  _search_table
-                  0x00bae8                  _kbd_send
-                  0x00bb46                  _kbd_update_leds
-                  0x00bb5c                  _kbd_get_key
-                  0x00bbec                  _kbd_wait_key
-                  0x00bbf4                  _kbd_reset
-                  0x00bc1c                  __CNInterrupt
-                  0x00bcae                  __T4Interrupt
- .text            0x00be46        0x36c build/default/production/Hardware/hardware.o
-                  0x00be5e                  _dalloc
-                  0x00be7e                  _dfree
-                  0x00be9a                  _dfree_size
-                  0x00bea2                  _dmark
-                  0x00bea6                  _systicks_init
-                  0x00bece                  _TVout_init
-                  0x00bf14                  _spi_init
-                  0x00bf38                  _kbd_init
-                  0x00bf74                  _audio_init
-                  0x00bf92                  _random
-                  0x00bfbc                  _randomize
-                  0x00bfc8                  _hardware_init
-                  0x00c03e                  _video_adjust
-                  0x00c0fe                  __AddressError
-                  0x00c136                  __MathError
-                  0x00c17a                  __StackError
- .text            0x00c1b2        0x34e build/default/production/filesys.o
-                  0x00c1b2                  _fs_last_error
-                  0x00c1b8                  _fs_umount
-                  0x00c1c8                  _fs_mount
-                  0x00c21c                  _fs_close_dir
-                  0x00c222                  _fs_open_dir
-                  0x00c256                  _fs_open_file
-                  0x00c2b2                  _fs_file_reset
-                  0x00c2c6                  _fs_read_file
-                  0x00c2d4                  _fs_write_file
-                  0x00c2e2                  _fs_load_spiram
-                  0x00c356                  _fs_read_dir
-                  0x00c36a                  _fs_create_file
-                  0x00c386                  _fs_save_spiram
-                  0x00c3f8                  _fs_file_size
-                  0x00c44c                  _fs_reset_dir
-                  0x00c45e                  _fs_find_file
-                  0x00c4ae                  _fs_rename_file
-                  0x00c4dc                  _fs_delete_file
+.text             0x00ba98        0xa64
+ .text            0x00ba98        0x3aa build/default/production/Hardware/ps2_kbd.o
+                  0x00ba98                  _kbd_ready
+                  0x00baa2                  _kbd_queue_empty
+                  0x00baae                  _search_table
+                  0x00bae4                  _kbd_send
+                  0x00bb42                  _kbd_update_leds
+                  0x00bb58                  _kbd_get_key
+                  0x00bbe8                  _kbd_wait_key
+                  0x00bbf0                  _kbd_reset
+                  0x00bc18                  __CNInterrupt
+                  0x00bcaa                  __T4Interrupt
+ .text            0x00be42        0x36c build/default/production/Hardware/hardware.o
+                  0x00be5a                  _dalloc
+                  0x00be7a                  _dfree
+                  0x00be96                  _dfree_size
+                  0x00be9e                  _dmark
+                  0x00bea2                  _systicks_init
+                  0x00beca                  _TVout_init
+                  0x00bf10                  _spi_init
+                  0x00bf34                  _kbd_init
+                  0x00bf70                  _audio_init
+                  0x00bf8e                  _random
+                  0x00bfb8                  _randomize
+                  0x00bfc4                  _hardware_init
+                  0x00c03a                  _video_adjust
+                  0x00c0fa                  __AddressError
+                  0x00c132                  __MathError
+                  0x00c176                  __StackError
+ .text            0x00c1ae        0x34e build/default/production/filesys.o
+                  0x00c1ae                  _fs_last_error
+                  0x00c1b4                  _fs_umount
+                  0x00c1c4                  _fs_mount
+                  0x00c218                  _fs_close_dir
+                  0x00c21e                  _fs_open_dir
+                  0x00c252                  _fs_open_file
+                  0x00c2ae                  _fs_file_reset
+                  0x00c2c2                  _fs_read_file
+                  0x00c2d0                  _fs_write_file
+                  0x00c2de                  _fs_load_spiram
+                  0x00c352                  _fs_read_dir
+                  0x00c366                  _fs_create_file
+                  0x00c382                  _fs_save_spiram
+                  0x00c3f4                  _fs_file_size
+                  0x00c448                  _fs_reset_dir
+                  0x00c45a                  _fs_find_file
+                  0x00c4aa                  _fs_rename_file
+                  0x00c4d8                  _fs_delete_file
 
-_f6d3895857164e02
-                  0x00c500        0x328
- _f6d3895857164e02
-                  0x00c500        0x328 build/default/production/font6x8.o
-                  0x00c500                  _font_6x8
+_f6dff9585717c215
+                  0x00c4fc        0x328
+ _f6dff9585717c215
+                  0x00c4fc        0x328 build/default/production/font6x8.o
+                  0x00c4fc                  _font_6x8
 
-.text             0x00c828        0x860
- .text            0x00c828        0x312 build/default/production/asm_graphics.o
-                  0x00c828                  _set_pixel
-                  0x00c82e                  _draw_pixel
-                  0x00c868                  _vm_get_pixel
-                  0x00c888                  _vm_xor_pixel
-                  0x00c88e                  _xor_pixel
-                  0x00c8b6                  _vm_scroll_up
-                  0x00c8b8                  _scroll_up
-                  0x00c8f4                  _vm_scroll_down
-                  0x00c8f6                  _scroll_down
-                  0x00c934                  _vm_scroll_right
-                  0x00c98a                  _vm_scroll_left
-                  0x00c9ca                  _vm_line
-                  0x00c9e4                  _vm_sprite
-                  0x00ca00                  _box
-                  0x00ca6a                  _vm_rect
-                  0x00ca90                  _clreol
-                  0x00cace                  _cls
-                  0x00cae8                  _gray_scale
-                  0x00cb0a                  _text_line
-                  0x00cb16                  _text_colon
-                  0x00cb22                  _new_line
- .text            0x00cb3a        0x226 build/default/production/graphics.o
-                  0x00cb3a                  _draw_line
-                  0x00cbda                  _draw_rect
-                  0x00cc42                  _draw_sprite
-                  0x00cd1e                  _save_screen
-                  0x00cd46                  _restore_screen
- .text            0x00cd60        0x156 build/default/production/Hardware/spi_ram.o
-                  0x00cd60                  _sram_set_mode
-                  0x00cd74                  _sram_get_mode
-                  0x00cd82                  _sram_send_address
-                  0x00cd92                  _sram_write_byte
-                  0x00cdac                  _sram_write_word
-                  0x00cdca                  _sram_read_byte
-                  0x00cde2                  _sram_read_word
-                  0x00ce04                  _sram_write_block
-                  0x00ce2e                  _sram_read_block
-                  0x00ce5c                  _sram_clear
-                  0x00ce8c                  _sram_clear_block
- .text            0x00ceb6        0x106 build/default/production/reader.o
-                  0x00cf6e                  _reader_init
-                  0x00cf7c                  _reader_getc
-                  0x00cfb4                  _reader_ungetc
- .text            0x00cfbc         0xcc build/default/production/Hardware/TVout.o
-                  0x00cfbc                  __T2Interrupt
-                  0x00d032                  __OC2Interrupt
+.text             0x00c824        0x860
+ .text            0x00c824        0x312 build/default/production/asm_graphics.o
+                  0x00c824                  _set_pixel
+                  0x00c82a                  _draw_pixel
+                  0x00c864                  _vm_get_pixel
+                  0x00c884                  _vm_xor_pixel
+                  0x00c88a                  _xor_pixel
+                  0x00c8b2                  _vm_scroll_up
+                  0x00c8b4                  _scroll_up
+                  0x00c8f0                  _vm_scroll_down
+                  0x00c8f2                  _scroll_down
+                  0x00c930                  _vm_scroll_right
+                  0x00c986                  _vm_scroll_left
+                  0x00c9c6                  _vm_line
+                  0x00c9e0                  _vm_sprite
+                  0x00c9fc                  _box
+                  0x00ca66                  _vm_rect
+                  0x00ca8c                  _clreol
+                  0x00caca                  _cls
+                  0x00cae4                  _gray_scale
+                  0x00cb06                  _text_line
+                  0x00cb12                  _text_colon
+                  0x00cb1e                  _new_line
+ .text            0x00cb36        0x226 build/default/production/graphics.o
+                  0x00cb36                  _draw_line
+                  0x00cbd6                  _draw_rect
+                  0x00cc3e                  _draw_sprite
+                  0x00cd1a                  _save_screen
+                  0x00cd42                  _restore_screen
+ .text            0x00cd5c        0x156 build/default/production/Hardware/spi_ram.o
+                  0x00cd5c                  _sram_set_mode
+                  0x00cd70                  _sram_get_mode
+                  0x00cd7e                  _sram_send_address
+                  0x00cd8e                  _sram_write_byte
+                  0x00cda8                  _sram_write_word
+                  0x00cdc6                  _sram_read_byte
+                  0x00cdde                  _sram_read_word
+                  0x00ce00                  _sram_write_block
+                  0x00ce2a                  _sram_read_block
+                  0x00ce58                  _sram_clear
+                  0x00ce88                  _sram_clear_block
+ .text            0x00ceb2        0x106 build/default/production/reader.o
+                  0x00cf6a                  _reader_init
+                  0x00cf78                  _reader_getc
+                  0x00cfb0                  _reader_ungetc
+ .text            0x00cfb8         0xcc build/default/production/Hardware/TVout.o
+                  0x00cfb8                  __T2Interrupt
+                  0x00d02e                  __OC2Interrupt
 
-_f6a873f457169e81
-                  0x00d088         0xbc
- _f6a873f457169e81
-                  0x00d088         0xbc build/default/production/shell.o
+_f6a803f45717c2b8
+                  0x00d084         0xbc
+ _f6a803f45717c2b8
+                  0x00d084         0xbc build/default/production/shell.o
 
-.text             0x00d144        0x260
- .text            0x00d144         0xa8 build/default/production/Hardware/tones.o
-                  0x00d1a4                  _tone
-                  0x00d1c0                  _vm_beep
-                  0x00d1c6                  _beep
- .text            0x00d1ec         0x94 build/default/production/FAT/partition.o
-                  0x00d1ec                  _partition_open
-                  0x00d272                  _partition_close
- .text            0x00d280         0x5a build/default/production/FAT/byteordering.o
-                  0x00d280                  _read16
-                  0x00d28a                  _read32
-                  0x00d2b6                  _write16
-                  0x00d2be                  _write32
- .text            0x00d2da         0x4c build/default/production/pv16sog.o
-                  0x00d2da                  _main
- .text            0x00d326         0x36 build/default/production/Hardware/spi.o
-                  0x00d326                  _store_init
-                  0x00d32c                  _spi_clock_speed
-                  0x00d350                  _spi_write
- .text            0x00d35c         0x2c build/default/production/errors.o
-                  0x00d35c                  _error
- .text            0x00d388         0x1c build/default/production/Hardware/systicks.o
-                  0x00d388                  __T1Interrupt
+.text             0x00d140        0x260
+ .text            0x00d140         0xa8 build/default/production/Hardware/tones.o
+                  0x00d1a0                  _tone
+                  0x00d1bc                  _vm_beep
+                  0x00d1c2                  _beep
+ .text            0x00d1e8         0x94 build/default/production/FAT/partition.o
+                  0x00d1e8                  _partition_open
+                  0x00d26e                  _partition_close
+ .text            0x00d27c         0x5a build/default/production/FAT/byteordering.o
+                  0x00d27c                  _read16
+                  0x00d286                  _read32
+                  0x00d2b2                  _write16
+                  0x00d2ba                  _write32
+ .text            0x00d2d6         0x4c build/default/production/pv16sog.o
+                  0x00d2d6                  _main
+ .text            0x00d322         0x36 build/default/production/Hardware/spi.o
+                  0x00d322                  _store_init
+                  0x00d328                  _spi_clock_speed
+                  0x00d34c                  _spi_write
+ .text            0x00d358         0x2c build/default/production/errors.o
+                  0x00d358                  _error
+ .text            0x00d384         0x1c build/default/production/Hardware/systicks.o
+                  0x00d384                  __T1Interrupt
