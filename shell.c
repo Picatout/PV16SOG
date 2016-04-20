@@ -806,12 +806,12 @@ static void expect(tok_id_t t){
     if (token.id!=t) throw(eERR_SYNTAX);
 }
 
-static bool try_string(){
-    next_token();
-    if (token.id==eSTRING) return true;
-    unget_token=true;
-    return false;
-}//f
+//static bool try_string(){
+//    next_token();
+//    if (token.id==eSTRING) return true;
+//    unget_token=true;
+//    return false;
+//}//f
 
 static bool try_addop(){
     next_token();
@@ -2588,6 +2588,7 @@ static void kw_waitkey(){
 //LEN var$|string
 static void kw_len(){
     var_t *var;
+    expect(eLPAREN);
     next_token();
     if (token.id==eSTRING){
         literal_string();
@@ -2615,6 +2616,7 @@ static void kw_len(){
         throw(eERR_BAD_ARG);
     }
     bytecode(LEN);
+    expect(eRPAREN);
 }//f
 
 //compile le code qui vérifie si une
@@ -2825,28 +2827,42 @@ static void kw_local(){
 static void kw_print(){
     var_t *var;
     
+    next_token();
     while (!activ_reader->eof){
-        if (try_string()){
-            literal_string();
-            bytecode(TYPE);
-            bytecode(SPACE);
-        }else if(token.id==eIDENT && token.str[strlen(token.str)-1]=='$'){
-            unget_token=false;
-            if ((var=var_search(token.str))){
-                if (var->vtype==eVAR_STRARRAY){
-                    expect(eLPAREN);
-                    code_array_address(var);
-                    bytecode(FETCH);
-                }else{
-                    lit((uint16_t)var->str);
-                }
+        switch (token.id){
+            case eSTRING:
+                literal_string();
                 bytecode(TYPE);
                 bytecode(SPACE);
-            }
-        }else{
-            expression();
-            bytecode(DOT);
-        }
+                break;
+            case eIDENT:
+                if(token.str[strlen(token.str)-1]=='$'){
+                    if ((var=var_search(token.str))){
+                        if (var->vtype==eVAR_STRARRAY){
+                            expect(eLPAREN);
+                            code_array_address(var);
+                            bytecode(FETCH);
+                        }else{
+                            lit((uint16_t)var->str);
+                        }
+                        bytecode(TYPE);
+                        bytecode(SPACE);
+                    }
+                }else{ 
+                    unget_token=true;
+                    expression();
+                    bytecode(DOT);
+                }
+               break;
+            case eNL:
+                bytecode(CRLF);
+                break;
+            default:
+                unget_token=true;
+                expression();
+                bytecode(DOT);
+                
+        }//switch
         next_token();
         if (token.id==eSEMICOL){
             break;
@@ -2857,6 +2873,7 @@ static void kw_print(){
             unget_token=true;
             break;
         }
+        next_token();
     }//while
 }//f()
 

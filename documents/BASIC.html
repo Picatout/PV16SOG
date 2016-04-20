@@ -66,6 +66,11 @@
 	les éléments de syntaxe indiqués entre <b>'['</b> et <b>']'</b> sont des éléments optionnels. si le caractère <b>'+'</b>
 	suit le caractère <b>']'</b> l'élément peut-être répété un nombre abritraire de fois.
 </p>
+<p>le caractère <b>'|'</b> sépare les alternatives</p>
+<p>
+  Dans les examples le <b>&gt;</b> au début d'une ligne représente l'invite de la ligne de commande.
+</p>
+
 <p>
 	<i>expr</i>  signifit une expression arithmétique.<br>
 	<i>expr_list</i> liste d'expression numérique. Les éléments sont séparés par la virgule <b>','</b>.<br>
@@ -215,6 +220,292 @@ Un caractère ASCII est saisie en le précédent de la barre oblique <b>'\'</b> 
 	 DIM t1(4)=(1,2,3,4) ' le tableau t1 contient 4 éléments qui sont initialisées.
 	 DIM msg$(3)=("nom","prenom","age") ' tableau de 3 chaînes initialisé.
 	 </code></pre></li>
+	 <li><a name="do"></a><b>DO <i>block</i> WHILE <i>log_expr</i></b> Le bloc d'instruction est exécuté en boucle tant que <i>log_expr</i> est vrai.<br>
+	      <b>DO <i>block</i> UNTIL <i>log_expr</i></b></b> Le bloc d'instruction est exécuté en boucle jusqu'à ce que <i>log_expr</i> soit vrai.
+	<pre><code>example:
+	DO i=i+1 UNTIL i=10 ' i est incrémenté jusqu'à la valeur 10
+	i=9 : DO i=i-1 : ? i : WHILE i ' compte à rebour affiché à l'écran.</code></pre></li>
+	<li><b>ELSE</b> est utilisé avec le <a href="#if">IF</a> et le <a href="#selectcase">SELECT CASE</a>.</li>
+	<li><b>END FUNC</b> marque la fin d'une <a href="#function">fonction</a>.<br>
+	<b> END SUB</b> marque la fin d'une <a href="#sub">sous routine</a>.<br>
+	<b>END IF</b> marque la fin d'un <a href="#if">IF</a><br>
+	<b>END SELECT</b> marque la fin d'un <a href="#selectcase">SELECT CASE</a>.
+	</li>
+	<li><b>EXIT SUB</b> permet de sortir prématurément d'une <a href="#sub">sous routine</a>.</li>
+	<li><a name="for"></a><b>FOR <i>var=expr</i> TO <i>expr</i> [STEP <i>expr</i>]</b><br>
+	  <i>block</i><br>
+	<b>NEXT <i>var</i></b><br>
+	Permet l'exécution d'un bloc d'instructions en boucle un nombre de fois déterminé par l'incrémentation d'une variable. Le programme sort de
+	la boucle lorsque la variable dépasse la valeur de la limite. l'incrément par défaut est <b>1</b>. Si <b>STEP</b> est présent l'incrément est
+	le résultat d'<i>expression</i> et peut-être un entier quelconque. La valeur de la variable de contrôle est vérifiée au début de la boucle
+	d'instructions. Si au départ elle dépasse la limite le bloc d'instruction n'est jamais exécuté.<br>
+	<pre><code>example:
+	FOR i=0 TO 10 STEP 2
+	  print i
+	next i
+	REM  affiche les nombres pairs de 0 à 10</code></pre>
+	</li>
+	<li><b><a name="function"></a>FUNC name(<i>arg_list</i>)</b><br>
+	[<b>LOCAL var_list</b>]<br>
+	<i>block</i><br>
+	<b>RETURN <i>expr</i></b><br>
+	<b>END FUNC</b><br>
+	Sert à définir une fonction.<br>
+	<ul>
+		<li><b>name</b> est le nom de la fonction qui sera utilisé pour son appel.</li>
+		<li><i>arg_list</i> Liste du nom des arguments de la fonctions. Les éléments sont séparé par la virgule <b>','</b></li>
+		<li><b>LOCAL var_list</b> Si la fonction utilise des variables locales la liste doit-être donnée au début.</li>
+		<li><i>block</i> bloc d'instructions exécuté par cette fonction.</li>
+		<li><b>RETURN <i>expr</i></b> Cette directive termine la fonction en retournant la valeur de l'expresssion qui suit. Cette 
+		directive peut apparaître plusieurs fois dans le bloc d'instruction dans une structure conditionnelle.
+		<pre><code>example:
+		REM cette fonction calcule  la factorielle d'un entier
+		REM méthode récursive
+		FUNC fact(n)
+		  if n<1 then 1/0 end if ' nombre &lt; 1 génère une exception
+		  if n=1 then return 1 end if
+		  return n*fact(n-1)
+		END FUNC
+		
+		REM même fonction mais en utilisant une boucle FOR
+		FUNC fact(n)
+		LOCAL f,i
+		   f=1
+		   for i=2 to n 
+		     f=f*i
+		   next i
+		   return f
+		END FUNC
+		</code></pre></li>
+	</ul>
+	</li>
+	<li><b>GETPIXEL(x,y)</b> retourne la couleur du pixel à la position {x,y}.
+	<pre><code>example:
+	? GETPIXEL(10,20) ' affiche la couleur du pixel à la coordonnée {10,20]</code></pre>
+	</li>
+	<li><a name="if"></a><b>IF <i>log_expr</i> THEN</b><br>
+	<i>block</i><br>
+	<b>ELSE</b><br>
+	<i>block</i><br>
+	<b>END IF</b><br>
+	L'expression logique qui suit le <b>IF</b> est évaluée et si la valeur est vrai le bloc d'instruction qui
+	suit le <b>THEN</b> est exécuté. Dans le cas contraire c'est le bloc d'instruction qui suit le <b>ELSE</b>
+	qui est exécuté.
+	<pre><code>example:
+	IF btest(4,0) then
+	  ? "nombre impair"
+	ELSE
+	  ? "nombre pair"
+	END IF
+	REM va imprimé <i>nombre pair</i>
+	</code></pre>
+	</li>
+	<li><b>INPUT [<i>chaîne</i>,] <i>var_list</i></b>
+	<ul>
+		<li><i>chaîne</i> est un message facultatif à imprimer à l'écran avant la saisie des données.</li>
+		<li><i>var_list</i> est la liste des variables auquelles les valeur saisies au clavier seront affectées.
+		La saisie se fait une variable à la fois dans leur ordre d'apparation dans la liste. Pour chaque variable
+		son nom est affichée à l'écran suivit d'un point d'interrogation.</li>
+	</ul>
+	<pre><code>example:
+	INPUT "Entrez votre prenom et votre age", nom$, age
+	'ceci apparaît à l'écran:
+	 Entrez votre prenom et votre age
+	 prenom? <i>Arthur</i>
+	 age? <i>40</i>
+	 
+	 &gt;? nom$, age
+	 Arthur 40
+	</code></pre>
+	</li>
+	<li><b>JSTICK()</b> Lecture du joystick. Retourne zéro si aucun contact n'est fermé. Autrement retourne une valeur
+	qui correspond à la combinaison des constacts fermés. 
+	<table border="single">
+	<tr><th>contact</th><th>valeur</th></tr>
+	<tr><td>bouton</td><td>1</td></tr>
+	<tr><td>levier vers la droite</td><td>2</td></tr>
+	<tr><td>levier vers la gauche</td><td>4</td></tr>
+	<tr><td>levier vers le bas</td><td>8</td></tr>
+	<tr><td>levier vers le haut</td><td>16</td></tr>
+	</table>
+	Deux contacts peuvent-être fermés en même temps. Par exemple si le levier est poussé vers le haut et la droite la valeur
+	retourné est 18.
+	<pre><code>example:
+	select case jstick()
+	case 1
+	  bye
+	case 2
+	  ? "droite"
+	case 4
+	  ? "gauche"
+	case 8
+	  ? "bas"
+	case 16
+	  ? "haut"
+	case 18
+	  ? "haut et droite"
+	case else
+	  ? "etc"
+	end select  
+	</code></pre>
+	</li>
+	<li><b>KEY()</b> Cette fonction retourne la touche tapée au clavier ou <b>0</b> si aucune touche n'est tapée.
+	<pre><code>example:
+	CASE SELECT key()
+	case \q 'quitte le programme
+	  bye
+	case \e ' efface l'écran
+	  cls
+	case \h ' salutation
+	  print "hello\n" ' \n à l'intérieur d'une chaîne pour imposer un retour à la ligne.
+	end SELECT
+	REM j'ai mélanger intentionnellement les mots réservés entre majuscules et minuscules
+	REM pour montrer que la casse n'a pas d'importance.
+	</code></pre></li>
+	<li><b>LEN(<i>var$</i>)</b><br>
+	<b>LEN ("chaîne")</b><br> 
+	Cette fonction retourne la longueur de la chaîne ASCII.
+	<pre><code>example:
+	&gt;nom$="Arthur Roy"
+	&gt;? len(nom$)
+	10
+	&gt;? len("hello world")
+	11
+	&gt;|</code></pre>
+	</li>
+    <li><b>[LET] <i>var_name[#]</i>i>[(<i>epxr</i>)]=<i>expr</i></b><br>
+    <b>[LET] <i>var_name$</i>[(<i>expr</i>)]=<i>chaîne</i></b><br>
+    Assigne une valeur à une variable. Le mot réservé <b>LET</b> est entre crochets car il est optionnel.
+    <pre><code>example:
+    LET a=34*5
+    a=34*5  REM c'est la même chose
+    REM ça peut aussi être une variable tableau
+    DIM tab(4)
+    tab(1)=-1234  ' le premier élément du tableau vaut maintenenat <b>-1234</b>
+    </code></pre>
+    </li>
+    <li><b>LINE(x0,y0,x1,y1,color)</b>  dessine une ligne à l'écran.
+    <ul>
+    <li><b>{x0,y0}</b> coordonnées première extrémité de la ligne.</li>
+    <li><b>{x1,y1}</b> coordonnées de l'autre extrémité de la ligne.</li>
+    <li><b>color</b> couleur (ton de gris) de la ligne.</li>
+    </ul>
+    <pre><code>example:
+    line(0,0,100,100,15)</code></pre>
+    </li>
+	<li><b>LOCAL <i>var_list</i></b> déclaration de la liste des variables utilisées dans une 
+	<a href="#function">fonction</a> ou une <a href="#sub">sous-routine.</a></li>
+	<li><b>LOCATE(ligne,colonne)</b> Positionne le curseur texte à l'endroit désigné.
+	<ul>
+		<li><i>ligne</i> numéro de la ligne, {0-20}</li>
+		<li><i>colonne</i> numéro de la colonne, {0-39}</li>
+	</ul>
+	<pre><code>example:
+	LOCATE(10,0) ' le curseur texte est maintenant au début de la 11ième ligne.
+	</code></pre>
+	</li>
+	<li><b>LOOP</b> voir <a href="#do">DO</a></li>
+	<li><b>MAX(<i>expr1</i>,<i>expr2</i>)</b> Cette fonction retourne le plus grand des 2 entiers.
+	<pre><code>example:
+	&gt;? max(56,30)
+	56
+	&gt;|</code></pre></li>
+	<li><b>MDIV(<i>expr1</i>,<i>expr2</i>,<i>expr3</i>)</b> Cette fonction retourne <i>expr1*expr2/expr3</i>. Le résultat de la 
+	multiplication est conservé sur 32 bits pour obtenir une valeur juste pour la division.
+	<pre><code>
+	&gt; ? 32540*8/33
+	-54 <i>'mauvaise réponse à cause du débordement de la multiplication.</i>	
+	&gt;? mdiv(3540,8,33)
+	7888 <i>'bonne réponse car le résultat de la multiplication est conservé sur 32 bits.</i>
+	&gt;REM multiplication d'un nombre par une approximation rationnelle de PI
+	&gt;? mdiv(5400,355,113)
+	16964 <i>'erreur &lt; 0,5 </i>
+	</code></pre></li>
+	<li><b>MIN(<i>expr1</i>,<i>expr2</i>)</b> Cette fonction retourne le plus petit des 2 entiers.
+	<pre><code>example:
+	&gt;? min(34,-5)
+	-5
+	&gt;|</code></pre></li>
+	<li><b>NEXT <i>var_name</i></b> Voir <a href="#for">FOR</a></li>
+	<li><b>NOISE(<i>expr</i>)</b> Produit un bruit blanc pour une durée <i>expr</i> exprimée en millisecondes.
+	<pre><code>example:
+	&gt;noise(100) 'produit le bruit d'une chute d'eau durant 0,1 seconde.
+	</code></pre></li>
+	<li><b>NOT <i>log_expr</i></b> Négation de la valeur d'une expression logique.
+	<pre><code>example:
+	if not 3&gt;4 then ? "3 n'est pas plus grand que 4" end if
+	3 n'est pas plus grand que 4
+	</code></pre></li>
+    <li><b><i>log_expr1</i> OR <i>log_expr2</i></b> retourne vrai si l'une ou l'autre des 2 <i>log_expr</i> est vrai.
+    <pre><code>example:
+    while 1
+    if key() or jstick()=1 then bye end if
+    wend
+    REM sort de la boucle si une touche ou le bouton du joystik
+    REM est enfoncé.
+    </code></pre></li>
+    <li><b>PAUSE(<i>expr</i>)</b> Suspend l'exécution du programme pour une durée en millisecondes égale à la valeur de <i>expr</i>.
+    <pre><code>example:
+    &gt;pause(1000)  REM l'invite de commande var réapparaître après 1 seconde.
+    </code></pre></li>
+    <li><b>PRINT|? [<i>expr</i>|<i>chaîne</i>|<i>var</i>] [,<i>expr</i>|<i>chaîne</i>|<i>var</i>]+ [;]</b><br>
+    Imprime à l'écran la liste des expressions, chaîne ou variable. Un espace sépare chaque valeur. Si la commande est terminée
+    par une <b>';'</b> il n'y a pas de retour à la ligne.
+    <pre><code>example:
+    &gt;DIM a=34, msg$="hello world"
+    &gt;print a, msg$, "bonjour" 
+    34 hello world bonjour
+    
+    &gt;|
+    </code></pre></li>
+    <li><b>PUTC expr</b> imprime un caractère à l'écran sans ajout d'espace ou de retour à la ligne. Si <i>expr</i> est évaluée en dehors
+    de l'intervalle {0-127} rien n'est imprimé. La majorité des codes entre 0 et 31 n'ont aucun effet. les codes reconnus sont les suivants:
+    <ul>
+		<li><b>7</b> alerte sonore</li>
+		<li><b>9</b> tabulation</li>
+		<li><b>10</b> retour à la ligne</li>
+		<li><b>12</b> efface écran</li>
+		<li><b>13</b> retour à la ligne</li>
+    </ul>
+    <pre><code>example:
+    &gt;putc \a : putc 98
+    ab
+    &gt;
+    </code></pre></li>
+    <li><b>RECT(x,y,width,height,color)</b> Dessine un rectangle vide à l'écran.
+    <ul>
+    <li><b>{x,y}</b> coordonnée du coin supérieur gauche</li>
+    <li><b>width</b> largeur du  rectangle en pixels.</li>
+    <li><b>height</b> auteur du rectangle en pixels.</li>
+    <li><b>color</b> couleur (ton de gris) du périmèter du rectangle.</li>
+    </ul>
+    <pre><code>RECT(10,10,20,60,7) ' position {10,10}, largeur 20, hauteur 60,  couleur 7</code></pre></li>
+	<li><b>REM|' <i></i>texte</i></b> indique un commentaire. Les commentaires se termine à la fin de la ligne.
+	<pre><code>example:
+	REM ce commentaire se termine a la fin de ligne.
+	' l'apostrophe peut remplacé le mot REM.</code></pre></li>
+	<li><b>RETURN</b> Voir <a href="#function">FUNC</a></li>
+	<li><b>RND()</b> Cette fonction retourne un entier de 16 bits pseudo aléatoire.
+	<pre><code>example:
+	&gt;while not key() : ? rnd() : wend
+	REM imprime sans arrêt une série de nombre aléatoire.
+	REM il faut enfoncer une touche du clavier pour arrêter l'exécution.</code></pre></li>
+	<li><b>SCRLUP(expr)</b> Fait glisser l'affichage vers le haut d'un nombre de pixels correspondant à la valeur
+	de <i>expr</i>
+	<pre><code>example:
+	&gt; scrlup(8) ' défilement vers le haut de la hauteur d'un caractère.</code></pre></li>
+	<li><b>SCRLDN(expr)</b> Fait glisser l'affichage vers le bas d'un nombre de pixels correspondant à la valeur
+	de <i>expr</i>
+	<pre><code>example:
+	&gt; scrldn(8) ' défilement vers le bas de la hauteur d'un caractère.</code></pre></li>
+	<li><b>SCRLRT(expr)</b> Fait glisser l'affichage vers la droite d'un nombre de pixels correspondant à la valeur
+	de <i>expr</i>. Cette valeur doit-être un nombre pair, sinon le nombre pair inférieur est choisi.
+	<pre><code>example:
+	&gt; scrlrt(6) ' défilement vers la droite de la largeur d'un caractère.</code></pre></li>
+	<li><b>SCRLLT(expr)</b> Fait glisser l'affichage vers la gauche d'un nombre de pixels correspondant à la valeur
+	de <i>expr</i>. Cette valeur doit-être un nombre pair, sinon le nombre pair inférieur est choisi.
+	<pre><code>example:
+	&gt; scrllt(6) ' défilement vers la gauche de la largeur d'un caractère.</code></pre></li>
 	<li><a name="selectcase"></a><b>SELECT CASE expr</b><br>
 	<b>CASE </b><i>expr_list</i><br>
 	<i>block</i><br>
@@ -240,6 +531,153 @@ Un caractère ASCII est saisie en le précédent de la barre oblique <b>'\'</b> 
 	end select
 	REM contrôle du mouvement d'un sprite à l'écran à l'aide du joystick     
 	  </code></pre></li>
+	<li><b>SETPIXEL(x,y,color)</b> colore le pixel à la coordonnée <i>{x,y}</i> avec la couleur <i>color</i>.
+	<pre><code>example:
+	setpixel(10,20,4) ' le pixel à la postion {10,20} prend la valeur 4
+	</code></pre></li>  
+	<li><b>SETTMR(<i>expr</i>)</b> Initialise la minuterie de pause sans bloquer l'exécution. À utiliser avec la fonction
+	<a href="#timeout">TIMEOUT</a>
+	<pre><code>example:
+    DIM count
+    settmr(100) ' minuterie initialisée à 100 millisecondes.
+    while not timeout()
+      rem combien de WHILE par seconde?
+      count=count+1
+    wend
+    print "boucle WHILE par seconde: ",10*count
+	  </code></pre></li>
+	<li><b>SHL(<i>expr</i>)</b> décale vers la gauche <i>expr</i> de 1 bit (multiplication par 2).
+	<pre><code>example:
+	&gt;? shl(4)
+	8
+	&gt;|</code></pre></li>
+	<li><b>SHR(<i>expr</i></b> décale vers la droite <i>expr</i> de 1 bit (division par 2).
+	<pre><code>example:
+	&gt;? shr(-9)
+	-5 
+	&gt; REM pensiez-vous que ça donnait -4 ?
+	&gt;|</code></pre></li> 
+	<li><b>SPRITE(x,y,width,height,@var#)</b><br>
+	fonction qui affiche un sprite à l'écran. Cette fonction retourne une
+	valeur booléenne qui indique si le sprite est entré en collision avec un autre objet.
+	<ul>
+		<li><b>{x,y}</b> Coordonnées du coin supérieur gauche du sprite.</li>
+		<li><b>width</b> Largeur du sprite en pixels.</li>
+		<li><b>height</b> Hauteur du sprite en pixels.</li>
+		<li><b>var#</b> Nom de la variable tableau d'octets qui contient le sprite. Cette variable doit-être passée par 
+		référence comme indiqué par le caractère <b>'@'</b>.</li>
+	</ul>
+	<pre><code>example:
+	dim cross#(8)=($0f,$f0,$ff,$ff,$ff,$ff,$0f,$f0) 'petite croix de 4x4 pixels
+	if sprite(56,24,4,4,@cross#) then ? "collision" end if
+	</code></pre>
+	Les sprites sont affichés à l'écran en utilisant une fonction XOR (OU exclusif) pixel à pixel. Cette méthode 2 avantages.
+	Le premier est qu'elle permet de détecter les collisions en supposant que le fond d'écran est noir (0). Le deuxième est qu'il
+	suffit de réafficher le sprite par dessus lui-même pour l'effacer. la méthode pour déplacer un sprite à l'écran est la suivante:
+	<pre><code>
+	while 1
+	  collision=sprite(x,y,8,8,@spr#) ' affiche un sprite de 8x8 pixels
+	  pause(10) ' pause de 10 millisecondes, cette valeur n'est pas critique peut-être 20 msec.
+	  sprite(x,y,8,8,@spr#) 'efface le sprite
+	  ' ici on peut mettre du code pour gérer les collisions
+	  '...
+	  select case jstick() 'lecture du joystick et déplacement dans la direction indiquée.
+	  case 1 ' bouton enfoncé
+	    cls
+	    bye
+	  case 16 'vers le haut
+	    if y&gt;0 then y=y-1 end if
+	  case 8 'vers le bas
+	    if y&lt;170-8 then y=y+1 end if
+	  case 2 'vers la droite
+	    if x&lt;240-8 then x=x+1 end if
+	  case 4 ' vers la gauche
+	    if x&gt;0 then x=x-1 end if
+	  ' on peut ajouter des CASE pour gérer les 4 directions diagonales.
+	  '...  
+	  end select  
+	wend   
+	</code></pre>
+	</li> 
+	<li><b>SRCLEAR(<i>expr</i>)</b><br>
+	Cette commande efface le contenu de la mémoire SPI RAM. <i>expr</i> est le nombre d'octets à effacer. L'effacement se fait 
+	toujours à partir de l'adresse 0.
+	<pre><code>example:
+	srclear(1000) ' efface les 1000 premiers octets de la mémoire SPI RAM.</code></pre></li>
+	<li><b>SRLOAD <i>file</i></b><br>
+	Il s'agit d'une fonction qui charge en mémoire SPI RAM le contenu d'un fichier. Le chargement débute à l'adresse 0.
+	La taille maximale est de 65535 octets. La fonction retourne le nombre d'octets chargés.
+	<pre><code>example:
+	size=srload "test.spr" ' charge le fichier <i>test.spr</i> et retourne sa grandeur dans <i>size</i>.</code></pre></li>
+	<li><b>SRREAD(<i>adr</i>,<i>size</i>,@var)</b><br>
+	Lecture d'un bloc d'octets de la SPI RAM dans une variable.
+	<ul><li><b>adr</b> adresse SPI ou doit débuter la lecture.</li>
+	<li><b>size</b> nombre d'octets à lire.</li>
+	<li><b>var</b> nom de la variable dans laquelle les valeurs lues seront copiées. Cette variable doit-être passée par
+	référence comme l'indique le caractère <b>'@'</b>.
+	<pre><code>example:
+	DIM i, spr#(32)
+	srread(0,2,@i) ' lit un entier et le met dans la variable <i>i</i>.
+	srread(4,32,@spr#) ' lit un bloc de <i>32</i> octets à partir de l'adresse <i>4</i> dans le tableau <i>spr#</i>
+	</code></pre>
+	</li>
+	</ul>
+	<li><b>SRSAVE <i>file</i>, <i>size</i></b><br>
+	Sauvegarde dans un fichier le contenu de la mémoire SPI RAM. La sauvegarde se fait à partir de l'adresse 0.<br>
+	<ul>
+	<li><b>file</b> Nom du fichier de sauvegarde.</li>
+	<li><b>size</b> Nombre d'octets à sauvegarder.</li></ul>
+	<pre><code>example:
+	srsave "test.dat", 1024 ' sauvegarde <i>1024 octets</i> dans le fichier <i>test.dat</i></code></pre>
+	</li>
+	<li><b>SRWRITE(<i>adr,size,@var</i>)</b><br>
+	Copie le contenu d'une variable dans la mémoire SPI RAM.<br>
+	<ul>
+	<li><b>adr</b> adresse destination dans la SPI RAM.</li>
+	<li><b>size</b> nombre d'octets à copier.</li>
+	<li><b>var</b> nom de la variable qui contient les données à transférer dans la SPI RAM. Cette variable est passée par référence
+	comme indiqué par le caractère <b>'@'</b>.</li>
+	</ul>
+	<pre><code>example:
+	DIM i, spr#(32)
+	srwrite(0,2,@i) ' écrit  l'entier <i>i</i> dans la SPI RAM à l'adresse 0.
+	srwrite(4,32,@spr#) ' écris un bloc de <i>32</i> octets à l'adresse <i>4</i> à partir du tableau <i>spr#</i>
+	</code></pre>
+	</li>
+	<li><a name="sub"></a><b>SUB name([<i>arg_list</i>])</b><br>
+	[<b>LOCAL</b> <i>var_list</i>]<br>
+	<i>block</i><br>
+	[if <i>log_expr<i> then </i></i><b>EXIT SUB</b> end if<br>
+	<i>block</i>]<br>
+	<b>END SUB</b><br>
+	Cette déclaration sert à définir une sous-routine. La liste des variables locales, s'il y en a, doit-être énumérée au début.
+	<b>EXIT SUB</b> peut-être utilisé pour sortir de la sous-routine si une certaine condition est remplie.
+	<pre><code>example:
+	sub box_madness() ' dessine des boites au hasard
+	  local x,y,w,h,c
+	  while not key() ' arrête lorsqu'une touche est enfoncée.
+	    x=abs(rnd())%240
+	    y=abs(rnd())%170
+	    w=abs(rnd())%240
+	    h=abs(rnd())%170
+	    c=abs(rnd())%16
+	    box(x,y,w,h,c)
+	  wend
+	end sub
+	</code></pre>
+	</li>
+	<li><b>THEN</b> Voir <a href="#if">IF</a></li>
+	<li><b>TICKS()</b><br>
+	 PV16SOG possède un compteur interne qui est incrémenté à chaque milliseconde. Cette fonction retourne la valeur de ce compteur.
+	 Ce compteur de 16 bits retourne à zéro à intervalle d'environ 65 secondes.
+	 <pre><code>example:
+	 REM utilisation du compteur interne pour mesurer un interval de temps.
+	 t0=ticks()
+	 for i=0 to 10000
+	 next i
+	 ? "temps écoulé pour 10000 itération FOR ", ticks()-t0
+	 </code></pre>
+	 </li>
 	</ul>
 </p>
 <h3><a name="examples">Examples de programmes</a></h3>
