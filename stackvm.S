@@ -153,7 +153,7 @@ savelimit: //( limit -- )
 
 ;sauvegarde les variables de boucle sur rstack
 ; sur _rstack
-saveloop: // ( -- R:step R:limit)
+saveloop: // (R: -- step limit)
     mov step,[++rsp] //step
     mov limit,[++rsp] //limit
     return

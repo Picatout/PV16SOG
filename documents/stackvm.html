@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+<header>
+<title>machine virtuelle du PV16SOG</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="Author" content="Jacques Deschênes">
+<meta name="Created on" content="2016-04-20">
+<meta name="version" content="1.0">
+<meta name="licence" content="CC-NC-SA-BY V3.0">
+<link rel="stylesheet" type="text/css" href="style.css">
+</header>
+<body>
+<h2>machine virtuelle du PV16SOG</h2>
+<h4>Licence</h4>
+<p>  
+  Ce document fait partie du projet <a href="https://github.com/picatout/pv16sog">PV16SOG</a> et est fourni sous licence <a href="https://creativecommons.org/">CC-NC-SA-BY V3.0</a><br><br>
+  <b>auteur:</b> Jacques Deschênes<br>
+  <b>révision</b> 1.0</br>
+  <b>Copyright:</b> 2015,2016, Jacques Deschênes<br>	
+
+</p>
+<h3></a>Présentation</h3>
+<p>
+	L'ordinateur PV16SOG possède un interpréteur BASIC qui exécute du bytecode sur une machine virtuelle à piles. Ce document décris cette
+	machine virtuelle. 
+</p>
+<h4>Architecture</h4>
+<p>
+	Cette machine virtuelle utilise 8 des 16 registres du PIC24EP512MC202 pour ses états internes ainsi que 2 piles. la première pile <i>dstack</i>
+	est utilisée pour les arguments et la deuxième <i>rstack</i> est utilisée pour conserver les adresses de retours des sous-programmes ainsi que
+	pour sauvegarder les registres <i>STEP</i> et <i>LIMIT</i> lors de l'imbrication de boucles <b>FOR</b>. Les registres de la machine virtuelle
+	sont les suivants:
+	<ul>
+	<li><b>IP</b> pointeur d'instruction. Les instructions sont de longueur variable mais les opcodes sont encodés sur 8 bits.</li>
+	<li><b>WP</b> pointeur pour la table des fonctions machine. Cette valeur est constante tout au long de l'exécution du programme.</li>
+	<li><b>DSP</b> pointeur pour la pile <i>dstack</i></li>
+	<li><b>RSP</b> pointeur pour la pile <i>rstack</i></li>
+	<li><b>FP</b>  pointeur pour les paramètres et variables locales qui sont sur la pile <i>dstack</i></li>
+	<li><b>_PAGE</b> ce registre conserve pour la durée d'exécution du programme la valeur du registre <b>DSRPAG</b> tel qu'elle 
+	était au démarrage de la machine virtuelle. Permet d'initialiser rapidement le registre <b>DSRPAG</b> lorsque la machine virtuelle 
+	appelle une fonction externe écrite en <b>C</b>.</li>
+	<li><b>STEP</b> Ce registre est utilisé par les boucles <b>FOR</b> et correspond à la valeur <b>STEP</b> de la boucle 
+	<b>FOR</b>.</li>
+	<li><b>LIMIT</b> Ce registre est utilisé par les boucles <b>FOR</b> et correspond à la limite du compteur de boucle.</li>
+	</ul>
+</p>
+<p>
+	la pile <b>dstack</b> peut contenir 128 éléments et la pile <b>rstack</b> 64. Étant donné ces tailles limités il faut-être prudent dans
+	l'utilisation des fonctions récursives.
+</p>
+<h4><a name="opcodes"></a>codes machines</h4>
+<p>
+	Cette table contient la description de chacun des codes  machine (opcode) utilisés par la machine virtuelle. La notation <i>état stack</i>
+	est une illustration de l'état de la pile <I>dstack</I> ou <i>rstack</i> avant et après l'exécution de cette instruction.
+	<table border="single">
+	<tr><th>opcode</th><th>mnémonique</th><th>description</th><th>état stacks</th></tr>
+	<tr><td>0</td><td>BYE</td><td>Termine l'exécution du programme et sortie de la machine virtuelle. Void commane BASIC <b>BYE</b></td><td>( -- )</td></tr>
+	<tr><td>1</td><td>DROP</td><td>Jette l'élément au sommet de la pile <i>dstack</i>.</td><td>( n -- )</td></tr>
+	<tr><td>2</td><td>DUP</td><td>Clone le sommet de la pile <i>dstack</i></td><td>( n -- n n )</td></tr>
+	<tr><td>3</td><td>SWAP</td><td>Interchange les 2 éléments au sommet de <I>dstack</I></td><td>( n1 n2 -- n2 n1 )</td></tr>
+	<tr><td>4</td><td>OVER</td><td>Copie le 2ième élément de la pile <i>dstack</i> au sommet.</td><td>( n1 n2 -- n1 n2 n1 )</td></tr>
+	<tr><td>5</td><td>SAVELOOP</td><td>Sauvegarde les registres <i>LIMIT</i> et <I>STEP</I> sur la pile <i>rstack</i></td><td>(R: -- STEP LIMIT)</td></tr>
+	<tr><td>6</td><td>RESTLOOP</td><td>Restaure l'état des registres <i>LIMIT</i> et <i>STEP</i> à partir des valeurs au sommet de <i>rstack</i></td>
+	<td>(R: STEP LIMIT -- )</td></tr>
+	<tr><td>7</td><td>LOOPTEST</td><td>Vérifie si la variable de contrôle d'une boucle <b>FOR</b> a dépassé la valeur limite.</td><td>( -- )</td></tr>
+	<tr><td>8</td><td>RND</td><td>Génère un nombre pseudo aléatoire qui est empilé sur <I>dstack</I></td><td>( -- n )</td></tr>
+	<tr><td>9</td><td>ABS</td><td>Remplace la valeur au sommet de <i>dstack</i> par sa valeur absolue</td><td>( n -- n )</td></tr>
+	<tr><td>10</td><td>BEEP</td><td>Fait entendre une tonalitée. Voir commande BASIC <b>BEEP()</b></td><td>( fr ms wait -- )</td></tr>
+	<tr><td>11</td><td>TONE</td><td>Fait entendre une note de la gamme tempérér. Voir commande BASIC <b>TONE()</b></td><td>(note ms wait -- )</td></tr>
+	<tr><td>12</td><td>TICKS</td><td>Empile la valeur du compteur de millisecondes du système. Voi fonction BASIC <b>TICKS()</b></td><td>( -- u )</td></tr>
+	<tr><td>13</td><td>SETTMR</td><td>Initialise la minuterie pause avec la valeur au sommet de la pile. Voir commande BASIC <b>SETTMR()</b></td><td>( n -- )</td></tr>
+	<tr><td>14</td><td>TIMEOUT</td><td>retourne vrai si la minuterie pause est à zéro. Voir fonction BASIC <b>TIMEOUT()</b></td><td>( -- f )</td></tr>
+	<tr><td>15</td><td>NOISE</td><td>Produit un bruit blanc d'une durée dont la valeur est au sommet de la pile.
+	Voir commande BASIC <b>NOISE()</b></td><td>( u -- ) </td></tr>
+	<tr><td>16</td><td>CLS</td><td>Met tous les pixels de l'écran à la valeur indiquée au sommet de la pile.
+	Voir commande BASIC <b>CLS</b></td><td>( n -- )</td></tr>
+	<tr><td></td><td></td><td></td><td></td></tr>
+
+	</table>
+</p>
+<hr width="50%" align="center">
+<p>
+	<ul>
+		<li><a href="./pv16sog.html">ordinateur PV16SOG</a></li>
+		<li><a href="./shell.html">shell du PV16SOG</a></li>
+		<li><a href="./editor.html">Éditeur du PV16SOG</a></li>
+        <li><a href="./BASIC.html">BASIC du PV16SOG</a></li>
+        <li><a href="./stackvm.html">machine virtuelle du PV16SOG</a></li>
+	</ul>
+</p>
+</body>
+</html>
