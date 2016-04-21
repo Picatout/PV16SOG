@@ -73,16 +73,10 @@ extern "C" {
 #define _disable_video() {dis_video=1;IEC0bits.OC2IE=0;}
 #define _enable_video() {dis_video=0;}
     
-extern volatile unsigned char video_buffer[TV_BUFFER];
-extern volatile unsigned char dis_video;
 
 #ifndef __asm
-//change la couleur de la police
-//extern void tv_font_color(unsigned char color);
-//change la couleur de fond de la police
-//extern void tv_back_color(unsigned char color);
-//affiche un caractère à l'écran en position x,y
-//extern void tv_char(int x, int y, char c);
+extern volatile unsigned char video_buffer[TV_BUFFER];
+extern volatile unsigned char dis_video;
 #endif // __asm
 
 #ifdef	__cplusplus

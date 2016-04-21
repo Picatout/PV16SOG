@@ -48,6 +48,7 @@
  *  functions graphiques
  */
 
+.include "p24EP512MC202.inc"
 #define __asm    
 #include "Hardware/ntsc_const.h"
 #include "stackvm.h"
@@ -563,5 +564,19 @@ _new_line: ; ( -- )
 2:    
     clr _xpos
     return
+    
+; active ou désactive le vidéo
+.global _video_off
+_video_off: ; ( f -- )
+    mov [dsp--],W0
+    cp0 W0
+    bra nz, 1f
+    setm.b  _dis_video
+    bclr IEC0, #OC2IE
+    return
+1:
+    clr.b _dis_video
+    return
+    
     
     

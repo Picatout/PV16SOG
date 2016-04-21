@@ -143,7 +143,7 @@ typedef struct _var{
 }var_t;
 
 // type d'unité lexicales
-typedef enum {eNONE,eNL,eCOLON,eIDENT,eNUMBER,eSTRING,ePLUS,eMINUS,eMUL,eDIV,
+typedef enum {eNONE,eSTOP,eCOLON,eIDENT,eNUMBER,eSTRING,ePLUS,eMINUS,eMUL,eDIV,
               eMOD,eCOMMA,eLPAREN,eRPAREN,eSEMICOL,eEQUAL,eNOTEQUAL,eGT,eGE,eLT,eLE,
               eEND, eELSE,eCMD,eKWORD,eCHAR} tok_id_t;
 
@@ -203,6 +203,8 @@ static void kw_case();
 static void kw_cls();
 static void kw_color();
 static void kw_const();
+static void kw_curcol();
+static void kw_curline();
 static void kw_dim();
 static void kw_do();
 static void kw_else();
@@ -257,6 +259,7 @@ static void kw_tone();
 static void kw_trace();
 static void kw_ubound();
 static void kw_use();
+static void kw_video();
 static void kw_waitkey();
 static void kw_wend();
 static void kw_while();
@@ -265,14 +268,15 @@ static void kw_xorpixel();
 //identifiant KEYWORD doit-être dans le même ordre que
 //dans la liste KEYWORD
 enum {eKW_ABS,eKW_AND,eKW_BEEP,eKW_BOX,eKW_BTEST,eKW_BYE,eKW_CASE,eKW_CLS,eKW_COLOR,
-      eKW_CONST,eKW_DIM,eKW_DO,eKW_ELSE,eKW_END,eKW_EXIT,
+      eKW_CONST,eKW_CURCOL,eKW_CURLINE,eKW_DIM,eKW_DO,eKW_ELSE,eKW_END,eKW_EXIT,
       eKW_FOR,eKW_FUNC,eKW_GETPIXEL,eKW_IF,eKW_INPUT,eKW_KEY,eKW_LEN,
       eKW_LET,eKW_LINE,eKW_LOCAL,eKW_LOCATE,eKW_LOOP,eKW_MAX,eKW_MDIV,eKW_MIN,eKW_NEXT,
       eKW_NOISE,eKW_NOT,eKW_OR,eKW_PAUSE,
       eKW_PRINT,eKW_PUTC,eKW_JSTICK,eKW_RECT,eKW_REF,eKW_REM,eKW_RETURN,eKW_RND,eKW_SCRLUP,eKW_SCRLDN,
       eKW_SCRLRT,eKW_SCRLFT,eKW_SELECT,eKW_SETPIXEL,eKW_SETTMR,eKW_SHL,eKW_SHR,
       eKW_SPRITE,eKW_SRCLEAR,eKW_SRLOAD,eKW_SRREAD,eKW_SRSSAVE,eKW_SRWRITE,eKW_SUB,eKW_THEN,eKW_TICKS,
-      eKW_TIMEOUT,eKW_TONE,eKW_TRACE,eKW_USE,eKW_UBOUND,eKW_WAITKEY,eKW_WEND,eKW_WHILE,eKW_XORPIXEL
+      eKW_TIMEOUT,eKW_TONE,eKW_TRACE,eKW_UBOUND,eKW_UNTIL,eKW_USE,eKW_VIDEO,
+      eKW_WAITKEY,eKW_WEND,eKW_WHILE,eKW_XORPIXEL
 };
 
 //mots réservés BASIC
@@ -287,6 +291,8 @@ __eds__ static const dict_entry_t __attribute__((space(prog))) KEYWORD[]={
     {kw_cls,3+AS_HELP,"CLS"},
     {kw_color,5+AS_HELP,"COLOR"},
     {kw_const,5,"CONST"},
+    {kw_curcol,6+FUNCTION,"CURCOL"},
+    {kw_curline,7+FUNCTION,"CURLINE"},
     {kw_dim,3,"DIM"},
     {kw_do,2,"DO"},
     {kw_else,4,"ELSE"},
@@ -342,7 +348,9 @@ __eds__ static const dict_entry_t __attribute__((space(prog))) KEYWORD[]={
     {kw_tone,4,"TONE"},
     {kw_trace,5,"TRACE"},
     {kw_ubound,6+FUNCTION,"UBOUND"},
+    {bad_syntax,5,"UNTIL"},
     {kw_use,3,"USE"},
+    {kw_video,5,"VIDEO"},
     {kw_waitkey,7+FUNCTION,"WAITKEY"},
     {kw_wend,4,"WEND"},
     {kw_while,5,"WHILE"},
@@ -422,8 +430,8 @@ void throw(int error){
         case eNUMBER:
             print_int(token.n,0);
             break;
-        case eNL:
-            print("unspected end of line.");
+        case eSTOP:
+            print("unspected end of command.");
             break;
         case eSTRING:
         case eIDENT:
@@ -766,8 +774,12 @@ static void next_token(){
             case '\n':
             case '\r':
                 line_count++;
+                if (activ_reader->device==eDEV_SDCARD){ // considéré comme un espace
+                    next_token();
+                    break;
+                }
             case ':':    
-                token.id=eNL;
+                token.id=eSTOP;
                 token.str[0]='\n';
                 token.str[1]=0;
                 break;
@@ -1230,7 +1242,7 @@ static void cmd_help(){
     char name[32];
     
     next_token();
-    if (token.id==eNL){
+    if (token.id==eSTOP){
         while(COMMAND[j].len){
             if ((COMMAND[j].len&AS_HELP)==0){j++;continue;}
             col=text_colon();
@@ -1613,7 +1625,7 @@ static void init_int_array(var_t *var){
             case eRPAREN:
                 continue;
                 break;
-            case eNL:
+            case eSTOP:
                 break;
             default:
                 throw(eERR_SYNTAX);
@@ -1654,7 +1666,7 @@ static void init_str_array(var_t *var){
             case eRPAREN:
                 continue;
                 break;
-            case eNL:
+            case eSTOP:
                 break;
             default:
                 throw(eERR_SYNTAX);
@@ -1831,6 +1843,26 @@ static void kw_use(){
     }
 }//f
 
+//VIDEO(0|1)
+// déactive|active la sortie vidéo
+static void kw_video(){
+    parse_arg_list(1);
+    bytecode(VIDEOCTRL);
+}//f
+
+//CURLINE()
+// retourne la position ligne du curseur texte
+static void kw_curline(){
+    parse_arg_list(0);
+    bytecode(CURLINE);
+}//f
+
+//CURCOL()
+// retourne la position colonne du curseur texte
+static void kw_curcol(){
+    parse_arg_list(0);
+    bytecode(CURCOL);
+}//f
 
 // EXEC @identifier
 //static void kw_exec(){
@@ -1846,6 +1878,8 @@ static void kw_color(){
     bytecode(FONT_COLOR);
 }//f
 
+// CONST  nom[$]=expr|string [, nom[$]=expr|string]
+// définition d'une constante
 static void kw_const(){
     char name[32];
     var_t *var;
@@ -1867,7 +1901,10 @@ static void kw_const(){
             bytecode(STORE);        
         }
         next_token();
-        if (token.id==eCOMMA) next_token();
+        if (token.id==eCOMMA)
+            expect(eIDENT);
+        else
+            break;
     }//while
     unget_token=true;
 }//f
@@ -2175,9 +2212,9 @@ static void kw_select(){
 static void compile_case_list(){
     int fix_count=0;
     next_token();
-    if (token.id==eNL) throw(eERR_SYNTAX);
+    if (token.id==eSTOP) throw(eERR_SYNTAX);
     unget_token=true;
-    while (token.id != eNL){
+    while (token.id != eSTOP){
         bytecode(DUP);
         expression();
         bytecode(EQUAL);
@@ -2188,9 +2225,9 @@ static void compile_case_list(){
         next_token();
         if (token.id==eKWORD && token.n==eKW_REM){
             kw_rem();
-            token.id=eNL;
+            token.id=eSTOP;
         }
-        if (!(token.id==eNL || token.id==eCOMMA)) throw(eERR_SYNTAX);
+        if (!(token.id==eSTOP || token.id==eCOMMA)) throw(eERR_SYNTAX);
     }//while
     bytecode(BRANCH);
     dp+=2;
@@ -2447,12 +2484,12 @@ static void kw_do(){
 
 // voir kw_do()
 static void kw_loop(){
-    expect(eIDENT);
-    if (!strcmp(token.str,"WHILE")){
+    expect(eKWORD);
+    if (token.n==eKW_WHILE){
         bool_expression();
         bytecode(NZBRANCH);
         
-    }else if (!strcmp(token.str,"UNTIL")){
+    }else if (token.n==eKW_UNTIL){
         bool_expression();
         bytecode(ZBRANCH);  
     }else{
@@ -2854,7 +2891,7 @@ static void kw_print(){
                     bytecode(DOT);
                 }
                break;
-            case eNL:
+            case eSTOP:
                 bytecode(CRLF);
                 break;
             default:
@@ -3003,7 +3040,7 @@ void compile(){
                     kw_let();
                 }
                 break;
-            case eNL:
+            case eSTOP:
                 if (activ_reader->device==STDIN) activ_reader->eof=true;
                 break;
             case eNONE:

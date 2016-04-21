@@ -119,8 +119,17 @@ Les valeurs litérales numérique peuvent-être saisie sous 3 formes:
 </ol>
 </p>
 <p>
-Les chaînes de caractères sont saisies entre guillemets <b>'"'</b> example: "Hello world"<br>
-Un caractère ASCII est saisie en le précédent de la barre oblique <b>'\'</b> example: \a
+Les chaînes de caractères sont saisies entre guillemets <b>'"'</b>. 
+Un caractère ASCII est saisie en le précédent de la barre oblique <b>'\'</b>
+<div>
+<pre><code> example: 
+&gt;print "Hello world"
+Hello world
+&gt;putc \a
+a
+&gt;|
+</code></pre><br>
+</div>
 </p>
 <h4>fonctions et sous-routines</h4>
 <p>
@@ -137,19 +146,23 @@ Un caractère ASCII est saisie en le précédent de la barre oblique <b>'\'</b> 
 <h4>commandes BASIC</h4>
 <p>
 	<ul>
-	<li><b>ABS(expr)</b> Fonction qui retourne la valeur absolue de l'expresssion passée comme paramètre.
+	<li><b>ABS(expr)</b><br>
+	Fonction qui retourne la valeur absolue de l'expresssion passée comme paramètre.
 	<pre><code>example:
-	? abs(3*b)
-	REM imprime la valeur absolue de la variable <b>b</b> multipliée par <b>3</b>.
+	&gt;b=-5
+	&gt;? abs(3*b)
+	-15
+	&gt;|
 	</code></pre>
 	</li>
-	<li><b>AND</b> conjonction logique <b>ET</b> utilisé dans les <i>log_expr</i>.
+	<li><b>AND</b><br>
+	conjonction logique <b>ET</b> utilisé dans les <i>log_expr</i>.
 	<pre><code>example:
 	if hour>=12 and hour<=17 then print "afternoon" end if
 	REM si la varialbe <i>hour</i> a une valeur entre 12 et 17 imprime le mot <i>afternoon</i>.
 	</code></pre>
 	</li>
-	<li><b>BEEP(freq,msec,wait)</b> sous-routine qui génère une tonalité.
+	<li><b>BEEP(freq,msec,wait)</b><br> sous-routine qui génère une tonalité.
 	<ul>
 	<li><b>freq</b> fréquence en Hertz.</li>
 	<li><b>msec</b> durée en millisecondes.</li>
@@ -160,7 +173,7 @@ Un caractère ASCII est saisie en le précédent de la barre oblique <b>'\'</b> 
 	<pre><code>example:
 	BEEP(440,1000,1)
 	REM génère une tonalitée de 440Hertz pour une durée de 1 seconde. Suspend l'exécution.</code></pre></li>
-	<li><b>BOX(x0,y0,width,height,color)</b> sous-routine qui dessine un rectangle plein. 
+	<li><b>BOX(x0,y0,width,height,color)</b><br> sous-routine qui dessine un rectangle plein. 
 	<ul><li><b>{x0,y0}</b> représente la position du coin supérieur gauche.</li>
 	<li><b>width</b> représente la largeur de la boite.</li>
 	<li><b>height</b> représente la hauteur de la boite.</li>
@@ -170,7 +183,7 @@ Un caractère ASCII est saisie en le précédent de la barre oblique <b>'\'</b> 
 	REM boite dont le coin supérieur gauche est à la position {10,20} de largeur 100 pixels,
 	REM hauteur de 50 pixels avec un ton de gris de 7.</code></pre>
 	</li>
-	<li><b>BTEST(<i>expr</i>,bit)</b> fonction qui vérifie l'état d'un bit. Retourne <i>vrai</i> si le bit est à 1 sinon
+	<li><b>BTEST(<i>expr</i>,bit)</b><br> fonction qui vérifie l'état d'un bit. Retourne <i>vrai</i> si le bit est à 1 sinon
 	retourne <i>faux</i>.
 	<ul>
 	<li><b>expr</b> valeur pour laquelle on veut vérifier l'état d'un bit.</li>
@@ -183,19 +196,19 @@ Un caractère ASCII est saisie en le précédent de la barre oblique <b>'\'</b> 
 	if btest(v2,15) then print "nombre negatif" end if
 	REM si le bit 15 est à 1 il s'agit d'un nombre négatif.</code></pre>
 	</li>
-	<li><b>BYE</b> Cette commande termine l'éxécution d'un programme et peut-être utilisée n'importe où à l'intérieur
+	<li><b>BYE</b><br> Cette commande termine l'éxécution d'un programme et peut-être utilisée n'importe où à l'intérieur
 	d'un programme.
 	<pre><code>example:
 	if key()='q' then BYE end if
 	REM termine l'exécution si la touche 'Q' est enfoncée.
 	</code></pre></li>
-	<li><b>CASE</b> mot réservé utilisé à l'intérieur des <a href="#selectcase">SELECT CASE</a></li>
-	<li><b>CLS [color]</b> Efface l'écran. Si le paramètre <i>color</i> est présent assigne cette valeur
+	<li><b>CASE</b><br> Voir <a href="#selectcase">SELECT CASE</a></li>
+	<li><b>CLS [color]</b><br> Efface l'écran. Si le paramètre <i>color</i> est présent assigne cette valeur
 	comme nouvelle couleur de fond avant d'effacer l'écran.
 	<pre><code>example:
 	CLS 7
 	REM la nouvelle couleur de fond sera <b>7</b> et tous les pixels auront cette couleur après cette commande.</code></pre></li>
-	<li><b>COLOR(police,fond)</b> Fixe la couleur de la police de caractère et du fond d'écran.
+	<li><b>COLOR(police,fond)</b><br> Fixe la couleur de la police de caractère et du fond d'écran.
 	<ul>
 	<li><b>police</b> expression arithmétique dont la valeur doit-être entre 0 et 15. Détermine la couleur des caractères.</li>
 	<li><b>fond</b> expression arithmétqiue dont la valeur doit-être entre 0 et 15. Détermine la couleur de fond d'écran.
@@ -203,13 +216,20 @@ Un caractère ASCII est saisie en le précédent de la barre oblique <b>'\'</b> 
 	COLOR(15,0)
 	REM caractère blanc sur fond noir.</code></pre></li></ul>
 	</li>
-	<li><b>CONST nom=valeur [,nom=valeur]</b> Déclare une ou plusieurs constantes séparées par une virgule <b>','</b>.
+	<li><b>CONST nom=valeur [,nom=valeur]</b><br> Déclare une ou plusieurs constantes séparées par une virgule <b>','</b>.
 	<ul><li><b>nom</b> est le nom de la constante.</li>
 	<li><b>valeur</b> selon le type de la variable il s'agit d'un entier, d'un octet ou d'une chaîne ASCII.</li></ul>
 	<pre><code>example:
 	CONST age#=30, salaire=32000, nom$="Capitaine Bonhomme"
 	REM défini 3 constantes de 3 types différents dans la même déclaration.</code></pre>
 	</li>
+	<li><b>CURCOL()</b><br> Retourne la poisition colonne du curseur texte.
+	<pre><code>example:
+	if curcol()=38 then locate(curline()+1,0) end if
+	</code></pre></li>
+	<li><b>CURLINE()</b><br> Retourne la position ligne du curseur texte.
+	<pre><code>example:
+	if curline()=20 and curcol()=39 then scrlup(8): locate(curline(),0) end if</code></pre></li>
 	<li><b>DIM <i>var</i>[=<i>value</i>] [,<i>var</i>[=<i>value</i>]]</b><br>
 	 <b>DIM <i>var</i>(<i>number</i>)[=(value_list)] [,<i>var</i>(<i>number</i>)[=(value_list)]]</b><br>
 	 Cette commande sert à déclarer des variables. Les variables peuvent-être initialisées lors de leur déclaration.
@@ -220,18 +240,44 @@ Un caractère ASCII est saisie en le précédent de la barre oblique <b>'\'</b> 
 	 DIM t1(4)=(1,2,3,4) ' le tableau t1 contient 4 éléments qui sont initialisées.
 	 DIM msg$(3)=("nom","prenom","age") ' tableau de 3 chaînes initialisé.
 	 </code></pre></li>
-	 <li><a name="do"></a><b>DO <i>block</i> WHILE <i>log_expr</i></b> Le bloc d'instruction est exécuté en boucle tant que <i>log_expr</i> est vrai.<br>
-	      <b>DO <i>block</i> UNTIL <i>log_expr</i></b></b> Le bloc d'instruction est exécuté en boucle jusqu'à ce que <i>log_expr</i> soit vrai.
+	 <li><a name="do"></a><b>DO</b><br>
+	  <i>block</i><br>
+	  <b>LOOP WHILE <i>log_expr</i></b><br>
+	  Le bloc d'instruction est exécuté en boucle tant que <i>log_expr</i> est vrai.<br>
+	  <b>DO</b><br>
+	  <i>block</i><br>
+	  <b>LOOP UNTIL <i>log_expr</i></b></b><br> 
+	  Le bloc d'instruction est exécuté en boucle jusqu'à ce que <i>log_expr</i> soit vrai.
 	<pre><code>example:
-	DO i=i+1 UNTIL i=10 ' i est incrémenté jusqu'à la valeur 10
-	i=9 : DO i=i-1 : ? i : WHILE i ' compte à rebour affiché à l'écran.</code></pre></li>
-	<li><b>ELSE</b> est utilisé avec le <a href="#if">IF</a> et le <a href="#selectcase">SELECT CASE</a>.</li>
-	<li><b>END FUNC</b> marque la fin d'une <a href="#function">fonction</a>.<br>
-	<b> END SUB</b> marque la fin d'une <a href="#sub">sous routine</a>.<br>
-	<b>END IF</b> marque la fin d'un <a href="#if">IF</a><br>
-	<b>END SELECT</b> marque la fin d'un <a href="#selectcase">SELECT CASE</a>.
+	&gt;i=0 : DO ? i : i=i+1 LOOP UNTIL i=5
+	0
+	1
+	2
+	3
+	4
+	&gt;i=9 : DO ? i : i=i-1 : LOOP WHILE i
+	9
+	8
+	7
+	6
+	5
+	4
+	3
+	2
+	1
+	</code></pre></li>
+	<li><b>ELSE</b><br>
+	Est utilisé avec le <a href="#if">IF</a> et le <a href="#selectcase">SELECT CASE</a>.</li>
+	<li><b>END FUNC</b><br>
+	Voir <a href="#function">FUNC</a>.<br>
+	<b> END SUB</b><br>
+	Voir <a href="#sub">SUB</a>.<br>
+	<b>END IF</b><br>
+	Voir <a href="#if">IF</a><br>
+	<b>END SELECT</b><br>
+	Voir <a href="#selectcase">SELECT CASE</a>.
 	</li>
-	<li><b>EXIT SUB</b> permet de sortir prématurément d'une <a href="#sub">sous routine</a>.</li>
+	<li><b>EXIT SUB</b><br> Voir <a href="#sub">SUB</a>.</li>
 	<li><a name="for"></a><b>FOR <i>var=expr</i> TO <i>expr</i> [STEP <i>expr</i>]</b><br>
 	  <i>block</i><br>
 	<b>NEXT <i>var</i></b><br>
@@ -279,7 +325,8 @@ Un caractère ASCII est saisie en le précédent de la barre oblique <b>'\'</b> 
 		</code></pre></li>
 	</ul>
 	</li>
-	<li><b>GETPIXEL(x,y)</b> retourne la couleur du pixel à la position {x,y}.
+	<li><b>GETPIXEL(x,y)</b><br>
+	Retourne la couleur du pixel à la position {x,y}.
 	<pre><code>example:
 	? GETPIXEL(10,20) ' affiche la couleur du pixel à la coordonnée {10,20]</code></pre>
 	</li>
@@ -318,7 +365,8 @@ Un caractère ASCII est saisie en le précédent de la barre oblique <b>'\'</b> 
 	 Arthur 40
 	</code></pre>
 	</li>
-	<li><b>JSTICK()</b> Lecture du joystick. Retourne zéro si aucun contact n'est fermé. Autrement retourne une valeur
+	<li><b>JSTICK()</b><br>
+	Lecture du joystick. Retourne zéro si aucun contact n'est fermé. Autrement retourne une valeur
 	qui correspond à la combinaison des constacts fermés. 
 	<table border="single">
 	<tr><th>contact</th><th>valeur</th></tr>
@@ -349,7 +397,8 @@ Un caractère ASCII est saisie en le précédent de la barre oblique <b>'\'</b> 
 	end select  
 	</code></pre>
 	</li>
-	<li><b>KEY()</b> Cette fonction retourne la touche tapée au clavier ou <b>0</b> si aucune touche n'est tapée.
+	<li><b>KEY()</b><br>
+	Cette fonction retourne la touche tapée au clavier ou <b>0</b> si aucune touche n'est tapée.
 	<pre><code>example:
 	CASE SELECT key()
 	case \q 'quitte le programme
@@ -384,7 +433,8 @@ Un caractère ASCII est saisie en le précédent de la barre oblique <b>'\'</b> 
     tab(1)=-1234  ' le premier élément du tableau vaut maintenenat <b>-1234</b>
     </code></pre>
     </li>
-    <li><b>LINE(x0,y0,x1,y1,color)</b>  dessine une ligne à l'écran.
+    <li><b>LINE(x0,y0,x1,y1,color)</b><br>
+    Dessine une ligne à l'écran.
     <ul>
     <li><b>{x0,y0}</b> coordonnées première extrémité de la ligne.</li>
     <li><b>{x1,y1}</b> coordonnées de l'autre extrémité de la ligne.</li>
@@ -393,9 +443,11 @@ Un caractère ASCII est saisie en le précédent de la barre oblique <b>'\'</b> 
     <pre><code>example:
     line(0,0,100,100,15)</code></pre>
     </li>
-	<li><b>LOCAL <i>var_list</i></b> déclaration de la liste des variables utilisées dans une 
+	<li><b>LOCAL <i>var_list</i></b><br>
+	Déclaration de la liste des variables utilisées dans une 
 	<a href="#function">fonction</a> ou une <a href="#sub">sous-routine.</a></li>
-	<li><b>LOCATE(ligne,colonne)</b> Positionne le curseur texte à l'endroit désigné.
+	<li><b>LOCATE(ligne,colonne)</b><br>
+	Positionne le curseur texte à l'endroit désigné.
 	<ul>
 		<li><i>ligne</i> numéro de la ligne, {0-20}</li>
 		<li><i>colonne</i> numéro de la colonne, {0-39}</li>
@@ -404,13 +456,16 @@ Un caractère ASCII est saisie en le précédent de la barre oblique <b>'\'</b> 
 	LOCATE(10,0) ' le curseur texte est maintenant au début de la 11ième ligne.
 	</code></pre>
 	</li>
-	<li><b>LOOP</b> voir <a href="#do">DO</a></li>
-	<li><b>MAX(<i>expr1</i>,<i>expr2</i>)</b> Cette fonction retourne le plus grand des 2 entiers.
+	<li><b>LOOP</b><br>
+	voir <a href="#do">DO</a></li>
+	<li><b>MAX(<i>expr1</i>,<i>expr2</i>)</b><br>
+	Cette fonction retourne le plus grand des 2 entiers.
 	<pre><code>example:
 	&gt;? max(56,30)
 	56
 	&gt;|</code></pre></li>
-	<li><b>MDIV(<i>expr1</i>,<i>expr2</i>,<i>expr3</i>)</b> Cette fonction retourne <i>expr1*expr2/expr3</i>. Le résultat de la 
+	<li><b>MDIV(<i>expr1</i>,<i>expr2</i>,<i>expr3</i>)</b><br>
+	Cette fonction retourne <i>expr1*expr2/expr3</i>. Le résultat de la 
 	multiplication est conservé sur 32 bits pour obtenir une valeur juste pour la division.
 	<pre><code>
 	&gt; ? 32540*8/33
@@ -421,22 +476,27 @@ Un caractère ASCII est saisie en le précédent de la barre oblique <b>'\'</b> 
 	&gt;? mdiv(5400,355,113)
 	16964 <i>'erreur &lt; 0,5 </i>
 	</code></pre></li>
-	<li><b>MIN(<i>expr1</i>,<i>expr2</i>)</b> Cette fonction retourne le plus petit des 2 entiers.
+	<li><b>MIN(<i>expr1</i>,<i>expr2</i>)</b><br>
+	Cette fonction retourne le plus petit des 2 entiers.
 	<pre><code>example:
 	&gt;? min(34,-5)
 	-5
 	&gt;|</code></pre></li>
-	<li><b>NEXT <i>var_name</i></b> Voir <a href="#for">FOR</a></li>
-	<li><b>NOISE(<i>expr</i>)</b> Produit un bruit blanc pour une durée <i>expr</i> exprimée en millisecondes.
+	<li><b>NEXT <i>var_name</i></b><br>
+	Voir <a href="#for">FOR</a></li>
+	<li><b>NOISE(<i>expr</i>)</b><br>
+	Produit un bruit blanc pour une durée <i>expr</i> exprimée en millisecondes.
 	<pre><code>example:
 	&gt;noise(100) 'produit le bruit d'une chute d'eau durant 0,1 seconde.
 	</code></pre></li>
-	<li><b>NOT <i>log_expr</i></b> Négation de la valeur d'une expression logique.
+	<li><b>NOT <i>log_expr</i></b><br>
+	Négation de la valeur d'une expression logique.
 	<pre><code>example:
 	if not 3&gt;4 then ? "3 n'est pas plus grand que 4" end if
 	3 n'est pas plus grand que 4
 	</code></pre></li>
-    <li><b><i>log_expr1</i> OR <i>log_expr2</i></b> retourne vrai si l'une ou l'autre des 2 <i>log_expr</i> est vrai.
+    <li><b><i>log_expr1</i> OR <i>log_expr2</i></b><br>
+    retourne vrai si l'une ou l'autre des 2 <i>log_expr</i> est vrai.
     <pre><code>example:
     while 1
     if key() or jstick()=1 then bye end if
@@ -444,7 +504,8 @@ Un caractère ASCII est saisie en le précédent de la barre oblique <b>'\'</b> 
     REM sort de la boucle si une touche ou le bouton du joystik
     REM est enfoncé.
     </code></pre></li>
-    <li><b>PAUSE(<i>expr</i>)</b> Suspend l'exécution du programme pour une durée en millisecondes égale à la valeur de <i>expr</i>.
+    <li><b>PAUSE(<i>expr</i>)</b><br>
+    Suspend l'exécution du programme pour une durée en millisecondes égale à la valeur de <i>expr</i>.
     <pre><code>example:
     &gt;pause(1000)  REM l'invite de commande var réapparaître après 1 seconde.
     </code></pre></li>
@@ -458,7 +519,8 @@ Un caractère ASCII est saisie en le précédent de la barre oblique <b>'\'</b> 
     
     &gt;|
     </code></pre></li>
-    <li><b>PUTC expr</b> imprime un caractère à l'écran sans ajout d'espace ou de retour à la ligne. Si <i>expr</i> est évaluée en dehors
+    <li><b>PUTC expr</b><br>
+    Imprime un caractère à l'écran sans ajout d'espace ou de retour à la ligne. Si <i>expr</i> est évaluée en dehors
     de l'intervalle {0-127} rien n'est imprimé. La majorité des codes entre 0 et 31 n'ont aucun effet. les codes reconnus sont les suivants:
     <ul>
 		<li><b>7</b> alerte sonore</li>
@@ -472,7 +534,8 @@ Un caractère ASCII est saisie en le précédent de la barre oblique <b>'\'</b> 
     ab
     &gt;
     </code></pre></li>
-    <li><b>RECT(x,y,width,height,color)</b> Dessine un rectangle vide à l'écran.
+    <li><b>RECT(x,y,width,height,color)</b><br>
+    Dessine un rectangle vide à l'écran.
     <ul>
     <li><b>{x,y}</b> coordonnée du coin supérieur gauche</li>
     <li><b>width</b> largeur du  rectangle en pixels.</li>
@@ -480,29 +543,36 @@ Un caractère ASCII est saisie en le précédent de la barre oblique <b>'\'</b> 
     <li><b>color</b> couleur (ton de gris) du périmèter du rectangle.</li>
     </ul>
     <pre><code>RECT(10,10,20,60,7) ' position {10,10}, largeur 20, hauteur 60,  couleur 7</code></pre></li>
-	<li><b>REM|' <i></i>texte</i></b> indique un commentaire. Les commentaires se termine à la fin de la ligne.
+	<li><b>REM|' <i>texte</i></b><br>
+	Indique un commentaire. Les commentaires se termine à la fin de la ligne.
 	<pre><code>example:
 	REM ce commentaire se termine a la fin de ligne.
 	' l'apostrophe peut remplacé le mot REM.</code></pre></li>
-	<li><b>RETURN</b> Voir <a href="#function">FUNC</a></li>
-	<li><b>RND()</b> Cette fonction retourne un entier de 16 bits pseudo aléatoire.
+	<li><b>RETURN</b><br>
+	Voir <a href="#function">FUNC</a></li>
+	<li><b>RND()</b><br>
+	Cette fonction retourne un entier de 16 bits pseudo aléatoire.
 	<pre><code>example:
 	&gt;while not key() : ? rnd() : wend
 	REM imprime sans arrêt une série de nombre aléatoire.
 	REM il faut enfoncer une touche du clavier pour arrêter l'exécution.</code></pre></li>
-	<li><b>SCRLUP(expr)</b> Fait glisser l'affichage vers le haut d'un nombre de pixels correspondant à la valeur
+	<li><b>SCRLUP(expr)</b><br>
+	Fait glisser l'affichage vers le haut d'un nombre de pixels correspondant à la valeur
 	de <i>expr</i>
 	<pre><code>example:
 	&gt; scrlup(8) ' défilement vers le haut de la hauteur d'un caractère.</code></pre></li>
-	<li><b>SCRLDN(expr)</b> Fait glisser l'affichage vers le bas d'un nombre de pixels correspondant à la valeur
+	<li><b>SCRLDN(expr)</b><br>
+	Fait glisser l'affichage vers le bas d'un nombre de pixels correspondant à la valeur
 	de <i>expr</i>
 	<pre><code>example:
 	&gt; scrldn(8) ' défilement vers le bas de la hauteur d'un caractère.</code></pre></li>
-	<li><b>SCRLRT(expr)</b> Fait glisser l'affichage vers la droite d'un nombre de pixels correspondant à la valeur
+	<li><b>SCRLRT(expr)</b><br>
+	Fait glisser l'affichage vers la droite d'un nombre de pixels correspondant à la valeur
 	de <i>expr</i>. Cette valeur doit-être un nombre pair, sinon le nombre pair inférieur est choisi.
 	<pre><code>example:
 	&gt; scrlrt(6) ' défilement vers la droite de la largeur d'un caractère.</code></pre></li>
-	<li><b>SCRLLT(expr)</b> Fait glisser l'affichage vers la gauche d'un nombre de pixels correspondant à la valeur
+	<li><b>SCRLLT(expr)</b><br>
+	Fait glisser l'affichage vers la gauche d'un nombre de pixels correspondant à la valeur
 	de <i>expr</i>. Cette valeur doit-être un nombre pair, sinon le nombre pair inférieur est choisi.
 	<pre><code>example:
 	&gt; scrllt(6) ' défilement vers la gauche de la largeur d'un caractère.</code></pre></li>
@@ -531,11 +601,13 @@ Un caractère ASCII est saisie en le précédent de la barre oblique <b>'\'</b> 
 	end select
 	REM contrôle du mouvement d'un sprite à l'écran à l'aide du joystick     
 	  </code></pre></li>
-	<li><b>SETPIXEL(x,y,color)</b> colore le pixel à la coordonnée <i>{x,y}</i> avec la couleur <i>color</i>.
+	<li><b>SETPIXEL(x,y,color)</b><br>
+	Colore le pixel à la coordonnée <i>{x,y}</i> avec la couleur <i>color</i>.
 	<pre><code>example:
 	setpixel(10,20,4) ' le pixel à la postion {10,20} prend la valeur 4
 	</code></pre></li>  
-	<li><b>SETTMR(<i>expr</i>)</b> Initialise la minuterie de pause sans bloquer l'exécution. À utiliser avec la fonction
+	<li><b>SETTMR(<i>expr</i>)</b><br>
+	Initialise la minuterie de pause sans bloquer l'exécution. À utiliser avec la fonction
 	<a href="#timeout">TIMEOUT</a>
 	<pre><code>example:
     DIM count
@@ -546,12 +618,14 @@ Un caractère ASCII est saisie en le précédent de la barre oblique <b>'\'</b> 
     wend
     print "boucle WHILE par seconde: ",10*count
 	  </code></pre></li>
-	<li><b>SHL(<i>expr</i>)</b> décale vers la gauche <i>expr</i> de 1 bit (multiplication par 2).
+	<li><b>SHL(<i>expr</i>)</b><br>
+	Décale vers la gauche <i>expr</i> de 1 bit (multiplication par 2).
 	<pre><code>example:
 	&gt;? shl(4)
 	8
 	&gt;|</code></pre></li>
-	<li><b>SHR(<i>expr</i></b> décale vers la droite <i>expr</i> de 1 bit (division par 2).
+	<li><b>SHR(<i>expr</i></b><br>
+	Décale vers la droite <i>expr</i> de 1 bit (division par 2).
 	<pre><code>example:
 	&gt;? shr(-9)
 	-5 
@@ -666,7 +740,8 @@ Un caractère ASCII est saisie en le précédent de la barre oblique <b>'\'</b> 
 	end sub
 	</code></pre>
 	</li>
-	<li><b>THEN</b> Voir <a href="#if">IF</a></li>
+	<li><b>THEN</b><br>
+	Voir <a href="#if">IF</a></li>
 	<li><b>TICKS()</b><br>
 	 PV16SOG possède un compteur interne qui est incrémenté à chaque milliseconde. Cette fonction retourne la valeur de ce compteur.
 	 Ce compteur de 16 bits retourne à zéro à intervalle d'environ 65 secondes.
@@ -759,6 +834,31 @@ Un caractère ASCII est saisie en le précédent de la barre oblique <b>'\'</b> 
 	 .
 	 </code></pre>
 	 </li>
+	 <li><b>video(<i>expr</i>)</b><br>
+	 Si <i>expr</i> est évaluée à <b>0</b> la sortie vidéo est désactivée autre elle est activée.  La sortie vidéo accapare le plus grand
+	 nombre de cycles du CPU. La désactivation de la sortie vidéo permet d'accélérer une sous-routine.
+	 <pre><code>example:
+	 sub test(n)
+	 local t0
+	   cls
+	   if n then 'rapide
+	     t0=ticks()
+	     video(0)
+	     box(0,0,240,170,4)
+	     video(1)
+	     ? ticks()-t0, "msec"
+	   else 'lent
+	     t0=ticks()
+	     box(0,0,240,170,4)
+	     ? ticks()-t0, "msec"
+	   end if
+	 end sub
+	 
+	 &gt; test(0)
+	 55 msec
+	 &gt; test(1)
+	 32 msec
+	 </code></pre></li>
 	 <li><b>WAITKEY()</b><br>
 	 Cette fonction attend que l'utilisateur enfonce une touche au clavier et retourne la valeur de cette touche.
 	 <pre><code>example:

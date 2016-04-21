@@ -188,6 +188,9 @@ extern void pause(uint16_t msec);
 #define MAX (MIN+1)
 #define MDIV (MAX+1)
 #define UBOUND (MDIV+1)
+#define VIDEOCTRL ( UBOUND+1)
+#define CURLINE (VIDEOCTRL+1)
+#define CURCOL (CURLINE+1)
 
 #ifdef __asm
 

@@ -71,7 +71,10 @@
 #include "Hardware/hardware.h"
 #include "Hardware/tones.h"
 #include "stackvm.h"
-#include "Hardware/ntsc_const.h"    
+#include "Hardware/ntsc_const.h" 
+#include "Hardware/TVout.h"
+#include "font6x8.h"  
+#include "text.h"    
 #undef __asm    
     
 
@@ -98,7 +101,7 @@ _progspace: ; adresse espace programme
 _dp:        ; pointer dans _progspace
 .space 2
 _pad:       ; tampon chaine lecture clavier
-.space CHAR_PER_LINE    
+.space HRES/CHAR_WIDTH    
 _ftrace:    ; indicateur mode traçage
 .space 2
 _vm_exit_code:  ; code de sortie de la machine virtuelle
@@ -325,7 +328,7 @@ accept:  // ( n -- adr len )
     mov #'?', W0
     callxfunc _put_char
     mov [dsp--],W0
-    mov #CHAR_PER_LINE,W1
+    mov #HRES/CHAR_WIDTH, W1
     cp W0,W1
     bra gt, 1f
     mov W0,W1
@@ -396,15 +399,41 @@ space: // ( -- )
 
 //positionne le curseur texte
 vm_locate: // ( line col -- )
-    mov [dsp--],W0
-    and #255,W0
-    mov [dsp--],W1
-    and #255,W1
-    saveregs
-    rcall _set_cursor
-    restregs
+    mov [dsp--],W2 ; col
+    mov [dsp--],W0 ; line
+    cp W0,#VRES/CHAR_HEIGHT
+    bra geu, 1f    
+    cp W2, #HRES/CHAR_WIDTH
+    bra geu, 1f
+    mov #CHAR_HEIGHT,W1
+    mul.uu W0,W1,W0
+    mov W0, _ypos
+    mov #CHAR_WIDTH,W0
+    mul.uu W2,W0,W0
+    mov W0, _xpos
+1:   
     return
 
+//retourne la ligne du curseur texte
+curline: ; ( -- n )
+    mov _ypos,W0
+    mov #CHAR_HEIGHT,W2
+    repeat #17
+    div.u W0,W2
+    mov W0,[++dsp]
+    return
+
+; retourne la colonne du curseur texte    
+curcol: ; ( -- n )
+    mov _xpos,W0
+    mov #CHAR_WIDTH,W2
+    repeat #17
+    div.u W0,W2
+    mov W0,[++dsp]
+    return
+    
+    
+    
 // change la couleur de fond d'écran
 vm_back_color: // ( n -- )
     mov [dsp--],W0
@@ -1043,7 +1072,7 @@ words:
 .word btest,alloc,local_store,local_fetch,local_address,frame,local_var,vm_pause,read_stick,_set_pixel
 .word _vm_get_pixel,to_int,_vm_xor_pixel,_vm_scroll_up,_vm_scroll_down,_vm_scroll_right,_vm_scroll_left,_vm_line,_vm_sprite,vm_ior
 .word vm_xor,vm_and,trace,rot,_box,key,_vm_rect,strlen,sr_load,sr_save
-.word sr_clear,sr_read,sr_write, min, max, muldiv, ubound
+.word sr_clear,sr_read,sr_write, min, max, muldiv, ubound,_video_off,curline,curcol
     
 .global _interpret
 _interpret:

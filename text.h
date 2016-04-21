@@ -55,10 +55,11 @@
 #ifndef TEXT_H_
 #define TEXT_H_
 
+#ifndef __asm
 #include <stdint.h>
 #include <stdbool.h>
-
 #include "Hardware/ntsc_const.h"
+#endif // ~__asm
 
 
 
@@ -84,7 +85,7 @@
 #define DOWN_ARROW  (131)
 #define CIRCLE      (132)
 
-
+#ifndef __asm
 typedef enum CURSOR_SHAPE{cBLOCK, cVLINE} cursor_shape_t;
 
 typedef struct text_cursor{
@@ -157,5 +158,5 @@ int16_t pstrcpy(char* dest, __eds__ const char * src);
 int pstrcmp(const unsigned char* str, __eds__ const unsigned char *pstr);
 // in situ capitalisation chaîne
 void uppercase(char *str);
-
+#endif // ~__asm
 #endif /* TEXT_H_ */

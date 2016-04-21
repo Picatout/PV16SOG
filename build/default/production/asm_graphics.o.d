@@ -7,4 +7,5 @@ build/default/production/asm_graphics.o:  \
 font6x8.h  \
 stackvm.h  \
  Hardware/ntsc_const.h  \
+  \
 asm_graphics.S  \
