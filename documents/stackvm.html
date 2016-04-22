@@ -74,7 +74,31 @@
 	Voir commande BASIC <b>NOISE()</b></td><td>( u -- ) </td></tr>
 	<tr><td>16</td><td>CLS</td><td>Met tous les pixels de l'écran à la valeur indiquée au sommet de la pile.
 	Voir commande BASIC <b>CLS</b></td><td>( n -- )</td></tr>
+	<tr><td>17</td><td>LOCATE</td><td>positionne le curseur texte</td><td>(ligne col -- )</td></tr>
+	<tr><td>18</td><td>BACK_COLOR</td><td>Fixe la couleur de fond d'écran pour le texte.</td><td>( n -- )</td></tr>
+	<tr><td>19</td><td>FONT_COLOR</td><td>Fixe la couleur des caractères.</td><td>( n -- )</td></tr>
+	<tr><td>20</td><td>EMIT</td><td>Affiche à la position courante du curseur le caractère au sommet de la pile.</td><td>( n -- )</td></tr>
+	<tr><td>21</td><td>DOT</td><td>Imprime l'entier au sommet de la pile.</td><td>( n -- )</td></tr>
+	<tr><td>22</td><td>WKEY</td><td>Attend que l'utilisateur entre un caractère au clavier</td><td>( -- n )</td></tr>
+	<tr><td>23</td><td>TYPE</td><td>Imprime la chaîne dont l'adresse est au sommet de la pile.</td><td>( adr -- )</td></tr>
+	<tr><td>24</td><td>ACCEPT</td><td>Lecture du clavier jusqu'à &tl;ENTER&gt;</td><td>( -- adr len)</td></tr>
+	<tr><td>25</td><td>SPACE</td><td>Imprime un espace (ASCII 32)</td><td>( -- )</td></tr>
+	<tr><td>26</td><td>CRLF</td><td>Renvoie le curseur texte au début de la ligne suivante.</td><td>( -- )</td></tr>
+	<tr><td>27</td><td>LITS</td><td>Chaîne litérale. Cet opcode est suivit d'un octet et d'une chaîne ASCIIZ. L'octet
+	est la longueur de la chaîne incluant le zéro terminal. L'adresse de la chaîne est placé au sommet de la pile et
+	IP est positionné après la chaîne.</td><td>IP=IP+LEN<br>( -- adr)</td></tr>
+	<tr><td>28</td><td>LIT</td><td>Entier litéral 16 bits. L'entier suit l'opcode et est empilé au sommet de la pile.</td><td>( -- n)</td></tr>
+	<tr><td>29</td><td>LITC</td><td>Entier litéral 8 bits. L'entier suit l'opcode et est empilé au sommet de la pile.</td><td>( -- n)</td></tr>
+	<tr><td>30</td><td>FETCH</td><td>Empile la variable entier 16 bits dont l'adresse est au sommet de la pile.</td><td>( adr -- n )</td></tr>
+	<tr><td>31</td><td>FETCHC</td><td>Empile la variable entier 8 bits dont l'adresse est au sommet de la pile.</td><td>( adr -- c )</td></tr>
+	<tr><td>32</td><td>STORE</td><td>Sauvegarde une variable entier 16 bits. <i>var=n</i></td><td>( n adr -- )</td></tr>
+	<tr><td>33</td><td>STOREC</td><td>Sauvegarde une variable entier 8 bits. <i>var#=c</i></td><td>( c adr -- )</td></tr>
 	<tr><td></td><td></td><td></td><td></td></tr>
+	<tr><td></td><td></td><td></td><td></td></tr>
+	<tr><td></td><td></td><td></td><td></td></tr>
+	<tr><td></td><td></td><td></td><td></td></tr>
+	<tr><td></td><td></td><td></td><td></td></tr>
+
 
 	</table>
 </p>
