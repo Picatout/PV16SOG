@@ -2502,9 +2502,12 @@ static void kw_loop(){
     complevel--;
 }//f
 
-static void literal_string(){
+static void literal_string(char *name){
     int size;
-    size=strlen(token.str)+1;
+    char fname[32];
+    strcpy(fname,name);
+    uppercase(fname);
+    size=strlen(fname)+1;
     if ((void*)&progspace[dp+size+2]>endmark) throw(eERR_PROGSPACE);
     bytecode(LITS);
     bytecode(size&0xff);
@@ -2517,16 +2520,36 @@ static void literal_string(){
 //charge un fichier dans la SPIRAM
 // retourne la grandeur en octet
 static void kw_srload(){
-    expect(eSTRING); // nom du fichier
-    literal_string();
+    var_t *var;
+    
+    next_token();
+    if (token.id==eSTRING){
+        literal_string(token.str);
+    }else if (token.id==eIDENT){
+        var=var_search(token.str);
+        if (!var) throw(eERR_BAD_ARG);
+        literal_string(var->adr);
+    }else{
+        throw(eERR_BAD_ARG);
+    }
     bytecode(SRLOAD);
 }//f
 
 //SRSAVE file_name, size
 //sauvegarde SPIRAM dans un fichier
 static void kw_srsave(){
-    expect(eSTRING);
-    literal_string();
+    var_t *var;
+    
+    next_token();
+    if (token.id==eSTRING){
+        literal_string(token.str);
+    }else if (token.id==eIDENT){
+        var=var_search(token.str);
+        if (!var) throw(eERR_BAD_ARG);
+        literal_string(var->adr);
+    }else{
+        throw(eERR_BAD_ARG);
+    }
     expect(eCOMMA);
     expression();
     bytecode(SRSAVE);
@@ -2628,7 +2651,7 @@ static void kw_len(){
     expect(eLPAREN);
     next_token();
     if (token.id==eSTRING){
-        literal_string();
+        literal_string(token.str);
     }else if (token.id==eIDENT){
         var=var_search(token.str);
         if (!var) throw(eERR_BAD_ARG);
@@ -2682,7 +2705,7 @@ static void kw_input(){
     
     next_token();
     if (token.id==eSTRING){
-        literal_string();
+        literal_string(token.str);
         bytecode(TYPE);
         bytecode(CRLF);
         expect(eCOMMA);
@@ -2868,7 +2891,7 @@ static void kw_print(){
     while (!activ_reader->eof){
         switch (token.id){
             case eSTRING:
-                literal_string();
+                literal_string(token.str);
                 bytecode(TYPE);
                 bytecode(SPACE);
                 break;

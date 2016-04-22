@@ -678,7 +678,8 @@ a
 	toujours à partir de l'adresse 0.
 	<pre><code>example:
 	srclear(1000) ' efface les 1000 premiers octets de la mémoire SPI RAM.</code></pre></li>
-	<li><b>SRLOAD <i>file</i></b><br>
+	<li><b>SRLOAD <i>"file_name"</i></b><br>
+	<b>SRLOAD <i>var$</i></b><br>
 	Il s'agit d'une fonction qui charge en mémoire SPI RAM le contenu d'un fichier. Le chargement débute à l'adresse 0.
 	La taille maximale est de 65535 octets. La fonction retourne le nombre d'octets chargés.
 	<pre><code>example:
@@ -696,10 +697,11 @@ a
 	</code></pre>
 	</li>
 	</ul>
-	<li><b>SRSAVE <i>file</i>, <i>size</i></b><br>
+	<li><b>SRSAVE <i>"file_name"</i>, <i>size</i></b><br>
+	<b>SRSAVE <i>var$</i>, <i>size</i></b><br>
 	Sauvegarde dans un fichier le contenu de la mémoire SPI RAM. La sauvegarde se fait à partir de l'adresse 0.<br>
 	<ul>
-	<li><b>file</b> Nom du fichier de sauvegarde.</li>
+	<li><b>file_name|var$</b> Nom du fichier de sauvegarde.</li>
 	<li><b>size</b> Nombre d'octets à sauvegarder.</li></ul>
 	<pre><code>example:
 	srsave "test.dat", 1024 ' sauvegarde <i>1024 octets</i> dans le fichier <i>test.dat</i></code></pre>
