@@ -2223,11 +2223,10 @@ static void compile_case_list(){
         dp+=2;
         fix_count++;
         next_token();
-        if (token.id==eKWORD && token.n==eKW_REM){
-            kw_rem();
-            token.id=eSTOP;
+        if (token.id!=eCOMMA){
+            unget_token=true;
+            break;
         }
-        if (!(token.id==eSTOP || token.id==eCOMMA)) throw(eERR_SYNTAX);
     }//while
     bytecode(BRANCH);
     dp+=2;

@@ -6,6 +6,7 @@
         <group>
             <file>file:/home/jacques/github/pv16sog/asm_graphics.S</file>
             <file>file:/home/jacques/github/pv16sog/stackvm.h</file>
+            <file>file:/home/jacques/github/pv16sog/Hardware/TVout.S</file>
             <file>file:/home/jacques/github/pv16sog/stackvm.S</file>
             <file>file:/home/jacques/github/pv16sog/graphics.c</file>
             <file>file:/home/jacques/github/pv16sog/filesys.c</file>
