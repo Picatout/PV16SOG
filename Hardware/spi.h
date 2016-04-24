@@ -65,6 +65,8 @@ extern "C" {
 // sélection carte SD
 #define _spi_disable()   SPI_STAT &= ~(1<<BIT_SPIEN)
 #define _spi_enable()    SPI_STAT |= (1<<BIT_SPIEN)
+#define _spi_rxbuff_full() (SPI_STAT & (1<<BIT_SPIRBF))
+    
 //#define configure_sdc_ss()   SDC_TRIS &= ~(1<<SDC_SS_RP)
 //#define select_card()       SDC_LAT &=~(1<<SDC_SS_RP)
 //#define unselect_card()     SDC_LAT |= (1<<SDC_SS_RP)
@@ -73,8 +75,7 @@ extern "C" {
 #define FAST_CLOCK (1)
 
 extern void spi_clock_speed(uint8_t speed);
-extern uint8_t spi_write(uint8_t);
-
+extern inline uint8_t spi_write(uint8_t);
 
 #ifdef	__cplusplus
 }

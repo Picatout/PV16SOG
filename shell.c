@@ -126,7 +126,7 @@ typedef struct{
 
 
 typedef enum {eVAR_INT,eVAR_STR,eVAR_INTARRAY,eVAR_BYTEARRAY,eVAR_STRARRAY,
-              eVAR_SUB,eVAR_FUNC,eLCVAR,eCONST,eVAR_BYTE}var_type_e;
+              eVAR_SUB,eVAR_FUNC,eVAR_LOCAL,eVAR_CONST,eVAR_BYTE}var_type_e;
 
 typedef struct _var{
     struct _var* next;
@@ -406,7 +406,7 @@ enum {eERROR_NONE,eERR_DSTACK=1,eERR_RSTACK=2,eERR_MISSING_ARG,eERR_EXTRA_ARG,
 void throw(int error){
     char message[64];
     
-    if (activ_reader->device==eDEV_SDCARD) fat_close_all_files();
+    fat_close_all_files();
     new_line();
     if (activ_reader->device==eDEV_SDCARD){
         print("line: ");
@@ -497,7 +497,7 @@ var_t *var_create(char *name, char *value){
         newvar->byte=*((uint8_t*)value);
     }else{// entier 16 bits
         if (var_local){ 
-            newvar->vtype=eLCVAR;
+            newvar->vtype=eVAR_LOCAL;
         }else{ 
             newvar->vtype=eVAR_INT;
         }
@@ -984,7 +984,7 @@ static void factor(){
                         bytecode(low((uint16_t)&var->adr));
                         bytecode(high((uint16_t)&var->adr));
                         break;
-                    case eLCVAR:
+                    case eVAR_LOCAL:
                         bytecode(LCFETCH);
                         bytecode(var->n&(DSTACK_SIZE-1));
                         break;
@@ -993,7 +993,7 @@ static void factor(){
                         bytecode(FETCHC);
                         break;
                     case eVAR_INT:
-                    case eCONST:
+                    case eVAR_CONST:
                         lit((uint16_t)&var->n);
                         bytecode(FETCH);
                         break;
@@ -1679,15 +1679,23 @@ static void init_str_array(var_t *var){
 }//f
 
 static void dim_array(char *var_name){
-    int size, len;
+    int size=0, len;
     void *array;
-    var_t *new_var;
+    var_t *new_var, *var;
     
-    expect(eNUMBER);
-    size=token.n;
+    next_token();
+    if (token.id==eNUMBER){
+        size=token.n;
+    }else if (token.id==eIDENT){
+        var=var_search(token.str);
+        if (!(var && (var->vtype==eVAR_CONST))) throw(eERR_BAD_ARG);
+        size=var->n;
+    }else{
+        throw(eERR_BAD_ARG);
+    }
     expect(eRPAREN);
     len=strlen(var_name);
-    if (size<1) throw(eERR_SYNTAX);
+    if (size<1) throw(eERR_BAD_ARG);
     if (var_name[len-1]=='#'){ //table d'octets
         array=alloc_var_space(size+2);
         memset(array,0,size+2);
@@ -1780,7 +1788,7 @@ static void kw_ref(){
     bytecode(LIT);
     switch(var->vtype){
     case eVAR_INT:
-    case eCONST:
+    case eVAR_CONST:
         bytecode(low((uint16_t)&var->n));
         bytecode(high((uint16_t)&var->n));
         break;
@@ -1895,10 +1903,12 @@ static void kw_const(){
             var->str=alloc_var_space(strlen(token.str)+1);
             strcpy(var->str,token.str);
         }else{
-            var->vtype=eCONST;
-            expression();
-            lit((uint16_t)&var->n);
-            bytecode(STORE);        
+            var->vtype=eVAR_CONST;
+            expect(eNUMBER);
+            var->n=token.n;
+//            expression();
+//            lit((uint16_t)&var->n);
+//            bytecode(STORE);        
         }
         next_token();
         if (token.id==eCOMMA)
@@ -2413,7 +2423,7 @@ static void kw_for(){
         unget_token=true;
     }
     var=var_search(name);
-    if (var->vtype==eLCVAR){
+    if (var->vtype==eVAR_LOCAL){
         bytecode(LCADR);
         bytecode(var->n);
     }else{
@@ -2433,8 +2443,8 @@ static void kw_next(){
     
     expect(eIDENT);
     var=var_search(token.str);
-    if (!(var && ((var->vtype==eVAR_INT) || (var->vtype==eLCVAR)))) throw(eERR_BAD_ARG);
-    if (var->vtype==eLCVAR){
+    if (!(var && ((var->vtype==eVAR_INT) || (var->vtype==eVAR_LOCAL)))) throw(eERR_BAD_ARG);
+    if (var->vtype==eVAR_LOCAL){
         bytecode(LCADR);
         bytecode(var->n);
     }else{
@@ -2614,7 +2624,7 @@ static void array_let(char * name){
 // compile le code pour le stockage d'untier
 static void store_integer(var_t *var){
     switch(var->vtype){
-        case eLCVAR:
+        case eVAR_LOCAL:
             bytecode(LCSTORE);
             bytecode(var->n);
             break;
@@ -2626,7 +2636,7 @@ static void store_integer(var_t *var){
             lit(((uint16_t)(int*)&var->n));
             bytecode(STOREC);
             break;
-        case eCONST:
+        case eVAR_CONST:
             // ignore les assignations de constantes jette la valeur
             bytecode(DROP);
             break;
@@ -2763,7 +2773,7 @@ static void kw_input(){
                 bytecode(STORE);   //( void* _var_adr  -- )
                 fix_branch_address();
                 break;
-            case eLCVAR:
+            case eVAR_LOCAL:
             case eVAR_INT:
             case eVAR_BYTE:
                 litc(17);

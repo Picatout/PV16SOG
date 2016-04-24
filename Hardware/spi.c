@@ -66,11 +66,10 @@ void spi_clock_speed(uint8_t speed){
     _spi_enable();
 }//f()
 
-uint8_t spi_write(uint8_t b){
+inline uint8_t spi_write(uint8_t b){
     SPI_TX_BUF=b;
-    while (!(SPI_STAT & (1<<BIT_SPIRBF)));
+    while (!_spi_rxbuff_full());
     return SPI_RX_BUF;
 }//f()
-
 
 

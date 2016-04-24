@@ -117,16 +117,20 @@ uint16_t sram_read_word(uint16_t address){
     return word;
 }//f()
 
+
 //écris un bloc d'octets dans la RAM
 void sram_write_block(uint16_t address, const uint8_t *data, uint16_t count){
-    uint16_t i;
+    uint16_t i,b;
 
     if (!count) return;
     _sram_select();
     spi_write(SRAM_WRITE);
     sram_send_address(address);
     for (i=0;i<count;i++){
-        spi_write(data[i]);
+//        spi_write(data[i]);
+        SPI_TX_BUF=data[i];
+        while (!_spi_rxbuff_full());
+        b=SPI_RX_BUF;
     }
     _sram_unselect();
 }//f()
@@ -140,7 +144,10 @@ void sram_read_block(uint16_t address, uint8_t *data, uint16_t count){
     spi_write(SRAM_READ);
     sram_send_address(address);
     for (i=0;i<count;i++){
-        data[i]=spi_write(0);
+//        data[i]=spi_write(0);
+        SPI_TX_BUF=0;
+        while(!_spi_rxbuff_full());
+        data[i]=SPI_RX_BUF;
     }
     _sram_unselect();
 }//f()

@@ -217,11 +217,11 @@ a
 	REM caractère blanc sur fond noir.</code></pre></li></ul>
 	</li>
 	<li><b>CONST nom=valeur [,nom=valeur]</b><br> Déclare une ou plusieurs constantes séparées par une virgule <b>','</b>.
-	<ul><li><b>nom</b> est le nom de la constante.</li>
-	<li><b>valeur</b> selon le type de la variable il s'agit d'un entier, d'un octet ou d'une chaîne ASCII.</li></ul>
+	<ul><li><b>nom</b> est le nom de la constante. Les constantes sont de types entier 16 bits ou chaîne ASCII.</li>
+	<li><b>valeur</b> selon le type de la constante il s'agit d'un entier ou d'une chaîne ASCII.</li></ul>
 	<pre><code>example:
-	CONST age#=30, salaire=32000, nom$="Capitaine Bonhomme"
-	REM défini 3 constantes de 3 types différents dans la même déclaration.</code></pre>
+	CONST age=30, salaire=32000, nom$="Capitaine Bonhomme"
+	REM défini 3 constantes dans la même déclaration.</code></pre>
 	</li>
 	<li><b>CURCOL()</b><br> Retourne la poisition colonne du curseur texte.
 	<pre><code>example:
@@ -231,9 +231,10 @@ a
 	<pre><code>example:
 	if curline()=20 and curcol()=39 then scrlup(8): locate(curline(),0) end if</code></pre></li>
 	<li><b>DIM <i>var</i>[=<i>value</i>] [,<i>var</i>[=<i>value</i>]]</b><br>
-	 <b>DIM <i>var</i>(<i>number</i>)[=(value_list)] [,<i>var</i>(<i>number</i>)[=(value_list)]]</b><br>
+	 <b>DIM <i>var</i>(<i>number|constant</i>)[=(value_list)] [,<i>var</i>(<i>number|constant</i>)[=(value_list)]]</b><br>
 	 Cette commande sert à déclarer des variables. Les variables peuvent-être initialisées lors de leur déclaration.
 	 Les variables tableaux doivent-être initialisées avec le nombre exact d'éléments déclarés dans la dimension  du tableau.
+	 Les valeurs d'initialisation sont soit des entiers, des chaînes ou des constantes pré-définies.
 	 <pre><code>example:
 	 DIM v1=34, v2#=234 ' la variable entier 16 bits v1 prend la valeur 34
 	                    ' la variable octet v2 prend la valeur 234
@@ -684,16 +685,16 @@ a
 	La taille maximale est de 65535 octets. La fonction retourne le nombre d'octets chargés.
 	<pre><code>example:
 	size=srload "test.spr" ' charge le fichier <i>test.spr</i> et retourne sa grandeur dans <i>size</i>.</code></pre></li>
-	<li><b>SRREAD(<i>adr</i>,<i>size</i>,@var)</b><br>
+	<li><b>SRREAD(<i>adr</i>,@var,<i>size</i>)</b><br>
 	Lecture d'un bloc d'octets de la SPI RAM dans une variable.
 	<ul><li><b>adr</b> adresse SPI ou doit débuter la lecture.</li>
-	<li><b>size</b> nombre d'octets à lire.</li>
 	<li><b>var</b> nom de la variable dans laquelle les valeurs lues seront copiées. Cette variable doit-être passée par
 	référence comme l'indique le caractère <b>'@'</b>.
+	<li><b>size</b> nombre d'octets à lire.</li>
 	<pre><code>example:
 	DIM i, spr#(32)
-	srread(0,2,@i) ' lit un entier et le met dans la variable <i>i</i>.
-	srread(4,32,@spr#) ' lit un bloc de <i>32</i> octets à partir de l'adresse <i>4</i> dans le tableau <i>spr#</i>
+	srread(0,@i,2) ' lit un entier et le met dans la variable <i>i</i>.
+	srread(4,@spr#,32) ' lit un bloc de <i>32</i> octets à partir de l'adresse <i>4</i> dans le tableau <i>spr#</i>
 	</code></pre>
 	</li>
 	</ul>
@@ -706,18 +707,18 @@ a
 	<pre><code>example:
 	srsave "test.dat", 1024 ' sauvegarde <i>1024 octets</i> dans le fichier <i>test.dat</i></code></pre>
 	</li>
-	<li><b>SRWRITE(<i>adr,size,@var</i>)</b><br>
+	<li><b>SRWRITE(<i>adr,@var,size</i>)</b><br>
 	Copie le contenu d'une variable dans la mémoire SPI RAM.<br>
 	<ul>
 	<li><b>adr</b> adresse destination dans la SPI RAM.</li>
-	<li><b>size</b> nombre d'octets à copier.</li>
 	<li><b>var</b> nom de la variable qui contient les données à transférer dans la SPI RAM. Cette variable est passée par référence
 	comme indiqué par le caractère <b>'@'</b>.</li>
+	<li><b>size</b> nombre d'octets à copier.</li>
 	</ul>
 	<pre><code>example:
 	DIM i, spr#(32)
-	srwrite(0,2,@i) ' écrit  l'entier <i>i</i> dans la SPI RAM à l'adresse 0.
-	srwrite(4,32,@spr#) ' écris un bloc de <i>32</i> octets à l'adresse <i>4</i> à partir du tableau <i>spr#</i>
+	srwrite(0,@i,2) ' écrit  l'entier <i>i</i> dans la SPI RAM à l'adresse 0.
+	srwrite(4,@spr#,32) ' écris un bloc de <i>32</i> octets à l'adresse <i>4</i> à partir du tableau <i>spr#</i>
 	</code></pre>
 	</li>
 	<li><a name="sub"></a><b>SUB name([<i>arg_list</i>])</b><br>

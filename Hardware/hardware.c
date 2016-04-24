@@ -151,11 +151,8 @@ void TVout_init(void){
 void spi_init(){
     SPI_TRIS &= ~((1<<BIT_SRAM_SEL)|(1<<BIT_SDC_SEL)|(1<<BIT_SPI_MOSI)|(1<<BIT_SPI_CLK));
     SPI_LAT |= ((1<<BIT_SRAM_SEL)|(1<<BIT_SDC_SEL));
-    //_set_spi_clock();
-    //_set_spi_mosi();
-    //_set_spi_miso();
     SPI_CON1=(1<<BIT_MSTEN)|(5<<BIT0_SPRE)|(3<<BIT0_PPRE)|(1<<BIT_CKE); // master mode, clk=Fcy/2
-    SPI_CON2=0; //1<<BIT_SPIBEN;//enhanced mode
+    SPI_CON2=0;
     SPI_STAT=(1<<BIT_SPIEN);
     SDC_TRIS &= ~(1<<SDC_SS_RP); // carte SD select
     SRAM_TRIS &= ~(1<<SRAM_SS_RP); // SPI RAM select
@@ -181,7 +178,6 @@ void kbd_init(){
     KBD_TCON|=(1<<15)+(1<<4);
     // période  7 msec. 
     KBD_TMR_PER= (FCY/8/1000*7)-1;
-    
 }//f();
 
 void audio_init(){
