@@ -93,13 +93,97 @@
 	<tr><td>31</td><td>FETCHC</td><td>Empile la variable entier 8 bits dont l'adresse est au sommet de la pile.</td><td>( adr -- c )</td></tr>
 	<tr><td>32</td><td>STORE</td><td>Sauvegarde une variable entier 16 bits. <i>var=n</i></td><td>( n adr -- )</td></tr>
 	<tr><td>33</td><td>STOREC</td><td>Sauvegarde une variable entier 8 bits. <i>var#=c</i></td><td>( c adr -- )</td></tr>
-	<tr><td></td><td></td><td></td><td></td></tr>
-	<tr><td></td><td></td><td></td><td></td></tr>
-	<tr><td></td><td></td><td></td><td></td></tr>
-	<tr><td></td><td></td><td></td><td></td></tr>
-	<tr><td></td><td></td><td></td><td></td></tr>
-
-
+	<tr><td>34</td><td>NEGATE</td><td>Remplace l'entier au sommet de la pile par son complément à 2</td><td>( n -- -n ) </td></tr>
+	<tr><td>35</td><td>NOT</td><td>Remplace l'entier au sommet de la pile par son complément à 1</td><td>( n -- ~n )</td></tr>
+	<tr><td>36</td><td>ADD</td><td>Addition</td><td>( n1 n2 -- n1+n2 )</td></tr>
+	<tr><td>37</td><td>SUB</td><td>Soustraction</td><td>( n1 n2 -- n1-n2 )</td></tr>
+	<tr><td>38</td><td>MUL</td><td>Multiplication</td><td>( n1 n2 -- n1*n2 )</td></tr>
+	<tr><td>39</td><td>DIV</td><td>Division entière</td><td>( n1 n2 -- n1/n2 )</td></tr>
+	<tr><td>40</td><td>MOD</td><td>Modulo</td><td>( n1 n2 -- n1%n2 )</td></tr> 
+	<tr><td>41</td><td>SHR</td><td>Déclalage à droite de 1 bit.</td><td>( n -- n/2 )</td></tr>
+	<tr><td>42</td><td>SHL</td><td>Décalage à gauche de 1 bit.</td><td>( n -- 2*n )</td></tr>
+	<tr><td>43</td><td>SQRT</td><td>Racine carrée entière.</td><td>( n -- sqrt(n) )</td></tr>
+	<tr><td>44</td><td>EQUAL</td><td>Compare les 2 nombres pour l'égalité. Si égaux f=-1 sinon f=0.</td><td>( n1 n2 -- f )</td></tr>
+	<tr><td>45</td><td>NOTEQUAL</td><td>Compares les 2 nombres si différent f=-1 sinon f=0</td><td>( n1 n2 -- f )</td></tr>
+	<tr><td>46</td><td>GT</td><td>Si n1&gt;n2 f=-1 sinon f=0</td><td>( n1 n2 -- f )</td></tr>
+	<tr><td>47</td><td>GE</td><td>Si n1&gt=n2 f=-1 sinon f=0</td><td>( n1 n2 -- f )</td></tr>
+	<tr><td>48</td><td>LT</td><td>Si n1&lt;n2 f=-1 sinon f=0</td><td>( n1 n2 -- f )</td></tr>
+	<tr><td>49</td><td>LE</td><td>Si n1&lt;=n2 f=-1 sinon f=0</td><td>( n1 n2 -- f )</td></tr>
+	<tr><td>50</td><td>BRANCH</td><td>Branchement relatif inconditionnel. L'offset de 16 bits suis le opcode. IP=IP+offset</td><td>( -- )</td></tr> 
+	<tr><td>51</td><td>ZBRANCH</td><td>Branchement relatif conditionnel à f=0.L'offset de 16 bits suis le opcode. IP=IP+offset </td><td>( f -- )</td></tr>    
+	<tr><td>52</td><td>NZBRANCH</td><td>Branchement relatif condition à f<>0.L'offset de 16 bits suis le opcode. IP=IP+offset </td><td>( f -- )</td></tr>
+	<tr><td>53</td><td>CALL</td><td>Branchement à une sous-routine dont l'adresse de 16 bits suis le opcode. Empile IP sur rstack.
+	<br>NOTE: Le opcode FRAME doit toujours être exécuté après celui-ci.</td><td>(R: -- IP )</td></tr>
+	<tr><td>54</td><td>LEAVE</td><td>Sortie de sous-routine restore IP et FP.</td><td>(R: IP FP -- )</td></tr>
+	<tr><td>55</td><td>STRCPY</td><td>Copy la chaîne ASCIIZ de src vers dest</td><td>( sr dest -- )</td></tr>
+	<tr><td>56</td><td>DOTS</td><td>Utilisé par TRACE pour afficher l'information sur rstack et dstack</td><td>( -- )</td></tr>
+	<tr><td>57</td><td>SAVESTEP</td><td>Initisalise le registre STEP avec la valeur qui est au sommet de la pile.
+	<br>STEP=T</td><td>( n -- )</td></tr>
+	<tr><td>58</td><td>SAVELIMIT</td><td>Initialise le registre LIMIT avec la valeur qui est au sommet de la pile.<br>
+	LIMIT=T</td><td>( n -- )</td></tr>
+	<tr><td>59</td><td>NEXT</td><td>Incrémente la variable de contrôle d'une boucle FOR avec la valeur STEP.<br>
+	 <i>adr</i> est l'adresse de la variable à incrémenter.</td><td>( adr -- adr )</td></tr>
+	<tr><td>60</td><td>BTEST</td><td>Test le bit <i>b</i> de <i>n</i>. Si b=1 f=-1 sinon f=0.</td><td>( n b -- f )</td></tr>
+	<tr><td>61</td><td>ALLOC</td><td>Réserve un bloc de <i>size</i> octets dans l'espace programme et empile l'adresse du bloc. Si l'espace libre
+	est insuffisant empile 0.</td><td>( size -- adr|0 )</td></tr>     
+	<tr><td>62</td><td>LCSTORE</td><td>Met le sommet de la pile dans la variable locale dont l'index suit l'opcode.<br>
+	[FP+2*I]=T</td><td>( n -- )</td></tr>
+	<tr><td>63</td><td>LCFETCH</td><td>Empile la valeur de la variable locale dont l'index suit l'opcdode.<br>
+	T=[FP+2*I]</td><td>( -- n)</td></tr>
+	<tr><td>64</td><td>LCADR</td><td>Empile l'adresse absolue de la variable local dont l'index suit le opcode.<br>
+	T=FP+2*I</td><td>( -- adr )</td></tr>
+	<tr><td>65</td><td>FRAME</td><td>Sauvegarde FP sur rstack et ajuste FP à sa nouvelle valeur en utilisant l'octet qui suis le opcode.
+	<br> FP=DSP+2*N</td><td>( R: -- FP )</td></tr>
+	<tr><td>66</td><td>LCVARSPACE</td><td>Réserve de l'espace sur dstack pour les variables locales. Le nombre de variables
+	locales suis l'opcode.<br> DSP=DSP+2*N où N est la valeur qui suis le opcode.</td><td>( ... -- ... )</td></tr>
+	<tr><td>67</td><td>IDLE</td><td>Exécution d'une boucle vide pour une durée en msec=T. Voir instruction BASIC PAUSE()</td><td>( n -- )</td></tr>
+	<tr><td>68</td><td>JSTICK</td><td>Lecture du joystick et empile le résultat.Voir fonction BASIC JSTICK()</td><td>( -- n )</td></tr>
+	<tr><td>69</td><td>SETPIXEL</td><td>Fixe la valeur du pixel situé aux coordonnées <i>{x,y}</i> à la valeur <i>c</i></td><td>(x y c -- )</td></tr>
+	<tr><td>70</td><td>GETPIXEL</td><td>Empile la valeur du pixel situé aux  coordonnées <i>{x,y}</i></td><td>( x y -- c )</td></tr>
+	<tr><td>71</td><td>INT</td><td>Convertie en entier la chaîne ASCII qui se trouve dans le <i>_pad</i>. Le 
+	<i>_pad</i> est un espace réservé pour la saisie par INPUT.</td><td>( -- n )</td></tr>    
+	<tr><td>72</td><td>XORPIXEL</td><td>Applique la fonction XOR au pixel situé au coordonnées <i>{x,y}</i> 
+	en utilisant la valeur n.</td><td>( x y n -- )</td></tr>
+	<tr><td>73</td><td>SCRLUP</td><td>Glisse l'affichage de n pixels vers le haut.</td><td>( n -- )</td></tr>
+	<tr><td>74</td><td>SCRLDN</td><td>Glisse l'affichage de n pixels vers le bas.</td><td>( n -- )</td></tr>
+	<tr><td>75</td><td>SCRLRT</td><td>Glisse l'affichage de n pixels vers la droite. n doit-être pair.</td><td>( n -- )</td></tr>
+	<tr><td>76</td><td>SCRLLT</td><td>Glisse l'affichage de n pixels vers la gauche. n doit-être pair.</td><td>( n -- )</td></tr>
+	<tr><td>77</td><td>LINE</td><td>Relie les coordonnées <i>{x0,y0}</i> et <i>{x1,y}</i> par une ligne droite. La
+	valeur <i>c</i> est la couleur de ligne.</td><td>( x0 y0 x1 y1 c -- )</td></tr>
+	<tr><td>78</td><td>SPRITE</td><td>Applique un sprite à l'écran en utilisant la fonction XOR bit à bit.
+	Les coordonnées <i>{x,y}</i> représente la position du coin supérieur gauche. 
+	<i>w</i> est la largeur en pixels. <i>h</i> est la hauteur en pixel. <i>adr</i> est l'adresse du sprite.
+	Empile un indicateur de collision. <i>f=-1 si collision sinon f=0.</i></td>.<td>( x y w h adr -- f)</td></tr>
+	<tr><td>79</td><td>OR</td><td>Fonction binaire OU inclusif.</td><td>( n1 n2 -- n1|n2 )</td></tr>
+	<tr><td>80</td><td>XOR</td><td>Fonction binaire OU exclusif.</td><td>( n1 n2 -- n1^n2 )</td></tr>
+	<tr><td>81</td><td>AND</td><td>Fonction binaire ET.</td><td>( n1 n2 -- n1&n2 )</td></tr>     
+	<tr><td>82</td><td>TRACE</td><td>Active ou désactive le pas à pas de débogage. Déctive si f=0, autrement active.</td><td>( f -- )</td></tr>
+	<tr><td>83</td><td>ROT</td><td>Rotation des 3 éléments supérieurs de la pile dstack.</td><td>( n1 n2 n3 -- n1 n2 n3 )</td></tr>
+	<tr><td>84</td><td>BOX</td><td>Dessine une rectangle plein de couleur <i>c</i> dont le coin supérieur gauche est
+	aux coordonnées <i>{x,y}</i>. <i>w</i> est la largeur en pixels et <i>>h</i> la hauteur.</td><td>( x y w h c -- )</td></tr>
+	<tr><td>85</td><td>KEY</td><td>Lecture du clavier. S'il n'y pas de touche enfoncée retourne 0.</td><td>( -- k|0 )</td></tr>
+	<tr><td>86</td><td>RECT</td><td>Dessine un rectangle vide de couleur <i>c</i> dont le coin supérieur gauche est
+	aux coordonnées <i>{x,y}</i>. <i>w</i> est la largeur en pixels et <i>>h</i> la hauteur.</td><td>( x y w h c -- )</td></tr>
+	<tr><td>87</td><td>LEN</td><td>retourne la longueur de la chaîne ASCIIZ dont l'adresse est au sommet de la pile.</td><td>( adr -- n )</td></tr>
+	<tr><td>88</td><td>SRLOAD</td><td>Charge un fichier dans la mémoire SPI RAM. <i>adr</i> est l'adresse de la chaîne ASCIIZ
+	qui correspond au nom du fichier. <i>n</i> est le nombre d'octets lus.</td><td>( adr -- n )</td></tr>
+	<tr><td>89</td><td>SRSAVE</td><td>Sauvegarde la mémoire SPI RAM dans un fichier. <i>adr</i> est un pointeur sur
+	le nom du fichier et <i>size</i> est le nombre d'octets à sauvegarder.</td><td></td></tr>
+	<tr><td>90</td><td>SRCLEAR</td><td>Met à zéro une région de la mémoire SPI RAM. <i>adr</i> est l'adresse de début.
+	<i>size</i> est la grandeur en octets.</td><td>( adr size -- )</td></tr>
+	<tr><td>91</td><td>SRREAD</td><td>Copie d'une région de la mémoire SPI RAM dans une variable. <i>adr</i> est 
+	l'adresse du début de la région et <i>size</i> est le nombre d'octets à copier. <i>var</i>  est un pointeur
+	sur la variable.</td><td>( adr var size -- )</td></tr>
+	<tr><td>92</td><td>SRWRITE</td><td>Copie du contenu d'une variable dans la mémoire SPI RAM. <i>adr</i> est l'adresse de début
+	de la copie dans SPI RAM. <i>size</i> est le nombre d'octets à copier. <i>var</i> est un pointeur sur la variable.</td><td>(adr var size -- )</td></tr>
+	<tr><td>93</td><td>MIN</td><td>Conserve le plus petit des 2 entiers.</td><td>( n1 n2 -- min ) </td></tr>
+	<tr><td>94</td><td>MAX</td><td>Conserve le plus grand des 2 entiers.</td><td>( n1 n2 -- min ) </td></tr>
+	<tr><td>95</td><td>MDIV</td><td>Multiplication double précision suivit d'une division.</td><td>(n1 n2 n3 -- n1*n2/n3 )</td></tr>
+	<tr><td>96</td><td>UBOUND</td><td>Empile l'indice supérieur du tableau dont l'adresse est au sommet de la pile.</td><td>( adr -- u )</td></tr>
+	<tr><td>97</td><td>VIDEOCTRL</td><td>Activation ou désactivation de la sortie vidéo. Si f=0 la sortie vidéo
+	est activée sinon elle est déscativée.</td><td>( f -- )</td></tr>
+	<tr><td>98</td><td>CURLINE</td><td>Empile la ligne du curseur texte.</td><td>( - u )</td></tr>
+	<tr><td>99</td><td>CURCOL</td><td>Empile la colonne du curseur texte.</td><td>( -- u )</td></tr>
 	</table>
 </p>
 <hr width="50%" align="center">

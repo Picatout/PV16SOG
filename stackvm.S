@@ -915,7 +915,7 @@ nzbranch: // ( n -- )
 //crée l'espace sur dstack pour
 // les variables locales
 //[IP] nombre de variables locales
-local_var:
+local_var: ; 
     clr W0
     mov.b [ip++],W0
     sl W0,W0
