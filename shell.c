@@ -992,8 +992,10 @@ static void factor(){
                         lit((uint16_t)&var->n);
                         bytecode(FETCHC);
                         break;
-                    case eVAR_INT:
                     case eVAR_CONST:
+                        lit(var->n);
+                        break;
+                    case eVAR_INT:
                         lit((uint16_t)&var->n);
                         bytecode(FETCH);
                         break;
@@ -1906,9 +1908,6 @@ static void kw_const(){
             var->vtype=eVAR_CONST;
             expect(eNUMBER);
             var->n=token.n;
-//            expression();
-//            lit((uint16_t)&var->n);
-//            bytecode(STORE);        
         }
         next_token();
         if (token.id==eCOMMA)
