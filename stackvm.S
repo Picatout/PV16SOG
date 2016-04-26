@@ -980,7 +980,7 @@ sr_load: ; ( char* -- size )
     mov [dsp],W0
     clr W1 ; sram_address=0
     mov #0xffff,W2 ; maxsize 65535
-    callxfunc _fs_load_spiram
+    callxfunc _fs_load_spiram ; (char*, sram_address, size)
     mov W0, [dsp]
     return
     

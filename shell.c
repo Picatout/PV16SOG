@@ -2535,8 +2535,14 @@ static void kw_srload(){
         literal_string(token.str);
     }else if (token.id==eIDENT){
         var=var_search(token.str);
-        if (!var) throw(eERR_BAD_ARG);
-        literal_string(var->adr);
+        if (!var || !(var->vtype==eVAR_STR || var->vtype==eVAR_STRARRAY)) throw(eERR_BAD_ARG);
+        if (var->vtype==eVAR_STRARRAY){
+            expect(eLPAREN);
+            code_array_address(var);
+        }else{
+            lit((uint16_t)&var->str);
+        }
+        bytecode(FETCH);
     }else{
         throw(eERR_BAD_ARG);
     }
@@ -2553,8 +2559,14 @@ static void kw_srsave(){
         literal_string(token.str);
     }else if (token.id==eIDENT){
         var=var_search(token.str);
-        if (!var) throw(eERR_BAD_ARG);
-        literal_string(var->adr);
+        if (!var || !(var->vtype==eVAR_STR || var->vtype==eVAR_STRARRAY)) throw(eERR_BAD_ARG);
+        if (var->vtype==eVAR_STRARRAY){
+            expect(eLPAREN);
+            code_array_address(var);
+        }else{
+            lit((uint16_t)&var->str);
+        }
+        bytecode(FETCH);
     }else{
         throw(eERR_BAD_ARG);
     }
@@ -2821,12 +2833,14 @@ static void kw_input(){
 static void kw_let(){
     char name[32];
     var_t *var;
+    int len;
     
     expect(eIDENT);
     strcpy(name,token.str);
+    len=strlen(name);
     next_token();
     if (var_local){ // on ne peut pas allouer de chaîne dans les sous-routine
-        if (name[strlen(name)-1]=='$') throw(eERR_SYNTAX);
+        if (name[len-1]=='$') throw(eERR_SYNTAX);
         var=var_search(name);
         if (!var) throw(eERR_BAD_ARG); // pas d'auto création à l'intérieur des sous-routines
         if (token.id==eLPAREN && (var->vtype==eVAR_INTARRAY || var->vtype==eVAR_BYTEARRAY)){
@@ -2851,10 +2865,10 @@ static void kw_let(){
             if (!var) var=var_create(name,NULL);
             unget_token=true;
             expect(eEQUAL);
-            if (name[strlen(name)-1]=='$'){
+            if (name[len-1]=='$'){
                 if (var->str) throw(eERR_ASSIGN);
                 expect(eSTRING);
-                var->str=alloc_var_space(strlen(token.str)+1);
+                var->str=alloc_var_space(len+1);
                 strcpy(var->str,token.str);
             }else{
                 expression();
@@ -2909,10 +2923,10 @@ static void kw_print(){
                         if (var->vtype==eVAR_STRARRAY){
                             expect(eLPAREN);
                             code_array_address(var);
-                            bytecode(FETCH);
                         }else{
-                            lit((uint16_t)var->str);
+                            lit((uint16_t)&var->str);
                         }
+                        bytecode(FETCH);
                         bytecode(TYPE);
                         bytecode(SPACE);
                     }
@@ -2937,7 +2951,7 @@ static void kw_print(){
         }
         if (token.id!=eCOMMA){
             bytecode(CRLF);
-            new_line();
+           // new_line();
             unget_token=true;
             break;
         }

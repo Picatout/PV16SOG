@@ -212,7 +212,7 @@ uint16_t fs_load_spiram(char *file,uint16_t sram_address, uint16_t maxsize){
             sram_write_block(sram_address,(const uint8_t*)buffer,count);
             sram_address+=count;
         }
-        if (byte_count) sram_write_byte(sram_address,0);
+//        if (byte_count) sram_write_byte(sram_address,0);
         fat_close_file(fh);
     }else{
         fs_error=eERR_OPENFAIL;
