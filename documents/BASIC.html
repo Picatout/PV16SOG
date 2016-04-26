@@ -890,8 +890,182 @@ a
 	</ul>
 </p>
 <h3><a name="examples">Examples de programmes</a></h3>
+<h4>Le jeux de la vie</h4>
 <p>
-</p>
+	Ce premier example est une implémentation du <a href="https://fr.wikipedia.org/wiki/Jeu_de_la_vie">jeux de la vie</a> 
+	du mathématicien <a href="https://fr.wikipedia.org/wiki/John_Horton_Conway">John H. Conway</a>. En dépit de son nom 
+	il ne s'agit pas d'un jeux mais d'une simulation d'automate cellulaire 	à 2 dimensions. 
+	Au démarrage un curseur	en forme de croix apparaît au centre de l'écran. Il s'agit de créer une configuraton de départ.
+	On déplace le curseur à l'aide des flèches du clavier. La touche <b>C</b>
+	ajoute une cellule à la position du curseur et la touche <b>ESPACE</b> supprime une cellule existante. Pour démarrer 
+	la simulation on utilise la touche <b>ENTER</b>. On regarde évoluer
+	cet univers d'automates cellulaires d'une génération à l'autre. Le nombre de générations est affiché dans le coin inférieur gauche.
+	Même si ce BASIC ne permet que la définition de tableaux à 1 seule dimension ce programme simule un tableau d'octets à 3 dimensions 
+	<b>g#(1368)</b> qui est la grille univers dans lequel évoluent les automates cellulaires.
+</p><p>
+	Vous pouvez vous représenter
+	cette grille comme une feuille de papier quadrillé dont certains carrés seraient noircis. Ces carrés noircis représenteraient
+	les cellules vivantes. Pour chaque carré de la feuille on compte le nombre de cellules vivantes qui l'entoure et on applique 
+	les règles suivantes:
+	<ol>
+	<li>S'il y a moins de 2 cellules vivantes dans le voisinage ce carré sera vide à la prochaine génération. Si le carré est vivant il meurt.</li>
+	<li>S'il y a 2 cellules vivantes dans le voisinage ce carré demeurera dans le même état à la prochaine génération. C'est à dire
+	vide s'il est vide ou plein s'il est plein.</li>
+	<li>S'il y a 3 cellules vivantes dans le voisinage et que le carré est vide il sera plein à la prochaine génération. C'est une naissance.</li>
+	<li>S'il y a plus 3 cellules vivantes dans le voisinage et que le carré est plein il sera vide à la prochaine génération. Mort par surpopulation.</li>
+	</ol>
+</p><p>	
+	Ces règles sont très simples et pourtant elles donnent lieu à une évolution qui peut-être très complexe dépendant de la configuration de départ.	
+</p>	
+	<div>
+	<pre><code>
+	rem John H. Conway's game of life
+	rem simulation automate cellulaire 2D
+	dim cursor#(24)=(
+		$00,$70,$00,
+		$00,$70,$00,
+		$00,$70,$00,
+		$77,$77,$70,
+		$00,$70,$00,
+		$00,$70,$00,
+		$00,$70,$00,
+		$00,$00,$00)
+
+	const width=38 ' dimension horizontale de grille
+	const height=18 ' dimension verticale de la grille
+	const cell=127  ' caractère utilisé pour représenter les cellules
+	const empty=32  ' caractère position grille vide
+	const k_up=141    ' valeur touche flèche vers le haut
+	const k_down=142  ' valeur touche flèche vers le bas
+	const k_left=143  ' valeur touche flèche vers la gauche
+	const k_right=144 ' valeur touche flèche vers la droite
+	const odd=684     ' déplacement grille génération impaire
+	dim g#(1368)  'grille univers
+	gen=0  'compteur de génération
+	src=0  ' déplacement grille source
+	des=odd 'déplacement grille destination
+
+    ' sous-routine d'effacement de la grille
+	sub clear_grid()
+	local i
+	  for i=1 to ubound(g#)
+		g#(i)=empty
+	  next i
+	end sub
+
+    ' sous-routine d'affichage de la grille
+	sub display_grid()
+	local x,y
+	 for x=1 to 38
+	  for y=1 to 18
+	   locate(y,x)
+	   putc g#((y-1)*width+x+src)
+	  next y
+	 next x
+	 locate(20,0)
+	 print gen ;
+	end sub 
+
+    ' initialisation de la grille
+    ' avec le modèle de départ.
+	sub set_grid()
+	local k,x,y
+	 x=width/2+1
+	 y=height/2+1
+	 cls
+	 locate(21,0)
+	 ? "&lt;SPACE&gt;,&lt;C&gt;,&lt;ENTER&gt;";
+	 gen=0
+	 src=0
+	 des=odd
+	 k=0 
+	 clear_grid()
+	 while k&lt;&gt;13
+	  locate(0,0)
+	  ? "x:",x," y:",y,"    ";
+	  locate(y,x)
+	  putc g#((y-1)*width+x)
+	  void=sprite(x*6,y*8,6,8,@cursor#)
+	  while not k : k= key() : wend
+	  void=sprite(x*6,y*8,6,8,@cursor#)
+	  select case k
+	  case k_up
+		if y&gt;1 then y=y-1 end if
+	  case k_down
+		if y&lt;height then y=y+1 end if
+	  case k_left
+		if x&gt;1 then x=x-1 end if
+	  case k_right
+		if x&lt;38 then x=x+1 end if
+	  case 32
+		g#(width*(y-1)+x)=empty
+	  case 67,99
+		g#((y-1)*width+x)=cell
+	  end select
+	  if k&lt;&gt;13 then k=0 end if
+	 wend
+	 cls
+	 ? "&lt;ESC&gt; quit, 'r' new grid";
+	end sub
+
+    ' compte le voisinage d'une cellule
+	func countn(x,y)
+	local n,x0,y0,ofs
+	 n=0
+	 for x0=max(x-1,1) to min(38,x+1)
+	  for y0=max(y-1,1) to min(18,y+1)
+	  if x0&lt;&gt;x or y0&lt;&gt;y then
+	   ofs=(y0-1)*width+x0+src
+	   if g#(ofs)=cell then
+		n=n+1
+	   end if
+	  end if
+	  next y0
+	 next x0
+	 return n 
+	end func
+
+    ' calcule les valeurs de la prochaine
+    ' génération.
+	sub next_gen()
+	local n,x,y,ofs
+	  for x=1 to 38
+	   for y=1 to 18
+		n=countn(x,y)
+		ofs=(y-1)*width+x
+		select case n
+		case 2
+		 g#(ofs+des)=g#(ofs+src)
+		case 3
+		 g#(ofs+des)=cell
+		case else ' 0,1,4,5,6,7,8
+		 g#(ofs+des)=empty
+		end select
+	   next y
+	  next x
+	  gen=gen+1
+	  src=odd-src
+	  des=odd-des
+	end sub
+
+    ' boucle principal
+    ' du programme
+	set_grid()
+	r=1
+	while r
+	  display_grid()
+	  next_gen()        
+	  select case key()
+	  case 27
+	   r=0
+	  case \r,\R
+	   set_grid()
+	  end select
+	wend
+	cls
+</code></pre>
+</div>
+
 <hr width="50%" align="center">
 <p>
 	<ul>
