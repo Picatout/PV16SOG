@@ -163,11 +163,11 @@ section                    address   length (PC units)   length (bytes) (dec)
 .text                        0x200               0xf7c          0x173a  (5946)
 .dinit                      0x117c              0x3ee4          0x5e56  (24150)
 .text                       0x5060              0x6746          0x9ae9  (39657)
-_f6ac0450571e7df1           0xb7a6               0x418           0x624  (1572)
+_f6af1450571f7b85           0xb7a6               0x418           0x624  (1572)
 .text                       0xbbbe               0xa64           0xf96  (3990)
-_f6df2958571e7772           0xc622               0x328           0x4bc  (1212)
+_f6d86958571f7b85           0xc622               0x328           0x4bc  (1212)
 .text                       0xc94a               0x87e           0xcbd  (3261)
-_f6ac03f4571e7df1           0xd1c8                0xbc           0x11a  (282)
+_f6af13f4571f7b85           0xd1c8                0xbc           0x11a  (282)
 .text                       0xd284               0x260           0x390  (912)
 .shared.dinit               0xd4e4                 0x2             0x3  (3)
 
@@ -2855,9 +2855,9 @@ ndata               0x1000         0xfc
                   0x00b74a                  _pstrcmp
                   0x00b78e                  _uppercase
 
-_f6ac0450571e7df1
+_f6af1450571f7b85
                   0x00b7a6        0x418
- _f6ac0450571e7df1
+ _f6af1450571f7b85
                   0x00b7a6        0x418 build/default/production/shell.o
 
 .text             0x00bbbe        0xa64
@@ -2909,9 +2909,9 @@ _f6ac0450571e7df1
                   0x00c5d0                  _fs_rename_file
                   0x00c5fe                  _fs_delete_file
 
-_f6df2958571e7772
+_f6d86958571f7b85
                   0x00c622        0x328
- _f6df2958571e7772
+ _f6d86958571f7b85
                   0x00c622        0x328 build/default/production/font6x8.o
                   0x00c622                  _font_6x8
 
@@ -2965,9 +2965,9 @@ _f6df2958571e7772
                   0x00d0fc                  __T2Interrupt
                   0x00d172                  __OC2Interrupt
 
-_f6ac03f4571e7df1
+_f6af13f4571f7b85
                   0x00d1c8         0xbc
- _f6ac03f4571e7df1
+ _f6af13f4571f7b85
                   0x00d1c8         0xbc build/default/production/shell.o
 
 .text             0x00d284        0x260
