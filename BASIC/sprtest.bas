@@ -1,39 +1,53 @@
 ' test sprite
-dim lem#(64)=(
-$00,$00,$00,$ff,$ff,$00,$00,$00
-$00,$00,$0f,$f0,$0f,$f0,$00,$00
-$00,$0f,$ff,$ff,$ff,$ff,$f0,$00
-$00,$ff,$ff,$ff,$ff,$ff,$ff,$00
-$00,$f0,$00,$00,$00,$00,$0f,$00
-$f0,$f0,$ff,$ff,$ff,$ff,$0f,$0f
-$0f,$f0,$ff,$00,$00,$ff,$0f,$f0
-$00,$f0,$ff,$00,$00,$ff,$0f,$00
-$0f,$f0,$ff,$ff,$ff,$ff,$0f,$f0
-$f0,$f0,$00,$00,$00,$00,$0f,$0f
-$00,$ff,$ff,$ff,$ff,$ff,$ff,$00
-$00,$ff,$ff,$ff,$ff,$ff,$ff,$00
-$00,$0f,$00,$f0,$f0,$0f,$00,$00
-$00,$f0,$0f,$00,$0f,$00,$f0,$00
-$0f,$f0,$00,$00,$00,$00,$ff,$00
-$ff,$00,$00,$00,$00,$00,$0f,$f0
-)
+use "lem.spr"
+use "joystick.inc"
 
-dim btn,x=112,y=77
-while 1
- sprite(x,y,16,16,@lem#)
- pause(20)
- sprite(x,y,16,16,@lem#)
- btn=jstick()
- if btn=1 then bye end if
- if btn=2 then x=(x+1)%224 end if
- if btn=4 then 
-  if x>0 then x=x-1 end if
- end if
- if btn=8 then 
+cls
+dim x=112,y=77
+
+sub move_left()
+ if x> 0 then x=x-1 end if
+end sub
+
+sub move_right()
+ if x<224 then x=x+1 end if
+end sub
+
+sub move_up()
   if y>0 then y=y-1 end if
- end if
- if btn=16 then y=(y+1) % 154 end if
+end sub
+
+sub move_down()
+  if y<154 then y=y+1 end if
+end sub
+
+while 1
+ void=sprite(x,y,16,16,@lem#)
+ pause(20)
+ vod=sprite(x,y,16,16,@lem#)
+ select case jstick()
+ case UP
+  move_up()
+ case DOWN
+  move_down()
+ case RIGHT
+  move_right()
+ case LEFT
+  move_left()
+ case UPRIGHT
+  move_up()
+  move_right()
+ case UPLEFT
+  move_up()
+  move_left()
+ case DOWNRIGHT
+  move_down()
+  move_right()
+ case DOWNLEFT
+  move_down()
+  move_left()
+ case BUTTON
+  cls
+  bye
+ end select
 wend
-
-
-
