@@ -1,24 +1,25 @@
+use "joystick.inc"
 cls
 ? "test select case"
 while 1
  select case jstick()
- case 1
+ case button
   bye
- case 2
+ case right
   ? "E";
- case 4
+ case left
   ? "O";
- case 8
+ case down
   ? "S";
- case 16
+ case up
   ? "N";
- case 18
+ case upright
   ? "NE";
- case 20
+ case upleft
   ? "NO";
- case 10
+ case downright
   ? "SE";
- case 12
+ case downleft
   ? "SO";
  end select
  pause(17)
