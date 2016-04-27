@@ -10,6 +10,7 @@
 <link rel="stylesheet" type="text/css" href="style.css">
 </header>
 <body>
+<a name="top"></a>	
 <h2>Langage BASIC du PV16SOG</h2>
 <h4>Licence</h4>
 <p>  
@@ -28,7 +29,12 @@
 <ul>
 <li><a href="#language">Caractéristiques du langage.</a></li>
 <li><a href="#reference">référence du langage</a></li>
-<li><a href="#examples">examples</a></li>
+<li><a href="#examples">examples</a>
+<ol>
+<li><a href="#conway">conway.bas</a></li>
+<li><a href="#spred">spred.bas</a></li>
+</ol>
+</li>
 </ul>
 </p>
 <h3><a name="language"></a></a>Caractéristques du langage.</h3>
@@ -92,7 +98,7 @@ Les <i>cond</i> et les <i>log_expr</i> ne peuvent pas être regroupées.</td></t
 <tr><td>func()</td><td>Les fonctions ont la plus haute priorité dans les expression arithmétiques.</td></tr>
 <tr><td>* / %</td><td>multiplication, division entière, modulo</td></tr>
 <tr><td>+ -</td><td>addition soustraction</td></tr>
-<tr><td>= >= < <= <> >< </td><td>les opérateurs de comparaison utilisés dans les <i>cond</i></td></tr>
+<tr><td>= &gt;= &lt; &lt;= &lt;&gt; &gt;&lt; </td><td>les opérateurs de comparaison utilisés dans les <i>cond</i></td></tr>
 <tr><td>NOT</td><td> négation logique appliquée au résultat d'une <i>cond</i></td> </tr>
 <tr><td>AND</td><td>conjonction logique appliqué entre les <i>cond</i></td> </tr>
 <tr><td>OR</td><td>alternative logique appliqué entre les <i>cond</i></td> </tr>
@@ -890,7 +896,7 @@ a
 	</ul>
 </p>
 <h3><a name="examples">Examples de programmes</a></h3>
-<h4>Le jeux de la vie</h4>
+<h4><a name="conway"></a>Le jeux de la vie</h4>
 <p>
 	Ce premier example est une implémentation du <a href="https://fr.wikipedia.org/wiki/Jeu_de_la_vie">jeux de la vie</a> 
 	du mathématicien <a href="https://fr.wikipedia.org/wiki/John_Horton_Conway">John H. Conway</a>. En dépit de son nom 
@@ -921,7 +927,7 @@ a
 	<pre><code>
 	rem John H. Conway's game of life
 	rem simulation automate cellulaire 2D
-	dim cursor#(24)=(
+	dim <a name="cursor"></a>cursor#(24)=(
 		$00,$70,$00,
 		$00,$70,$00,
 		$00,$70,$00,
@@ -1064,11 +1070,193 @@ a
 	wend
 	cls
 </code></pre>
+<a href="#top">début</a>
 </div>
+<h4><a name="spred"></a>spred.bas</h4>
+<p>
+  <b>spred.bas</b>, <i>(sprite editor)</i> est un éditeur de figurine pour les jeux vidéo. On peut définir des sprites directement
+  en BASIC comme montré dans l'example précédent avec le <a href="#cursor">cursor</a> mais ce n'est pas très commode. Cet éditeur
+  simple permet de les créer et de les sauvegarder sous forme de fichier binaire.
+</p>
+<p>
+ Au démarrage le programme demande le nom du fichier sous lequel le sprite doit-être sauvegarder ou le nom d'un fichier existant
+ qui peut-être chargé pour modification. Ensuite les dimensions du sprite sont demandées. <b>width</b> est la largeur en pixels et
+ <b>height</b> la hauteur. La grandeur maximale est de <b>32x32 pixels</b>. Une fois ces informations saisies un rectangle apparaît au centre de l'écran avec un <b>x</b> qui représente
+ le curseur. Ce rectangle est la zone d'édition zoommée 4X. En haut à gauche apparait les coordonnées du curseur et sous les coordonnées apparaît
+ la représentation taille réelle du sprite.<br>
+  Les commandes sont entièrement au clavier.
+</p>
+ <ul>
+ <li><b>&lt;L&gt;</b>oad est utilisé pour charger un sprite existant pour modification. Après le chargement un message
+ apparaît en bas à gauche de l'écran indiquant que le sprite a été chargé ainsi que ses dimensions. Le sprite est affiché dans
+ la grille d'édition. Si le fichier est vide ou n'existe pas le message affiché est <b>Nothing loaded</b>.</li>
+ <li><b>&lt;S&gt;</b>ave sauvegarde le sprite dans le fichier nommé en entrée de programme.</li>
+ <li><b>Les flèches de direction</b> servent à déplacer le curseur à l'intérieur de la zone d'édition.</li>
+ <li><b>&lt;0&gt;-&lt;F&gt;</b> détermine la couleur du pixel. Cette couleur sera utlisée lors de l'enfoncement de la touche <b>ESPACE</b>.
+ Ces touches correspondent aux valeurs hexadécimales de 0 à 15 soit les 16 tons de gris.</li>
+ <li><b>&lt;ESPACE&gt;</b> applique la couleur sélectionnée à la position courante du curseur.</li>
+ <li><b>&lt;ESC&gt;</b> Sortie du programme.</li>
+ </ul>
+ <p>
+ Il s'agit donc d'un programme très simple. On ne peut éditer qu'un seul sprite par session. Cette limitation est du au fait 
+ que ce BASIC considère les chaînes de caractères comme des constantes donc la valeur de <i>name$</i> ne peut-être modifiée
+ une fois initialisée par la commande <b>INPUT</b> en début de programme. Pour éditer un autre sprite il faut sortir du programme
+ et le relancer avec la commande <b>run spred.bas</b>.  Cette limitation peut-être contournée, je vous laisse ce problème à titre
+ d'exercice pratique.
+</p>
+<div>
+<pre><code>
+	REM editeur de sprite
 
+	' nom, largeur, hauteur, couleur pixel
+	dim name$, w, h, c=0
+	' tableau contenant le sprite
+	dim spr#(512)
+	' sprite curseur
+	dim c#(8)=($f0,$0f,   
+		$0f,$f0,
+		$0f,$f0,
+		$f0,$0f)
+	' x offset, y offset, x, y
+	dim xo,yo,x,y
+	const psize=4  'dimension pixel zoomé
+	const xres=240  'résolution écran horizontale
+	const yres=170  ' résolution écran verticale
+	cls
+	' saisie des paramètres
+	input "sprite name", name$
+	input "sprite width", w
+	input "sprite height", h
+
+    'dessine le rectangle d'édition
+	sub draw_bounds()
+	 cls
+	 xo=(xres-psize*w)/2
+	 yo=(yres-psize*h)/2
+	 rect(xo-1,yo-1,psize*w+2,psize*h+2,7)
+	 x=w/2
+	 y=h/2
+	end sub
+
+    'affiche les coordonnées {x,y} du curseur
+	sub prtxy()
+	  locate(0,0)
+	  print "x:",x," y:",y ;
+	end sub
+
+    'sauvegarde du sprite 
+    'dans un fichier binaire
+	sub save_sprite()
+	  srwrite(0,@w,2)
+	  srwrite(2,@h,2)
+	  srwrite(4,@spr#,w*h/2)
+	  srsave name$,w*h/2+4
+	  locate(19,0)
+	  ? name$ ,"saved"
+	  ? w,"x",h,"pixels";
+	end sub
+
+    'dessine le sprite
+    'dans le rectangle d'édition
+	sub fill_canevas()
+	local i,x,y,c
+	  for x=0 to w-1
+	   for y=0 to h-1
+		i=(y*w+x)/2+1
+		if btest(x,0) then
+		  c=spr#(i)%16
+		else
+		  c=spr#(i)/16
+		end if
+		box(xo+x*psize,yo+y*psize,psize,
+		psize,c)
+		setpixel(10+x,10+y,c)
+	   next y
+	  next x
+	end sub
+
+    'charge un fichier binaire
+    'sprite
+	sub load_sprite()
+	local size
+	 size=srload name$
+	 if size then
+	   srread(0,@w,2)
+	   srread(2,@h,2)
+	   srread(4,@spr#,size-4)
+	   draw_bounds()
+	   fill_canevas()
+	   locate(19,0)
+	   ? name$, "loaded"
+	   ? "width",w,"height",h ;
+	 else
+	   locate(19,0)
+	   ? "load failed";
+	 end if
+	end sub
+
+    'assigne la couleur du pixel
+    '{x,y} dans le tableau
+	sub let_pixel(x,y,c)
+	local idx
+	  idx=(y*w+x)/2+1
+	  if btest(x,0) then 'impair
+	   spr#(idx)=spr#(idx)/16*16+c
+	  else ' pair
+	   spr#(idx)=spr#(idx)%16+c*16
+	  end if
+	end sub
+
+
+	draw_bounds()
+
+    ' boucle principale du programme
+	while 1
+	 prtxy()
+	 sprite(xo+x*psize,yo+y*psize,psize,
+	 psize,@c#)
+	 pause(20)
+	 sprite(xo+x*psize,yo+y*psize,psize,
+	 psize,@c#)
+	 k=key()
+	 if k&gt;=\a then k=k-32 end if
+	 select case k
+	 ' sélection couleur 0-9
+	 case \0,\1,\2,\3,\4,\5,\6,\7,\8,\9
+	  c=k-\0
+	  ' sélection couleur A-F
+	 case \A,\B,\C,\D,\E,\F
+	  c=k-\A+10
+	 case 32 ' ESPACE  = colore le pixel
+	  box(xo+x*psize,yo+y*psize,psize,
+	  psize,c)
+	  setpixel(10+x,10+y,c)
+	  let_pixel(x,y,c)
+	 case 141 ' déplacement vers le haut
+	  if y>0 then y=y-1 end if
+	 case 142 ' déplacement vers le bas
+	  if y&lt;h-1 then y=y+1 end if
+	 case 143 ' déplacement vers la gauche
+	  if x&gt;0 then x=x-1 end if
+	 case 144 ' déplacement vers la droite
+	  if x&lt;h-1 then x=x+1 end if
+	 case 27 ' ESC = quit
+	  cls
+	  bye
+	 case \S  ' sauvegarde sprite
+	  save_sprite()
+	 case \L  ' charge sprite
+	  load_sprite()
+	 end select
+	wend
+
+</code></pre>
+<a href="#top">début</a>
+</div>
 <hr width="50%" align="center">
 <p>
 	<ul>
+		<li><a href="#top">début</a></li>
 		<li><a href="./pv16sog.html">ordinateur PV16SOG</a></li>
 		<li><a href="./shell.html">shell du PV16SOG</a></li>
 		<li><a href="./editor.html">Éditeur du PV16SOG</a></li>
