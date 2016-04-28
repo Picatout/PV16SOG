@@ -33,6 +33,7 @@
 <ol>
 <li><a href="#conway">conway.bas</a></li>
 <li><a href="#spred">spred.bas</a></li>
+<li><a href="#jstick">joystick.bas</a></li>
 </ol>
 </li>
 </ul>
@@ -1459,7 +1460,120 @@ a
 </code></pre>
 <a href="#top">début</a>
 </div>
-<hr width="50%" align="center">
+<h4><a name="jstick"></a>jstick.bas</h4>
+<p>
+ Ce démo montre comment utiliser le joystick pour déplacer un <i>sprite</i> à l'écran. Il utilise la directive <b>USE</b> pour
+ inclure 2 fichiers. <b>joystick.inc</b>  contient la définitions des constantes pour faciliter l'utilisation du joystick.
+ <b>lem.spr</b> contient le code basic pour un <i>sprite</i> appelé LEM (<b>L</b>unar <b>E</b>xpedition <b>M</b>odule).
+</p>
+<div>
+<pre><code>
+rem fichier: joystick.inc
+rem constantes pour le joystick
+const button=1
+const up=16
+const down=8
+const right=2
+const left=4
+const upleft=20
+const upright=18
+const downleft=12
+const downright=10
+</code></pre>
+<hr>
+<pre><code>
+rem fichier: lem.spr
+rem définition d'un sprite appellé LEM
+rem Lunar Expedition Module
+' sprite LEM
+dim lem#(128)=(
+$00,$00,$00,$ff,$ff,$00,$00,$00,
+$00,$00,$0f,$f0,$0f,$f0,$00,$00,
+$00,$0f,$ff,$ff,$ff,$ff,$f0,$00,
+$00,$ff,$ff,$ff,$ff,$ff,$ff,$00,
+$00,$f0,$00,$00,$00,$00,$0f,$00,
+$f0,$f0,$ff,$ff,$ff,$ff,$0f,$0f,
+$0f,$f0,$ff,$00,$00,$ff,$0f,$f0,
+$00,$f0,$ff,$00,$00,$ff,$0f,$00,
+$0f,$f0,$ff,$ff,$ff,$ff,$0f,$f0,
+$f0,$f0,$00,$00,$00,$00,$0f,$0f,
+$00,$ff,$ff,$ff,$ff,$ff,$ff,$00,
+$00,$ff,$ff,$ff,$ff,$ff,$ff,$00,
+$00,$0f,$00,$f0,$f0,$00,$f0,$00,
+$00,$f0,$0f,$00,$0f,$00,$0f,$00,
+$0f,$f0,$00,$00,$00,$00,$0f,$f0,
+$ff,$00,$00,$00,$00,$00,$00,$ff
+)
+</code></pre>
+<hr>
+<pre><code>
+REM fichier: jstick.bas
+REM ce démo montre comment
+REM utiliser le joystick pour 
+rem déplacer un sprite à l'écran
+use "lem.spr"
+use "joystick.inc"
+
+cls
+dim x=112,y=77 'position du sprite
+
+'déplacement vers la gauche
+sub move_left()
+ if x&gt;0 then x=x-1 end if
+end sub
+
+'déplacement vers la droite
+sub move_right()
+ if x&lt;224 then x=x+1 end if
+end sub
+
+'déplacement vers le haut
+sub move_up()
+  if y&gt;0 then y=y-1 end if
+end sub
+
+'déplacement vers le bas
+sub move_down()
+  if y&tl;154 then y=y+1 end if
+end sub
+
+'boucle principale du programme
+
+while 1
+ void=sprite(x,y,16,16,@lem#)
+ pause(20)
+ vod=sprite(x,y,16,16,@lem#)
+ select case jstick()
+ case UP
+  move_up()
+ case DOWN
+  move_down()
+ case RIGHT
+  move_right()
+ case LEFT
+  move_left()
+ case UPRIGHT
+  move_up()
+  move_right()
+ case UPLEFT
+  move_up()
+  move_left()
+ case DOWNRIGHT
+  move_down()
+  move_right()
+ case DOWNLEFT
+  move_down()
+  move_left()
+ case BUTTON  'termine démo
+  cls
+  bye
+ end select
+wend
+</code></pre>
+
+<a href="#top">début</a>
+</div>
+<hr width="50%" size="4" align="center">
 <p>
 	<ul>
 		<li><a href="#top">début</a></li>
