@@ -63,7 +63,7 @@
 </li>
 </ul>	
 </p>
-<hr width="50%" align="center">
+<hr class="l1">
 <h3><a name="reference">Référence des commandes BASIC</a></h3>
 <p>
 	PV16SOG BASIC est insensible à casse tous les mots réservés et indentificateurs de variables sont convertis en majuscules par le compilateur.
@@ -228,6 +228,7 @@ a
 	<li><a href="#WHILE">WHILE</a></li>
 	<li><a href="#XORPIXEL">XORPIXEL</a></li>
 </ul>
+<hr class="l1">
 <p>
 	<ul>
 	<li><a name="abs"></a><b>ABS(expr)</b><br>
@@ -1101,7 +1102,7 @@ a
 	</li>
 	</ul>
 </p>
-<hr width="50%" align="center">
+<hr class="l1">
 <h3><a name="examples">Examples de programmes</a></h3>
 <h4><a name="conway"></a>Le jeux de la vie</h4>
 <p>
@@ -1279,6 +1280,7 @@ a
 </code></pre>
 <a href="#top">début</a>
 </div>
+<hr class="l2">
 <h4><a name="spred"></a>spred.bas</h4>
 <p>
   <b>spred.bas</b>, <i>(sprite editor)</i> est un éditeur de figurine pour les jeux vidéo. On peut définir des sprites directement
@@ -1460,6 +1462,7 @@ a
 </code></pre>
 <a href="#top">début</a>
 </div>
+<hr class="l2">
 <h4><a name="jstick"></a>jstick.bas</h4>
 <p>
  Ce démo montre comment utiliser le joystick pour déplacer un <i>sprite</i> à l'écran. Il utilise la directive <b>USE</b> pour
@@ -1479,9 +1482,9 @@ const upleft=20
 const upright=18
 const downleft=12
 const downright=10
-</code></pre>
-<hr>
-<pre><code>
+</code></pre></div>
+<hr class="l3">
+<div><pre><code>
 rem fichier: lem.spr
 rem définition d'un sprite appellé LEM
 rem Lunar Expedition Module
@@ -1504,8 +1507,9 @@ $00,$f0,$0f,$00,$0f,$00,$0f,$00,
 $0f,$f0,$00,$00,$00,$00,$0f,$f0,
 $ff,$00,$00,$00,$00,$00,$00,$ff
 )
-</code></pre>
-<hr>
+</code></pre></div>
+<hr class="l3">
+<div>
 <pre><code>
 REM fichier: jstick.bas
 REM ce démo montre comment
@@ -1538,7 +1542,6 @@ sub move_down()
 end sub
 
 'boucle principale du programme
-
 while 1
  void=sprite(x,y,16,16,@lem#)
  pause(20)
@@ -1571,9 +1574,11 @@ while 1
 wend
 </code></pre>
 
-<a href="#top">début</a>
 </div>
-<hr width="50%" size="4" align="center">
+<div>
+<a href="#top" >début</a>
+</div>
+<hr class="l1">
 <p>
 	<ul>
 		<li><a href="#top">début</a></li>
@@ -1584,6 +1589,5 @@ wend
         <li><a href="./stackvm.html">machine virtuelle du PV16SOG</a></li>
 	</ul>
 </p>
-
 </body>
 </html>
