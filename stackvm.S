@@ -106,7 +106,9 @@ _ftrace:    ; indicateur mode traçage
 .space 2
 _vm_exit_code:  ; code de sortie de la machine virtuelle
 .space 2
-
+seed: ; registre du PRNG
+.space 4
+    
 .global _pause_timer
 _pause_timer: .space 2
  
@@ -668,14 +670,74 @@ sqroot: //( u -- sqrt(u) )
     1: mov W2,[dsp]
     return
 
+//REF: https://en.wikipedia.org/wiki/Xorshift
+//REF: http://excamera.com/sphinx/article-xorshift.html
+//xorshift32 pseudo random number generator
+//uint32_t random()
+//{
+//  seed ^= seed << 13;
+//  seed ^= seed >> 17;
+//  seed ^= seed << 5;
+//  return seed;
+//}
+
 // retourne un nomber aléatoire
 rnd: //( -- n)
-    saveregs
-    rcall _random
-    restregs
+    ; seed ^=seed<<13
+    mov seed, W0
+    mov seed+2,W1
+    mov #13,W2
+1:    
+    sl  W0,W0
+    rlc W1,W1
+    dec W2,W2
+    bra nz,1b
+    xor seed
+    mov W1,W0
+    xor seed+2
+    ; seed ^= seed>>17
+    mov seed, W0
+    mov seed+2,W1
+    mov #17,W2
+2:
+    lsr W1,W1
+    rrc W0,W0
+    dec W2,W2
+    bra nz, 2b
+    xor seed
+    mov W1,W0
+    xor seed
+    ; seed ^= seed<<5
+    mov seed, W0
+    mov seed+2,W1
+    mov #5,W2
+3:
+    sl  W0,W0
+    rlc W1,W1
+    dec W2,W2
+    bra nz,3b
+    xor seed
+    mov W1,W0
+    xor seed+2
+    mov seed,W0
+;    saveregs
+;    rcall _random
+;    restregs
     mov W0, [++dsp]
     return
 
+.global _randomize    
+; initialisation du PRNG    
+_randomize:; ( -- )
+    mov _msec_ticks, W0
+    mov #3,W2
+    repeat #17
+    div.u W0,W2
+    mov W0,seed
+    mov W1, seed+2
+    return
+    
+    
 vm_abs: //(n -- u )
     btst.c [dsp],#15
     bra nc, 1f
@@ -773,7 +835,8 @@ timeout: // ( -- flag )
 vm_noise:
     mov [dsp--],W0
     mov W0, _tone_len
-0:  callxfunc _random
+0:  rcall rnd
+    mov [dsp--],W0
     mov #16,W1
 1:  btsc W0,#0
     btg AUDIO_PORT,#AUDIO_OUT
@@ -1017,7 +1080,6 @@ sr_write: ; ( adr buffer size -- )
     callxfunc _sram_write_block
     return
     
-    
 bye: // ( -- )
     sub #4,W15
     bra vm_quit
@@ -1073,7 +1135,7 @@ words:
 .word _vm_get_pixel,to_int,_vm_xor_pixel,_vm_scroll_up,_vm_scroll_down,_vm_scroll_right,_vm_scroll_left,_vm_line,_vm_sprite,vm_ior
 .word vm_xor,vm_and,trace,rot,_box,key,_vm_rect,strlen,sr_load,sr_save
 .word sr_clear,sr_read,sr_write, min, max, muldiv, ubound,_video_off,curline,curcol
-.word _save_scr,_rest_scr,_rem_sprite    
+.word _save_scr,_rest_scr,_rem_sprite,_randomize    
     
 .global _interpret
 _interpret:

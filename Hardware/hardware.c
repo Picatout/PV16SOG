@@ -194,18 +194,18 @@ void audio_init(){
 //REF: https://en.wikipedia.org/wiki/Xorshift
 //REF: http://excamera.com/sphinx/article-xorshift.html
 //xorshift32 pseudo random number generator
-uint32_t seed = 7;  // 100% random seed value
-uint32_t random()
-{
-  seed ^= seed << 13;
-  seed ^= seed >> 17;
-  seed ^= seed << 5;
-  return seed;
-}
+//uint32_t seed = 7;  // 100% random seed value
+//uint32_t random()
+//{
+//  seed ^= seed << 13;
+//  seed ^= seed >> 17;
+//  seed ^= seed << 5;
+//  return seed;
+//}
 
-void randomize(){
-    seed=msec_ticks|1;
-}
+//void randomize(){
+//    seed=msec_ticks/3;
+//}
 
 //pour réduire la consommation on désactive les périphérique 
 // inutilisés, 1->désactive le périphérique

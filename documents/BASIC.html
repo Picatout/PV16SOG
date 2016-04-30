@@ -195,6 +195,7 @@ a
 	<li><a href="#PAUSE">PAUSE</a></li>
 	<li><a href="#PRINT">PRINT</a></li>
 	<li><a href="#PUTC">PUTC</a></li>
+	<li><a href="#RANDOMIZE">RANDOMIZE</a></li>
 	<li><a href="#JSTICK">JSTICK</a></li>
 	<li><a href="#RECT">RECT</a></li>
 	<li><a href="#REM">REM</a></li>
@@ -684,6 +685,22 @@ a
     &gt;putc \a : putc 98
     ab
     &gt;
+    </code></pre>
+	<a href="#indexBasic">index BASIC</a>
+    </li>
+    <li><a name="RANDOMIZE"></a><b>RANDOMIZE()</b><br>
+    Initialise le générateur de nombre pseudo aléatoire. L'initialisation est faîte par <b>seed=ticks()/3</b>. Il est bon
+    d'utiliser cette commande au début de chaque programme qui utilise <a href="#RND">RND()</a><br>
+    <pre><code>example:
+    'colore l'écran avec des pixels au hasard
+    dim x,y,c
+    RANDOMIZE()
+    while not key()
+		x=abs(rnd())%240
+		y=abs(rnd())%170
+		c=abs(rnd())%16
+		setpixel(x,y,c)
+    wend
     </code></pre>
 	<a href="#indexBasic">index BASIC</a>
     </li>

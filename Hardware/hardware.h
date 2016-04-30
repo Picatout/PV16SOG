@@ -281,8 +281,6 @@ uint16_t dfree_size();
 void software_exception(uint8_t code);
 // initialise le PRNG
 void randomize();
-//xorshift PRNG
-uint32_t random();
 // ajuste la position du cadre vidéo
 extern void video_adjust();
 

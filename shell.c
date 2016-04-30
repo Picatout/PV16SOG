@@ -230,6 +230,7 @@ static void kw_noise();
 static void kw_pause();
 static void kw_print();
 static void kw_putc();
+static void kw_randomize();
 static void kw_read_jstick();
 static void kw_rect();
 static void kw_ref();
@@ -275,7 +276,7 @@ enum {eKW_ABS,eKW_AND,eKW_BEEP,eKW_BOX,eKW_BTEST,eKW_BYE,eKW_CASE,eKW_CLS,eKW_CO
       eKW_FOR,eKW_FUNC,eKW_GETPIXEL,eKW_IF,eKW_INPUT,eKW_KEY,eKW_LEN,
       eKW_LET,eKW_LINE,eKW_LOCAL,eKW_LOCATE,eKW_LOOP,eKW_MAX,eKW_MDIV,eKW_MIN,eKW_NEXT,
       eKW_NOISE,eKW_NOT,eKW_OR,eKW_PAUSE,
-      eKW_PRINT,eKW_PUTC,eKW_JSTICK,eKW_RECT,eKW_REF,eKW_REM,eKW_REMSPR,eKW_RESTSCR,
+      eKW_PRINT,eKW_PUTC,eKW_RANDOMISIZE,eKW_JSTICK,eKW_RECT,eKW_REF,eKW_REM,eKW_REMSPR,eKW_RESTSCR,
       eKW_RETURN,eKW_RND,eKW_SAVESCR,eKW_SCRLUP,eKW_SCRLDN,
       eKW_SCRLRT,eKW_SCRLFT,eKW_SELECT,eKW_SETPIXEL,eKW_SETTMR,eKW_SHL,eKW_SHR,
       eKW_SPRITE,eKW_SRCLEAR,eKW_SRLOAD,eKW_SRREAD,eKW_SRSSAVE,eKW_SRWRITE,eKW_SUB,eKW_THEN,eKW_TICKS,
@@ -324,6 +325,7 @@ __eds__ static const dict_entry_t __attribute__((space(prog))) KEYWORD[]={
     {kw_pause,5,"PAUSE"},
     {kw_print,5,"PRINT"},
     {kw_putc,4,"PUTC"},
+    {kw_randomize,9,"RANDOMIZE"},
     {kw_read_jstick,6+FUNCTION,"JSTICK"},
     {kw_rect,4,"RECT"},
     {kw_ref,1+FUNCTION,"@"},
@@ -2290,6 +2292,12 @@ static void kw_rnd(){
     expect(eLPAREN);
     expect(eRPAREN);
     bytecode(RND);
+}//f
+
+//RANDOMIZE()
+static void kw_randomize(){
+    parse_arg_list(0);
+    bytecode(RANDOMIZE);
 }//f
 
 //MAX(expr1,expr2)
