@@ -342,14 +342,26 @@ _vm_line: ; ( x0 y0 x1 y1 c -- )
     return
     
 .global _vm_sprite
-_vm_sprite: ; ( x y w h sprite* -- )
+; affiche un sprite    
+_vm_sprite: ; ( x y w h sprite* save* -- )
+    mov [dsp--],W5
     mov [dsp--],W4
     mov [dsp--],W3
     mov [dsp--],W2
     mov [dsp--],W1
     mov [dsp--],W0
     callxfunc _draw_sprite
-    mov W0,[++dsp]
+    return
+
+.global _rem_sprite
+;efface sprite de l'écran    
+_rem_sprite:; ( x y w h adr -- )  adr est le pointeur sur le tableau contenant les bits à restaurer
+    mov [dsp--],W4
+    mov [dsp--],W3
+    mov [dsp--],W2
+    mov [dsp--],W1
+    mov [dsp--],W0
+    callxfunc _remove_sprite
     return
     
 .global _box
@@ -578,5 +590,18 @@ _video_off: ; ( f -- )
     clr.b _dis_video
     return
     
+.global _save_scr 
+;sauvegarde de la mémoire écran
+;dans la SPI RAM   
+_save_scr:; ( adr -- ) adresse destination dans la SPI RAM
+    mov [dsp--],W0
+    callxfunc _save_screen
+    return
+    
+.global _rest_scr
+_rest_scr:; ( adr -- ) adresse d'origine dans la SPI RAM    
+    mov [dsp--],W0
+    callxfunc _restore_screen
+    return
     
     

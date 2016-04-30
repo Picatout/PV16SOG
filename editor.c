@@ -206,6 +206,7 @@ static bool quit;
 
 static void leave_editor(){
     if (ask_confirm()){
+        set_cursor_shape(cVLINE);
         quit=true;
     }
 }

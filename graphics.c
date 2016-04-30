@@ -126,11 +126,10 @@ void draw_rect(int x1, int y1, int x2, int y2, color_t color){
     }
 }//f()
 
-bool draw_sprite(int x, int y, int width, int height, const uint8_t* sprite){
-    bool collision=false;
+void draw_sprite(int x, int y, int width, int height, const uint8_t* sprite, uint8_t *save_back){
     int c,r, sprt_w,xp,yp;
-    color_t b, scr_pixel,pixel_color;
-    
+    color_t b,s, scr_pixel,pixel_color;
+
     sprt_w=width>>1;
     if (width&1) sprt_w++;
     for (r=0;r<height;r++){
@@ -147,18 +146,46 @@ bool draw_sprite(int x, int y, int width, int height, const uint8_t* sprite){
                 scr_pixel=video_buffer[yp*BPL+(xp>>1)]>>4;
             }
             b=sprite[(sprt_w*r)+(c>>1)]; 
+            s=save_back[(sprt_w*r)+(c>>1)];
             if (c&1){
                 pixel_color=b&0xf;
+                s=(s&0xf0)|scr_pixel;
             }else{
                 pixel_color=(b>>4);
+                s=(s&0xf)|(scr_pixel<<4);
             }
-            scr_pixel ^= pixel_color;
-            collision = collision || !((scr_pixel==bg_color) || ((scr_pixel^bg_color)==pixel_color));
-            draw_pixel(xp,yp,scr_pixel);
-        }
-    }
-    return collision;
+            save_back[(sprt_w*r)+(c>>1)]=s;
+            if (pixel_color){
+                draw_pixel(xp,yp,pixel_color);
+            }
+        }//for 
+    }//for
 }//f()
+
+// enlève le sprite de l'écran
+void remove_sprite(int x,int y, int width, int height, const uint8_t* rest_back){
+    int c,r, sprt_w,xp,yp;
+    color_t b;
+
+    sprt_w=width>>1;
+    if (width&1) sprt_w++;
+    for (r=0;r<height;r++){
+        yp=r+y;
+        if (yp<0) continue;
+        if (yp>=VRES) break;
+        for (c=0;c<width;c++){
+            xp=c+x;
+            if (xp<0)continue;
+            if (xp>=HRES) break;
+            b=rest_back[(sprt_w*r)+(c>>1)]; 
+            if (c&1){
+                draw_pixel(xp,yp,b&0xf);
+            }else{
+                draw_pixel(xp,yp,b>>4);
+            }
+        }//for 
+    }//for
+}//f
 
 //sauvegarde le buffer vidéo dans la SRAM à l'adresse <address>
 void save_screen(uint16_t address){

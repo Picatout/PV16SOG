@@ -1073,6 +1073,7 @@ words:
 .word _vm_get_pixel,to_int,_vm_xor_pixel,_vm_scroll_up,_vm_scroll_down,_vm_scroll_right,_vm_scroll_left,_vm_line,_vm_sprite,vm_ior
 .word vm_xor,vm_and,trace,rot,_box,key,_vm_rect,strlen,sr_load,sr_save
 .word sr_clear,sr_read,sr_write, min, max, muldiv, ubound,_video_off,curline,curcol
+.word _save_scr,_rest_scr,_rem_sprite    
     
 .global _interpret
 _interpret:

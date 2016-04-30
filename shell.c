@@ -234,8 +234,11 @@ static void kw_read_jstick();
 static void kw_rect();
 static void kw_ref();
 static void kw_rem();
+static void kw_remove_sprite();
+static void kw_restore_screen();
 static void kw_return();
 static void kw_rnd();
+static void kw_save_screen();
 static void kw_scrlup();
 static void kw_scrldown();
 static void kw_scrlright();
@@ -272,7 +275,8 @@ enum {eKW_ABS,eKW_AND,eKW_BEEP,eKW_BOX,eKW_BTEST,eKW_BYE,eKW_CASE,eKW_CLS,eKW_CO
       eKW_FOR,eKW_FUNC,eKW_GETPIXEL,eKW_IF,eKW_INPUT,eKW_KEY,eKW_LEN,
       eKW_LET,eKW_LINE,eKW_LOCAL,eKW_LOCATE,eKW_LOOP,eKW_MAX,eKW_MDIV,eKW_MIN,eKW_NEXT,
       eKW_NOISE,eKW_NOT,eKW_OR,eKW_PAUSE,
-      eKW_PRINT,eKW_PUTC,eKW_JSTICK,eKW_RECT,eKW_REF,eKW_REM,eKW_RETURN,eKW_RND,eKW_SCRLUP,eKW_SCRLDN,
+      eKW_PRINT,eKW_PUTC,eKW_JSTICK,eKW_RECT,eKW_REF,eKW_REM,eKW_REMSPR,eKW_RESTSCR,
+      eKW_RETURN,eKW_RND,eKW_SAVESCR,eKW_SCRLUP,eKW_SCRLDN,
       eKW_SCRLRT,eKW_SCRLFT,eKW_SELECT,eKW_SETPIXEL,eKW_SETTMR,eKW_SHL,eKW_SHR,
       eKW_SPRITE,eKW_SRCLEAR,eKW_SRLOAD,eKW_SRREAD,eKW_SRSSAVE,eKW_SRWRITE,eKW_SUB,eKW_THEN,eKW_TICKS,
       eKW_TIMEOUT,eKW_TONE,eKW_TRACE,eKW_UBOUND,eKW_UNTIL,eKW_USE,eKW_VIDEO,
@@ -324,8 +328,11 @@ __eds__ static const dict_entry_t __attribute__((space(prog))) KEYWORD[]={
     {kw_rect,4,"RECT"},
     {kw_ref,1+FUNCTION,"@"},
     {kw_rem,3,"REM"},
+    {kw_remove_sprite,6,"REMSPR"},
+    {kw_restore_screen,7,"RESTSCR"},
     {kw_return,6,"RETURN"},
     {kw_rnd,3+FUNCTION,"RND"},
+    {kw_save_screen,7,"SAVESCR"},
     {kw_scrlup,6,"SCRLUP"},
     {kw_scrldown,6,"SCRLDN"},
     {kw_scrlright,6,"SCRLRT"},
@@ -335,7 +342,7 @@ __eds__ static const dict_entry_t __attribute__((space(prog))) KEYWORD[]={
     {kw_set_timer,6,"SETTMR"},
     {kw_shl,3+FUNCTION,"SHL"},
     {kw_shr,3+FUNCTION,"SHR"},
-    {kw_sprite,6+FUNCTION,"SPRITE"},
+    {kw_sprite,6,"SPRITE"},
     {kw_srclear,7,"SRCLEAR"},
     {kw_srload,6+FUNCTION,"SRLOAD"},
     {kw_srread,6,"SRREAD"},
@@ -2384,12 +2391,23 @@ static void kw_rect(){
     bytecode(RECT);
 }//f
 
-// SPRITE(x,y,width,hight,@sprite)
+// SPRITE(x,y,width,height,@sprite,@save_back)
 // desssine le sprite à la position désigné
 // sprite est un vecteur de type octet
+//save_back est un vecteur de type octet de même grandeur que sprite
+//save_back est utilisé pour sauvegarder le fond d'écran
+//en vue de sa restauration
 static void kw_sprite(){
-    parse_arg_list(5);
+    parse_arg_list(6);
     bytecode(SPRITE);
+}//f
+
+//REMSPR(x,y,width,height,@rest_back)
+//efface le sprite en restaurant les bits
+// de fond d'écran sauvegardés par SPRITE()
+static void kw_remove_sprite(){
+    parse_arg_list(5);
+    bytecode(REMSPR);
 }//f
 
 static void kw_let();
@@ -2595,6 +2613,22 @@ static void kw_srread(){
 static void kw_srwrite(){
     parse_arg_list(3);
     bytecode(SRWRITE);
+}//f
+
+//RESTSCR(adresse)
+//restore le buffer vidéo à partir de la SPI RAM
+// adresse est l'adresse sour dans SPI RAM
+void kw_restore_screen(){
+    parse_arg_list(1);
+    bytecode(RESTSCR);
+}//f
+
+//SAVESCR(adresse)
+//sauvegarde le buffer vidéo dans la SPI RAM
+// adresse est la destination dans SPI RAM
+void kw_save_screen(){
+    parse_arg_list(1);
+    bytecode(SAVESCR);
 }//f
 
 //compile l'assignation pour élément de variable

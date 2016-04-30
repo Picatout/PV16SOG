@@ -63,7 +63,8 @@
 
     void draw_line(int x1, int y1, int x2, int y2, color_t color);
     void draw_rect(int x1, int y1, int x2, int y2, color_t color);
-    bool draw_sprite(int x, int y, int width, int height, const uint8_t* sprite);
+    void draw_sprite(int x, int y, int width, int height,const uint8_t* sprite, uint8_t *save_back);
+    void remove_sprite(int x,int y, int width, int height,const uint8_t* rest_back);
     //sauvegarde le buffer vidéo dans la SRAM à l'adresse <address>
     void save_screen(uint16_t address);
     //rempli le buffer vidéo avec le contenu de la SRAM qui est à l'adressse <address>

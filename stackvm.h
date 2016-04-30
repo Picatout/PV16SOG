@@ -191,6 +191,9 @@ extern void pause(uint16_t msec);
 #define VIDEOCTRL ( UBOUND+1)
 #define CURLINE (VIDEOCTRL+1)
 #define CURCOL (CURLINE+1)
+#define SAVESCR (CURCOL+1)
+#define RESTSCR (SAVESCR+1)
+#define REMSPR (RESTSCR+1)
 
 #ifdef __asm
 

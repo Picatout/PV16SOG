@@ -145,11 +145,13 @@ a
 	caractère <b>'@'</b>. Dans ce cas le paramètre doit-être le nom d'une variable qui est passée par référence.
 	<div>
     <pre><code>example:
-    sprite(10,10,8,8,@lem#) ' lem# est le nom d'une variable taleau qui contient un sprite.
-                            ' ce tableau doit-être passé par référence.</code></pre></div>
+    sprite(10,10,8,8,@lem#,@rest#) ' lem# est le nom d'une variable taleau qui contient un sprite.
+                                   ' ce tableau doit-être passé par référence.
+                                   ' rest# sauvegarde le fond d'écran couvert par le sprite.
+    </code></pre></div>
 </p><p>                            
-    La valeur de retour d'une fonction peut-être ignorée comme c'est le cas dans cet example puisque <b>sprite()</b> est
-    une fonction.
+    La valeur de retour d'une fonction peut-être ignorée. Si la fonction est appellée comme une commande la 
+    valeur de retour est simplement jetée. 
 </p>
 <h4>commandes BASIC</h4>
 <h5><a name="indexBasic"></a>index</h5>
@@ -196,8 +198,11 @@ a
 	<li><a href="#JSTICK">JSTICK</a></li>
 	<li><a href="#RECT">RECT</a></li>
 	<li><a href="#REM">REM</a></li>
+	<li><a href="#RESTSCR">RESTSCR</a></li>
+	<li><a href="#REMSPR">REMSPR</a></li>
 	<li><a href="#RETURN">RETURN</a></li>
 	<li><a href="#RND">RND</a></li>
+	<li><a href="#SAVESCR">SAVESCR</a></li>
 	<li><a href="#SCRLUP">SCRLUP</a></li>
 	<li><a href="#SCRLDN">SCRLDN</a></li>
 	<li><a href="#SCRLRT">SCRLRT</a></li>
@@ -700,6 +705,35 @@ a
 	' l'apostrophe peut remplacé le mot REM.</code></pre>
 	<a href="#indexBasic">index BASIC</a>
 	</li>
+	<li><a name="REMSPR"></a><b>REMSPR(</i>x,y,width,height,@rest#</i>)</b><br>
+	Restaure la partie de l'affichate préalablement recourverte par un sprite. 
+	<ul>
+		<li><b>x</b> Coordonnée x du coin supérieur gauche de région à restaurer.</li>
+		<li><b>y</b> Coordonnée y du coin supérieur gauche de la région à restaurer.</li>
+		<li><b>width</b> Largeur en pixels de la région à restaurer.</li>
+		<li><b>height</b> Hauteur en pixels de la région à restaurer.</li>
+		<li><b>@rest#</b> Pointeur vers le tableau d'octets qui contient l'information à restaurer. Cette information 
+		est habitullement obtenu par la commande <a href="#SPRITE">SPRITE</a>.</li>
+	</ul>
+	<pre><code>example:
+	'affiche un sprite
+	sprite(10,20,16,16,@spr#,@rest#) 'après cette commande rest# va contenir les bits écrans écrasés par le sprite.
+	'supprime le sprite de l'écran.
+	remspr(10,20,16,16,@rest#) ' après cet appel le sprite est disparu de l'écran.
+	</code></pre>	
+	<a href="#indexBasic">index BASIC</a>
+	</li>
+	<li><a name="RESTSCR"></a><b>RESTSCR(<i>adr</i>)</b><br>
+	Restaure le contenu de l'écran à partir de la SPI RAM. <i>adr</i> est l'adresse source du début des données dans la SPI RAM.
+	Le contenu complet de l'écran est restauré. Il peut s'agir d'un bitmap chargé à partir d'un fichier dont le contenu a été mis
+	en SPI RAM par la commande <a href="#SRLOAD">SRLOAD</a>. Autrement le contenu peut-avoir été mis en SPI RAM avec la commande
+	<a href="#SAVESCR">SAVESCR</a>.
+	<pre><code>example:
+	srload "moonscape.scr"
+	restscr(6) ' en supposant que les données écran débute à l'adresse 6 du fichier.
+	</code></pre>
+	<a href="#indexBasic">index BASIC</a>
+	</li>
 	<li><a name="RETURN"></a><b>RETURN</b><br>
 	Voir <a href="#function">FUNC</a><br>
 	<a href="#indexBasic">index BASIC</a>
@@ -710,6 +744,16 @@ a
 	&gt;while not key() : ? rnd() : wend
 	REM imprime sans arrêt une série de nombre aléatoire.
 	REM il faut enfoncer une touche du clavier pour arrêter l'exécution.</code></pre>
+	<a href="#indexBasic">index BASIC</a>
+	</li>
+	<li><a name="SAVESCR"></a><b>SAVESCR(<i>adr</i>)</b><br>
+	Sauvegarde le contenu complet de l'écran dans la SPI RAM. <i>adr</i> est l'adresse de début de la sauvegarde
+	dans la SPI RAM. Cet écran pourra être rétabli avec la commande <a href="#RESTSCR">RESTSCR</a>.
+	<pre><code>example:
+	SAVESCR(0) 'sauvegarde le contenu de l'écran au début de la mémoire SPI RAM.
+	box(100,120,40,50,5) ' dessine un rectangle plein
+	RESTSCR(0) ' après la restauration le rectangle est disparu.
+	</code></pre>
 	<a href="#indexBasic">index BASIC</a>
 	</li>
 	<li><a name="SCRLUP"></a><b>SCRLUP(expr)</b><br>
@@ -805,28 +849,32 @@ a
 	&gt;|</code></pre>
 	<a href="#indexBasic">index BASIC</a>
 	</li> 
-	<li><a name="SPRITE"></a><b>SPRITE(x,y,width,height,@var#)</b><br>
-	fonction qui affiche un sprite à l'écran. Cette fonction retourne une
-	valeur booléenne qui indique si le sprite est entré en collision avec un autre objet.
+	<li><a name="SPRITE"></a><b>SPRITE(x,y,width,height,@var#,@rest#)</b><br>
+	Cette commande affiche un sprite à l'écran. Tout en conservant le contenu original du fond d'écran dans @rest#.
 	<ul>
 		<li><b>{x,y}</b> Coordonnées du coin supérieur gauche du sprite.</li>
 		<li><b>width</b> Largeur du sprite en pixels.</li>
 		<li><b>height</b> Hauteur du sprite en pixels.</li>
 		<li><b>var#</b> Nom de la variable tableau d'octets qui contient le sprite. Cette variable doit-être passée par 
 		référence comme indiqué par le caractère <b>'@'</b>.</li>
+		<li><b>@rest#</b> Nom de la variable tableau d'octets qui va contenir les pixels de fond d'écran écrasés par
+		l'affichage du sprite. Cette information est utilisée par la commande <a href="#REMSPR">REMSPR</a></li>
 	</ul>
 	<pre><code>example:
-	dim cross#(8)=($0f,$f0,$ff,$ff,$ff,$ff,$0f,$f0) 'petite croix de 4x4 pixels
-	if sprite(56,24,4,4,@cross#) then ? "collision" end if
+	dim rest#(8),cross#(8)=($0f,$f0,$ff,$ff,$ff,$ff,$0f,$f0) 'petite croix de 4x4 pixels
+	' affiche le sprite
+	sprite(56,24,4,4,@cross#,@rest#)
+	' supprime le sprite
+	remspr(56,24,4,4,@rest#)
 	</code></pre>
-	Les sprites sont affichés à l'écran en utilisant une fonction XOR (OU exclusif) pixel à pixel. Cette méthode 2 avantages.
-	Le premier est qu'elle permet de détecter les collisions en supposant que le fond d'écran est noir (0). Le deuxième est qu'il
-	suffit de réafficher le sprite par dessus lui-même pour l'effacer. la méthode pour déplacer un sprite à l'écran est la suivante:
+	La couleur noire (0) est une couleur transparente pour les sprites. C'est à dire que les pixels d'un sprite qui ont
+	cette couleur ne sont pas appliqués à l'affichage.
 	<pre><code>
+    dim rest#(32)
 	while 1
-	  collision=sprite(x,y,8,8,@spr#) ' affiche un sprite de 8x8 pixels
-	  pause(10) ' pause de 10 millisecondes, cette valeur n'est pas critique peut-être 20 msec.
-	  sprite(x,y,8,8,@spr#) 'efface le sprite
+	  sprite(x,y,8,8,@spr#,@rest#) ' affiche un sprite de 8x8 pixels
+	  pause(20) ' pause de 20 millisecondes, cette valeur n'est pas critique.
+	  remspr(x,y,8,8,@rest#) 'efface le sprite
 	  ' ici on peut mettre du code pour gérer les collisions
 	  '...
 	  select case jstick() 'lecture du joystick et déplacement dans la direction indiquée.
@@ -1135,6 +1183,7 @@ a
 	<pre><code>
 	rem John H. Conway's game of life
 	rem simulation automate cellulaire 2D
+	dim rest#(24) ' pour restaurer le fond d'ecran
 	dim <a name="cursor"></a>cursor#(24)=(
 		$00,$70,$00,
 		$00,$70,$00,
@@ -1199,9 +1248,9 @@ a
 	  ? "x:",x," y:",y,"    ";
 	  locate(y,x)
 	  putc g#((y-1)*width+x)
-	  void=sprite(x*6,y*8,6,8,@cursor#)
+	  sprite(x*6,y*8,6,8,@cursor#,@rest#)
 	  while not k : k= key() : wend
-	  void=sprite(x*6,y*8,6,8,@cursor#)
+	  remspr(x*6,y*8,6,8,@rest#)
 	  select case k
 	  case k_up
 		if y&gt;1 then y=y-1 end if
@@ -1320,7 +1369,8 @@ a
 	' nom, largeur, hauteur, couleur pixel
 	dim name$, w, h, c=0
 	' tableau contenant le sprite
-	dim spr#(512)
+	dim spr#(512) ' contient le sprite à dessiner
+	dim rest#(8) ' données de restauration fond ecran pour curseur
 	' sprite curseur
 	dim c#(8)=($f0,$0f,   
 		$0f,$f0,
@@ -1423,10 +1473,10 @@ a
 	while 1
 	 prtxy()
 	 sprite(xo+x*psize,yo+y*psize,psize,
-	 psize,@c#)
+	 psize,@c#,@rest#)
 	 pause(20)
-	 sprite(xo+x*psize,yo+y*psize,psize,
-	 psize,@c#)
+	 remspr(xo+x*psize,yo+y*psize,psize,
+	 psize,@rest#)
 	 k=key()
 	 if k&gt;=\a then k=k-32 end if
 	 select case k
@@ -1519,6 +1569,7 @@ use "lem.spr"
 use "joystick.inc"
 
 cls
+dim rest#(128) ' pour restauration fond écran.
 dim x=112,y=77 'position du sprite
 
 'déplacement vers la gauche
@@ -1543,9 +1594,9 @@ end sub
 
 'boucle principale du programme
 while 1
- void=sprite(x,y,16,16,@lem#)
+ sprite(x,y,16,16,@lem#,@rest#)
  pause(20)
- vod=sprite(x,y,16,16,@lem#)
+ remspr(x,y,16,16,@rest#)
  select case jstick()
  case UP
   move_up()
