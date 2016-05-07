@@ -60,44 +60,80 @@
 #include "Hardware/systicks.h"
 #include "stackvm.h"
 
+#define abs(n) ((n)<0?-(n):(n))
 
-void draw_line(int x1, int y1, int x2, int y2, color_t color){
-    int dx, dy, dxabs, dyabs, i, px, py, sdx, sdy, x, y;
+//  REF: http://members.chello.at/~easyfilter/bresenham.html
+void draw_line(int x0, int y0, int x1, int y1,color_t color)
+{
+   int dx =  abs(x1-x0), sx = x0<x1 ? 1 : -1;
+   int dy = -abs(y1-y0), sy = y0<y1 ? 1 : -1;
+   int err = dx+dy, e2; /* error value e_xy */
 
-#define sign(x) ((x) > 0 ? 1: ((x) == 0 ? 0: (-1)))
+   for(;;){  /* loop */
+      draw_pixel(x0,y0,color);
+      if (x0==x1 && y0==y1) break;
+      e2 = 2*err;
+      if (e2 >= dy) { err += dy; x0 += sx; } /* e_xy+e_x > 0 */
+      if (e2 <= dx) { err += dx; y0 += sy; } /* e_xy+e_y < 0 */
+   }
+}//line()
 
-    dx=x2-x1;
-    dy=y2-y1;
-    sdx=sign(dx);
-    sdy=sign(dy);
-    dxabs=abs(dx);
-    dyabs=abs(dy);
-    x=0;
-    y=0;
-    px=x1;
-    py=y1;
-    if (dxabs>dyabs){
-        for (i=0;i<dxabs;i++){
-            y += dyabs;
-            if (y>dxabs){
-                y -= dxabs;
-                py += sdy;
-            }
-            px += sdx;
-            draw_pixel(px,py,color);
+////  REF: http://members.chello.at/~easyfilter/bresenham.html
+//void draw_circle(int xc, int yc, int r, color_t color)
+//{
+//   int x = -r, y = 0, err = 2-2*r; /* II. Quadrant */
+//   do {
+//      draw_pixel(xc-x, yc+y,color); /*   I. Quadrant */
+//      draw_pixel(xc-y, yc-x,color); /*  II. Quadrant */
+//      draw_pixel(xc+x, yc-y,color); /* III. Quadrant */
+//      draw_pixel(xc+y, yc+x,color); /*  IV. Quadrant */
+//      r = err;
+//      if (r <= y) err += ++y*2+1;           /* e_xy+e_y < 0 */
+//      if (r > x || err > y) err += ++x*2+1; /* e_xy+e_x > 0 or no 2nd y-step */
+//   } while (x < 0);
+//}//circle()
+
+//ref: https://sites.google.com/site/ruslancray/lab/projects/bresenhamscircleellipsedrawingalgorithm/bresenham-s-circle-ellipse-drawing-algorithm
+void draw_ellipse (int xc, int yc, int width, int height,color_t color)
+{
+    width/=2;
+    height/=2;
+    long a2 = (width * width);
+    long b2 = (height * height);
+    long fa2 = 4 * a2, fb2 = 4 * b2;
+    long sigma;
+    int x, y;
+
+    /* first half */
+    for (x = 0, y = height, sigma = 2*b2+a2*(1-2*height); b2*x <= a2*y; x++)
+    {
+        draw_pixel (xc + x, yc + y,color);
+        draw_pixel (xc - x, yc + y,color);
+        draw_pixel (xc + x, yc - y,color);
+        draw_pixel (xc - x, yc - y,color);
+        if (sigma >= 0)
+        {
+            sigma += fa2 * (1 - y);
+            y--;
         }
-    }else{
-        for (i=0;i<dyabs;i++){
-            x += dxabs;
-            if (x>=dyabs){
-                x -= dyabs;
-                px += sdx;
-            }
-            py += sdy;
-            draw_pixel(px,py,color);
-        }
+        sigma += b2 * ((4 * x) + 6);
     }
-}//f()
+
+    /* second half */
+    for (x = width, y = 0, sigma = 2*a2+b2*(1-2*width); a2*y <= b2*x; y++)
+    {
+        draw_pixel (xc + x, yc + y,color);
+        draw_pixel (xc - x, yc + y,color);
+        draw_pixel (xc + x, yc - y,color);
+        draw_pixel (xc - x, yc - y,color);
+        if (sigma >= 0)
+        {
+            sigma += fb2 * (1 - x);
+            x--;
+        }
+        sigma += a2 * ((4 * y) + 6);
+    }
+}
 
 void draw_rect(int x1, int y1, int x2, int y2, color_t color){
     int i,limit;

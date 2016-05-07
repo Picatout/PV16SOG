@@ -195,6 +195,8 @@ extern void pause(uint16_t msec);
 #define RESTSCR (SAVESCR+1)
 #define REMSPR (RESTSCR+1)
 #define RANDOMIZE (REMSPR+1)
+#define CIRCLE (RANDOMIZE+1)
+#define ELLIPSE (CIRCLE+1)
 
 #ifdef __asm
 

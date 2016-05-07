@@ -83,7 +83,7 @@
 #define LEFT_ARROW  (129)
 #define UP_ARROW    (130)
 #define DOWN_ARROW  (131)
-#define CIRCLE      (132)
+#define ROUND       (132)
 
 #ifndef __asm
 typedef enum CURSOR_SHAPE{cBLOCK, cVLINE} cursor_shape_t;

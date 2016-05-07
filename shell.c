@@ -200,6 +200,7 @@ static void kw_box();
 static void kw_btest();
 static void kw_bye();
 static void kw_case();
+static void kw_circle();
 static void kw_cls();
 static void kw_color();
 static void kw_const();
@@ -207,6 +208,7 @@ static void kw_curcol();
 static void kw_curline();
 static void kw_dim();
 static void kw_do();
+static void kw_ellipse();
 static void kw_else();
 static void kw_end();
 static void kw_exit();
@@ -271,8 +273,8 @@ static void kw_xorpixel();
 
 //identifiant KEYWORD doit-être dans le même ordre que
 //dans la liste KEYWORD
-enum {eKW_ABS,eKW_AND,eKW_BEEP,eKW_BOX,eKW_BTEST,eKW_BYE,eKW_CASE,eKW_CLS,eKW_COLOR,
-      eKW_CONST,eKW_CURCOL,eKW_CURLINE,eKW_DIM,eKW_DO,eKW_ELSE,eKW_END,eKW_EXIT,
+enum {eKW_ABS,eKW_AND,eKW_BEEP,eKW_BOX,eKW_BTEST,eKW_BYE,eKW_CASE,eKW_CIRCLE,eKW_CLS,eKW_COLOR,
+      eKW_CONST,eKW_CURCOL,eKW_CURLINE,eKW_DIM,eKW_DO,eKW_ELLIPSE,eKW_ELSE,eKW_END,eKW_EXIT,
       eKW_FOR,eKW_FUNC,eKW_GETPIXEL,eKW_IF,eKW_INPUT,eKW_KEY,eKW_LEN,
       eKW_LET,eKW_LINE,eKW_LOCAL,eKW_LOCATE,eKW_LOOP,eKW_MAX,eKW_MDIV,eKW_MIN,eKW_NEXT,
       eKW_NOISE,eKW_NOT,eKW_OR,eKW_PAUSE,
@@ -293,6 +295,7 @@ __eds__ static const dict_entry_t __attribute__((space(prog))) KEYWORD[]={
     {kw_btest,5+FUNCTION,"BTEST"},
     {kw_bye,3,"BYE"},
     {kw_case,4,"CASE"},
+    {kw_circle,6,"CIRCLE"},
     {kw_cls,3+AS_HELP,"CLS"},
     {kw_color,5+AS_HELP,"COLOR"},
     {kw_const,5,"CONST"},
@@ -300,6 +303,7 @@ __eds__ static const dict_entry_t __attribute__((space(prog))) KEYWORD[]={
     {kw_curline,7+FUNCTION,"CURLINE"},
     {kw_dim,3,"DIM"},
     {kw_do,2,"DO"},
+    {kw_ellipse,7,"ELLIPSE"},
     {kw_else,4,"ELSE"},
     {kw_end,3,"END"},
     {kw_exit,4,"EXIT"},
@@ -2398,6 +2402,22 @@ static void kw_rect(){
     parse_arg_list(5);
     bytecode(RECT);
 }//f
+
+//CIRCLE(xc,yc,r, color)
+//dissine un cercle rayon r, centré sur xc,yc
+static void kw_circle(){
+    parse_arg_list(4);
+    bytecode(CIRCLE);
+}//f
+
+//ELLIPSE(xc,yc,w,h,color)
+//dessine une ellipse centrée sur xc,yc
+// et de largeur w, hauteur h
+static void kw_ellipse(){
+    parse_arg_list(5);
+    bytecode(ELLIPSE);
+}//f
+
 
 // SPRITE(x,y,width,height,@sprite,@save_back)
 // desssine le sprite à la position désigné

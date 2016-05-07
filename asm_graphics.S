@@ -451,6 +451,34 @@ _vm_rect: ; ( x0,y0,width,height,color -- )
     pop W4
     return
 
+.global _circle
+; dessine une ellipse avec aspect ratio de 6/8    
+_circle: ; ( xc yc, r, c -- )
+    mov [dsp--], W4 ; couleur
+    mov [dsp--], W3 ; rayon
+    sl W3,W3
+    mov #6,W0
+    mul.uu W0,W3,W0
+    mov #8,W2
+    repeat #17
+    div.u W0,W2
+    mov W0,W2
+    mov [dsp--], W1 ; coord. y centre
+    mov [dsp--], W0 ; coord. x centre
+    callxfunc _draw_ellipse
+    return
+    
+.global _ellipse
+_ellipse: ; ( x, y, w, h, c -- )
+    mov [dsp--], W4 ; couleur
+    mov [dsp--], W3 ; hauteur
+    mov [dsp--], W2 ; largeur
+    mov [dsp--], W1 ; coord. y centre
+    mov [dsp--], W0 ; coord. x centre
+    callxfunc _draw_ellipse
+    return
+    
+    
 .global _clreol
 ; efface la fin de la ligne
 ; à partir de la position du curseur    

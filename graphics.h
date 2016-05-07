@@ -63,6 +63,8 @@
 
     void draw_line(int x1, int y1, int x2, int y2, color_t color);
     void draw_rect(int x1, int y1, int x2, int y2, color_t color);
+//    void draw_circle(int xc, int yc, int r, color_t color);
+    void draw_ellipse (int x0, int y0, int x1, int y1, color_t color);
     void draw_sprite(int x, int y, int width, int height,const uint8_t* sprite, uint8_t *save_back);
     void remove_sprite(int x,int y, int width, int height,const uint8_t* rest_back);
     //sauvegarde le buffer vidéo dans la SRAM à l'adresse <address>

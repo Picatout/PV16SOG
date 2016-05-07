@@ -163,6 +163,7 @@ a
 	<li><a href="#BTEST">BTEST</a></li>
 	<li><a href="#BYE">BYE</a></li>
 	<li><a href="#CASE">CASE</a></li>
+	<li><a href="#CIRCLE">CIRCLE</a></li>
 	<li><a href="#CLS">CLS</a></li>
 	<li><a href="#COLOR">COLOR</a></li>
 	<li><a href="#CONST">CONST</a></li>
@@ -170,6 +171,7 @@ a
 	<li><a href="#CURLINE">CURLINE</a></li>
 	<li><a href="#DIM">DIM</a></li>
 	<li><a href="#DO">DO</a></li>
+	<li><a href="#ELLIPSE">ELLIPSE</a></li>
 	<li><a href="#ELSE">ELSE</a></li>
 	<li><a href="#END">END</a></li>
 	<li><a href="#EXIT">EXIT</a></li>
@@ -304,6 +306,18 @@ a
 	<li><a name="CASE"></a><b>CASE</b><br> Voir <a href="#selectcase">SELECT CASE</a><br>
 	<a href="#indexBasic">index BASIC</a>
     </li>
+    <li><a name="CIRCLE"></a><b>CIRCLE(xc,yc,r,color)</b><br>
+    Desssine un cercle.<br>
+    <ul>
+    <li><b>xc,yc</b> coordonnées du centre du cercle.</li>
+    <li><b>r</b> rayon du cercle.</li>
+    <li><b>color</b> couleur du trait.</li>
+    </ul>
+    <pre><code>example:
+    circle(100,100,45,7) 'dessine un cercle de rayon 45 pixels centré sur {100,100}
+    </code></pre>
+	<a href="#indexBasic">index BASIC</a>
+    </li>
 	<li><a name="CLS"></a><b>CLS [color]</b><br> Efface l'écran. Si le paramètre <i>color</i> est présent assigne cette valeur
 	comme nouvelle couleur de fond avant d'effacer l'écran.
 	<pre><code>example:
@@ -377,6 +391,19 @@ a
 	3
 	2
 	1
+	</code></pre>
+	<a href="#indexBasic">index BASIC</a>
+	</li>
+	<li><a name="ELLIPSE"></a><b>ELLIPSE(xc,yc,w,h,color)</b><br>
+	Dessine une ellipse centrée sur les coordonnées {xc,yc}.<br>
+	<ul>
+	<li><b>{xc,yc}</b> Centre de l'ellipse.</li>
+	<li><b>w</b> largeur de l'ellipse en pixels.</li>
+	<li><b>h</b> hauteur de l'ellipse en pixels.</li>
+	<li><b>color</b> couleur du trait.</li>
+	</ul>
+	<pre><code>example:
+	ellipse(120,85,120,85,15) ' dessine une ellipse centrée sur {120,85} de largeur 120 et hauteur 85
 	</code></pre>
 	<a href="#indexBasic">index BASIC</a>
 	</li>
