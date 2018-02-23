@@ -163,11 +163,11 @@ section                    address   length (PC units)   length (bytes) (dec)
 .text                        0x200               0xf94          0x175e  (5982)
 .dinit                      0x1194              0x3ee2          0x5e53  (24147)
 .text                       0x5076              0x6810          0x9c18  (39960)
-_f6a6f450572e0e7e           0xb886               0x47a           0x6b7  (1719)
+_f6a8e450572f3d29           0xb886               0x47a           0x6b7  (1719)
 .text                       0xbd00              0x11f4          0x1aee  (6894)
-_f6df2958572df41f           0xcef4               0x328           0x4bc  (1212)
+_f6da6958572f3c90           0xcef4               0x328           0x4bc  (1212)
 .text                       0xd21c               0x336           0x4d1  (1233)
-_f6a6f3f4572e0e7e           0xd552                0xbc           0x11a  (282)
+_f6a8e3f4572f3d29           0xd552                0xbc           0x11a  (282)
 .text                       0xd60e               0x260           0x390  (912)
 .shared.dinit               0xd86e                 0x2             0x3  (3)
 
@@ -2877,9 +2877,9 @@ ndata               0x1000        0x100
                   0x00b82a                  _pstrcmp
                   0x00b86e                  _uppercase
 
-_f6a6f450572e0e7e
+_f6a8e450572f3d29
                   0x00b886        0x47a
- _f6a6f450572e0e7e
+ _f6a8e450572f3d29
                   0x00b886        0x47a build/default/production/shell.o
 
 .text             0x00bd00       0x11f4
@@ -2965,9 +2965,9 @@ _f6a6f450572e0e7e
                   0x00ce78                  __MathError
                   0x00cebc                  __StackError
 
-_f6df2958572df41f
+_f6da6958572f3c90
                   0x00cef4        0x328
- _f6df2958572df41f
+ _f6da6958572f3c90
                   0x00cef4        0x328 build/default/production/font6x8.o
                   0x00cef4                  _font_6x8
 
@@ -2992,9 +2992,9 @@ _f6df2958572df41f
                   0x00d486                  __T2Interrupt
                   0x00d4fc                  __OC2Interrupt
 
-_f6a6f3f4572e0e7e
+_f6a8e3f4572f3d29
                   0x00d552         0xbc
- _f6a6f3f4572e0e7e
+ _f6a8e3f4572f3d29
                   0x00d552         0xbc build/default/production/shell.o
 
 .text             0x00d60e        0x260

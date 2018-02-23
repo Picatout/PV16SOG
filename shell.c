@@ -109,7 +109,7 @@ static bool program_loaded;
 static bool run_it=false;
 static uint16_t program_end;
 
-#define NAME_MAX 32 //longueur maximale nom
+#define NAME_MAX 32 //longueur maximale nom incluant zéro terminal
 #define LEN_MASK 0x1F   // masque longueur nom.
 #define HIDDEN 0x20 // mot caché
 #define FUNCTION 0x40 // ce mot est une fonction
@@ -2391,7 +2391,7 @@ static void kw_line(){
 
 //BOX(x,y,width,height,color)
 //desssine une rectangle plein
-static void kw_box(){
+static __attribute__((naked)) void kw_box(){
     parse_arg_list(5);
     bytecode(BOX);
 }//f
